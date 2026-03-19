@@ -2,81 +2,85 @@
 
 - Date: 2026-03-19
 - Project: e-be
-- Branch: main（初回コミット前・未push）
+- Branch: main
 
 ## 作業概要
 
-イーベ（E-be）というイベントバー運営プラットフォームのモノレポを `/Users/km/dev/_github/e-be` に新規構築した。Turborepo + Next.js 16 + shadcn/ui の Web アプリをサンプルページ表示まで実装し、next-intl による日英2言語対応も完了した。プロジェクト全体の設計方針・アーキテクチャ決定をドキュメント化した。
+ロール設計・イベントステートマシン・クーポン機能など主要な設計方針を確定し、`docs/architecture/decisions.md` に記録した。`CLAUDE.md` をスリム化して `.claude/rules/`（paths 付き6ファイル）に分割した。`docs/features/` に機能別ビジネスルール仕様を12ファイル作成し、`docs/README.md` に機能一覧を整備した。
 
 ## 完了済みタスク
 
-- Turborepo モノレポ初期構築（`pnpm-workspace.yaml` / `turbo.json`）
-- `apps/web` — Next.js 16.2 + shadcn/ui + Tailwind CSS セットアップ
-- サンプルホームページ実装（Hero / Features / Stack セクション）
-- `next-intl` による日英 i18n 対応（`/ja` / `/en` ルーティング）
-- `src/proxy.ts` による言語リダイレクト設定
-- `CLAUDE.md` — 開発ガイドライン（UI・モバイルファースト・i18n・課金・アーキテクチャルール）
-- `AGENTS.md` — `CLAUDE.md` へのシンボリックリンク
-- `README.md` — ローカル起動・ビルド手順
-- `.claude/steering/` — 実装計画書群（VitePress・i18n・課金・GitHub repo）
-- `.claude/commands/create-steering.md` — `/create-steering <issue番号>` スラッシュコマンド
-- `docs/architecture/decisions.md` — 8つのアーキテクチャ意思決定記録
-- `suppressHydrationWarning` + `colorScheme` viewport 設定（Dark Reader 対策）
+- ロール設計確定（user / org:owner / org:member / platform:admin）
+- イベントステートマシン再設計（stored: draft/pending/published/cancelled/rejected、derived: ongoing/completed）
+- 主催者許可システム（bar_host_permissions）設計
+- owner 権限移譲設計
+- クーポン機能設計（coupons / user_coupons / token カラム追加）
+- 店舗イメージカラー設計（HEX保存・プリセット→カスタム拡張可能・WCAG文字色自動判定）
+- `docs/architecture/decisions.md` に #9〜#13 追記
+- `docs/architecture/validations.md` 作成（フォームバリデーション仕様）
+- `CLAUDE.md` スリム化 → `.claude/rules/` に6ファイル分割（paths付き）
+- `.claude/commands/implement.md` 作成（/implement スラッシュコマンド）
+- `docs/README.md` 作成（機能一覧・TBD・カレンダー連携方針）
+- `docs/features/` 12ファイル作成:
+  - `bar-search.md` / `coupon.md` / `event-analytics.md` / `event-approval.md`
+  - `event-creation.md` / `event-participation.md` / `event-search.md`
+  - `eventer-payment.md` / `notifications.md` / `organizer-history.md`
+  - `store-calendar.md` / `store-creation.md`
+- CSV エクスポート・クリップボードコピーを各機能ファイルに追記
+- GitHub Issues 5件作成（#1 VitePress / #2 packages/db / #3 Supabase / #4 Expo / #5 Billing）
 
 ## 未完了・継続タスク
 
-- GitHub リポジトリ未作成・未 push（`.claude/steering/01-github-repo.md` 参照）
-- VitePress ドキュメントサイト未構築（`.claude/steering/vitepress-github-pages.md` 参照）
-- `packages/db` — Drizzle ORM スキーマ未実装
-- `apps/mobile` — Expo 未セットアップ
-- Supabase 接続・認証未実装
-- `docs/features/` — 機能別ドキュメント未作成
+- `docs/features/` の残り未コミットファイル（CSV・クリップボード追記分）をコミット
+- `packages/db` Drizzle ORM スキーマ実装（#2）← 次の実装優先タスク
+- VitePress セットアップ（#1）
+- Supabase 接続・認証（#3）
+- `apps/mobile` Expo セットアップ（#4）
+- 参加表明の仕組み（TBD）・通知タイミング（TBD）・支払いフロー（TBD）の仕様決定
 
 ## 重要な決定事項
 
-- **バックエンド構成**: Supabase（BaaS）+ Next.js Route Handlers。専用 API サーバーなし。Mobile は Supabase JS クライアントで直接接続
-- **ドキュメント**: VitePress（`docs/`）→ GitHub Pages 公開。`apps/` 配下ではなくルート直下
-- **ステアリング**: `.claude/steering/` に AI 生成の実装計画書を Git 管理で保存
-- **i18n**: Web は `next-intl`（URL: `/ja/` `/en/`）、Mobile は `i18next`。デフォルト `ja`
-- **課金**: Stripe 前提。DB スキーマに `stripe_customer_id` / `plan` / `plan_expires_at` を最初から含める
-- **ソフトデリート**: 全テーブルに `deleted_at` 列必須。`DELETE` 文禁止
-- **タイムゾーン**: DB は UTC 固定。表示時に `Intl.DateTimeFormat` で変換
-- **イベントステートマシン**: `canTransition(from, to)` を通す。直接 status 書き換え禁止
-- **機能制限**: `canUseFeature(user, feature)` を通す。コンポーネントに直接判定を書かない
+- **イベントステータス**: DB には `draft/pending/published/cancelled/rejected` のみ保存。`ongoing`/`completed` は `start_at`/`end_at` から導出（cron 不要）
+- **クーポン `expired`** も同様に時刻導出。`expires_at` と現在時刻を比較
+- **ロール**: アカウント種別ではなく組織メンバーシップで決まる。同一ユーザーが参加者にも主催者にもなれる
+- **owner**: 1組織1人。権限移譲機能あり（取り消し不可・audit_logs 記録）
+- **クーポン token**: `user_coupons.token`（UUID）を今から入れておく → 将来 QR 化はこれを encode するだけ
+- **店舗イメージカラー**: HEX で保存。フェーズ1はプリセットのみ、フェーズ2でカスタム入力追加（スキーマ変更なし）
+- **Google Calendar**: アプリは独自カレンダーを持つ。「Google Calendar に追加」ボタンのみ提供（双方向同期は TBD）
+- **設計原則**: シンプルさ優先・導出できるものは DB に持たない・TBD は勝手に決めない
 
 ## 変更したファイル（未コミット含む）
 
 ```
-.claude/steering/01-github-repo.md
-.claude/steering/billing-premium.md
-.claude/steering/i18n.md
-.claude/steering/vitepress-github-pages.md
-.claude/commands/create-steering.md   ← /create-steering スラッシュコマンド
-.gitignore
-AGENTS.md                             ← CLAUDE.md へのシンボリックリンク
-CLAUDE.md
-README.md
-docs/architecture/decisions.md
-docs/README.md（空）
-package.json
-pnpm-lock.yaml
-pnpm-workspace.yaml
-turbo.json
-apps/web/                             ← Next.js 16 全体（未追跡）
-docs/architecture/                    ← 未追跡
+M docs/features/bar-search.md
+M docs/features/coupon.md
+M docs/features/event-analytics.md
+M docs/features/event-creation.md
+M docs/features/event-participation.md
+M docs/features/event-search.md
+M docs/features/eventer-payment.md
+M docs/features/organizer-history.md
 ```
 
 ## 次のセッションへの最初の指示
 
-1. `.claude/steering/01-github-repo.md` を読み、GitHub リポジトリを作成して初回 push する
-2. push 後に `.claude/steering/vitepress-github-pages.md` を読み、VitePress をセットアップする
-3. `packages/db` を作成し、Drizzle ORM スキーマを実装する（`docs/architecture/decisions.md` のソフトデリート・タイムゾーン・ステートマシン方針に従う）
-4. dev サーバー起動時は必ず `.next` キャッシュ存在確認をしてから `pnpm dev` を実行する
+1. 未コミットの `docs/features/` 変更をコミットする（CSV・クリップボードコピー追記分）
+2. `docs/features/` と `docs/architecture/decisions.md` を読んで全体設計を把握する
+3. `.claude/steering/` に `packages/db` の実装計画を作成する（`/create-steering 2` を使う）
+4. `packages/db` の Drizzle ORM スキーマを実装する（Issue #2）
+   - テーブル: users / organizations / organization_members / events / bar_host_permissions / bar_blocks / coupons / user_coupons / audit_logs / notifications
+   - `packages/db/src/event-transitions.ts` — `canTransition(from, to)`・`resolveStatus(event)`
+   - `packages/db/src/plans.ts` — `canUseFeature(plan, feature)`
+   - `packages/db/src/notification-types.ts`
 
 ## プロジェクト文脈
 
-- Tech stack: Turborepo / Next.js 16 (App Router) / Expo / Supabase / Drizzle ORM / shadcn/ui / Tailwind CSS / next-intl / VitePress
-- 主要ルール: `CLAUDE.md` および `.claude/steering/` を参照すること
-- ローカル開発URL: Web http://localhost:3000 / Docs http://localhost:5173（VitePress未構築）
+- Tech stack: Turborepo / Next.js 16.2 (App Router) / Expo / Supabase / Drizzle ORM / shadcn/ui / Tailwind CSS / next-intl / VitePress
+- 主要ルール: `CLAUDE.md` および `.claude/rules/` を参照すること
+- 機能仕様: `docs/features/` を参照すること
+- 設計方針: `docs/architecture/decisions.md` を参照すること
+- バリデーション仕様: `docs/architecture/validations.md` を参照すること
+- ローカル開発URL: Web http://localhost:3000 / Docs http://localhost:5173（VitePress 未構築）
 - 作業ディレクトリ: `/Users/km/dev/_github/e-be`
+- GitHub リポジトリ: https://github.com/qei-2027-700/e-be
 - pnpm 9 + Node.js 20 必須
