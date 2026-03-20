@@ -204,5 +204,16 @@
   "metadata": {
     "title": "E-be",
     "description": "The event bar management platform connecting venues and organizers"
+  },
+  "event_detail": {
+    "back": "Back to Dashboard",
+    "start_at": "Starts",
+    "end_at": "Ends",
+    "location": "Location",
+    "organizer": "Organizer",
+    "my_status": "My Status",
+    "not_found": "Event not found",
+    "status_registered": "Registered",
+    "status_cancelled": "Cancelled"
   }
 }
