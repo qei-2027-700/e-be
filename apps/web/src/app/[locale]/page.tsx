@@ -3,6 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getUser } from "@/lib/auth";
 import Link from "next/link";
+import Image from "next/image";
 import { NavBar } from "@/components/lp/nav-bar";
 import { LinkButton } from "@/components/lp/link-button";
 import { AppFooter } from "@/components/layout/app-footer";
@@ -76,6 +77,20 @@ export default async function HomePage() {
             <LinkButton href="#" size="lg" variant="outline" className="w-full sm:w-auto">
               {t("hero.cta_secondary")}
             </LinkButton>
+          </div>
+        </div>
+
+        {/* Hero image */}
+        <div className="relative mx-auto max-w-5xl px-6 pb-0">
+          <div className="overflow-hidden rounded-t-2xl shadow-2xl ring-1 ring-border">
+            <Image
+              src="/hero-bar.png"
+              alt="イベントバーとアプリの様子"
+              width={1456}
+              height={816}
+              className="w-full object-cover"
+              priority
+            />
           </div>
         </div>
       </section>
