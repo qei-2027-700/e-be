@@ -43,12 +43,30 @@
       "venue_title": "店舗管理者向け",
       "eventer_title": "イベント主催者向け",
       "participant_title": "イベント参加者向け",
-      "events": { "title": "イベント管理", "description": "開催リクエスト・承認・時間重複チェックを一元管理。複数店舗の予定をひと目で把握できます。" },
-      "multitenant": { "title": "マルチテナント", "description": "1事業者 = N店舗の階層構造で運営をシンプルに。各店舗の実績を分けて管理できます。" },
-      "participants": { "title": "参加者管理", "description": "主催者・共催者・参加者のロールを柔軟に管理。定員設定や参加状況を一覧で確認。" },
-      "ai": { "title": "AI分析基盤", "description": "実績データをAI分析用テキストとしてエクスポート。集客傾向・人気タグを素早く把握。" },
-      "coupons": { "title": "クーポン発行", "description": "店舗限定・事業者全店共通クーポンを発行。リピーター獲得・次回来店促進に活用できます。" },
-      "fc": { "title": "FCリクエスト", "description": "新店舗オーナーへの立候補と過去実績マッチング。優秀なイベンターを新拠点へ繋げます。" }
+      "events": {
+        "title": "イベント管理",
+        "description": "開催リクエスト・承認・時間重複チェックを一元管理。複数店舗の予定をひと目で把握できます。"
+      },
+      "multitenant": {
+        "title": "マルチテナント",
+        "description": "1事業者 = N店舗の階層構造で運営をシンプルに。各店舗の実績を分けて管理できます。"
+      },
+      "participants": {
+        "title": "参加者管理",
+        "description": "主催者・共催者・参加者のロールを柔軟に管理。定員設定や参加状況を一覧で確認。"
+      },
+      "ai": {
+        "title": "AI分析基盤",
+        "description": "実績データをAI分析用テキストとしてエクスポート。集客傾向・人気タグを素早く把握。"
+      },
+      "coupons": {
+        "title": "クーポン発行",
+        "description": "店舗限定・事業者全店共通クーポンを発行。リピーター獲得・次回来店促進に活用できます。"
+      },
+      "fc": {
+        "title": "FCリクエスト",
+        "description": "新店舗オーナーへの立候補と過去実績マッチング。優秀なイベンターを新拠点へ繋げます。"
+      }
     },
     "how": {
       "title": "はじめ方はかんたん 3 ステップ",
@@ -129,11 +147,15 @@
       "title": "組織設定",
       "back": "組織ダッシュボードへ戻る",
       "owner_only": "この設定はオーナーのみ閲覧できます"
-    }
+    },
+    "participation_history_title": "参加イベント履歴",
+    "participation_history_empty": "参加したイベントはまだありません",
+    "participation_status_registered": "参加予定",
+    "participation_status_cancelled": "キャンセル済み"
   },
   "apply": {
     "title": "事業者申請",
-    "description": "店舗情報を入力して申請してください。管理者が内容を確認し、承認後に組織が作成されます。",
+    "description": "店舗説明",
     "company_name": "法人名",
     "company_name_placeholder": "株式会社イーベ",
     "org_name": "店舗名",
@@ -141,7 +163,6 @@
     "org_slug": "スラッグ（URL）",
     "org_slug_placeholder": "e-be-shibuya",
     "org_slug_hint": "英数字とハイフンのみ / 最大50文字 / 後から変更不可",
-    "description": "店舗説明",
     "description_placeholder": "店舗の説明を入力してください（任意）",
     "address": "住所",
     "address_placeholder": "東京都渋谷区...",
