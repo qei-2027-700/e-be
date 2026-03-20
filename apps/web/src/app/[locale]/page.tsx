@@ -202,7 +202,7 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <AppFooter />
+      <AppFooter innerClassName="mx-auto max-w-5xl px-6 py-10" />
     </main>
   );
 }
