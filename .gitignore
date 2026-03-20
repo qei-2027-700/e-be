@@ -7,3 +7,5 @@ dist
 .playwright-mcp/
 .claude/ctx-export-needed
 .claude/handoff-*.md
+docs/.vitepress/dist
+docs/.vitepress/cache
