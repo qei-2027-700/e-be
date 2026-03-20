@@ -105,6 +105,11 @@
     "role_member": "Member",
     "go_to_org": "Go to Organization",
     "admin_link": "Admin Dashboard",
+    "organizer_history_title": "Organized Events",
+    "organizer_history_empty": "You haven't organized any events yet",
+    "event_status_published_ended": "Completed",
+    "event_status_cancelled": "Cancelled",
+    "event_status_rejected": "Rejected",
     "org": {
       "title": "Organization Dashboard",
       "back": "Back to Dashboard",
