@@ -1,11 +1,14 @@
 import { redirect } from "next/navigation";
 import { getLocale, getTranslations } from "next-intl/server";
-import { getUser, getUserOrgs } from "@/lib/auth";
+import { getUser, getUserOrgs, getUserType } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
+import { db } from "@/lib/db";
+import { operatorApplications } from "@e-be/db/schema";
+import { eq, and, isNull } from "drizzle-orm";
 
 export default async function DashboardPage() {
   const locale = await getLocale();
@@ -16,7 +19,27 @@ export default async function DashboardPage() {
     redirect(`/${locale}/auth/sign-in`);
   }
 
-  const userOrgs = await getUserOrgs(user.id);
+  const [userOrgs, userType] = await Promise.all([
+    getUserOrgs(user.id),
+    getUserType(user.id),
+  ]);
+
+  // 申請中かどうかを確認（userType === 'user' の場合のみ）
+  let hasPendingApplication = false;
+  if (userType === "user") {
+    const pending = await db
+      .select({ id: operatorApplications.id })
+      .from(operatorApplications)
+      .where(
+        and(
+          eq(operatorApplications.userId, user.id),
+          eq(operatorApplications.status, "pending"),
+          isNull(operatorApplications.deletedAt)
+        )
+      )
+      .limit(1);
+    hasPendingApplication = pending.length > 0;
+  }
 
   async function signOut() {
     "use server";
@@ -30,11 +53,21 @@ export default async function DashboardPage() {
       <div className="mx-auto max-w-2xl space-y-6">
         <div className="flex items-center justify-between">
           <h1 className="text-2xl font-bold">{t("title")}</h1>
-          <form action={signOut}>
-            <Button variant="outline" type="submit" className="min-h-11">
-              {t("sign_out")}
-            </Button>
-          </form>
+          <div className="flex items-center gap-2">
+            {userType === "system_user" && (
+              <Link
+                href={`/${locale}/admin`}
+                className="inline-flex min-h-11 items-center rounded-lg border border-border bg-background px-2.5 text-[0.8rem] font-medium transition-all hover:bg-muted"
+              >
+                {t("admin_link")}
+              </Link>
+            )}
+            <form action={signOut}>
+              <Button variant="outline" type="submit" className="min-h-11">
+                {t("sign_out")}
+              </Button>
+            </form>
+          </div>
         </div>
 
         <Card>
@@ -45,10 +78,20 @@ export default async function DashboardPage() {
             {userOrgs.length === 0 ? (
               <div className="space-y-4 text-center py-4">
                 <p className="text-sm text-muted-foreground">{t("no_orgs")}</p>
-                {/* 組織作成フローは別Issueで実装予定 */}
-                <Button variant="outline" disabled className="min-h-11">
-                  {t("create_org")}
-                </Button>
+                {userType === "user" && (
+                  hasPendingApplication ? (
+                    <Badge variant="secondary" className="text-sm px-4 py-2">
+                      {t("application_pending")}
+                    </Badge>
+                  ) : (
+                    <Link
+                      href={`/${locale}/dashboard/apply`}
+                      className="inline-flex min-h-11 items-center rounded-lg border border-border bg-background px-4 text-[0.8rem] font-medium transition-all hover:bg-muted"
+                    >
+                      {t("apply_operator")}
+                    </Link>
+                  )
+                )}
               </div>
             ) : (
               <ul className="divide-y">
