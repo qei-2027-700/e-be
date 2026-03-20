@@ -8,13 +8,59 @@
     "cta_request": "Request an Event",
     "features_title": "Features",
     "stack_title": "Tech Stack",
+    "nav": {
+      "sign_in": "Sign In",
+      "sign_up": "Get Started Free",
+      "dashboard": "Dashboard"
+    },
+    "hero": {
+      "eyebrow": "The Event Bar Platform",
+      "title": "More Great Events, Together.",
+      "subtitle": "E-be connects venues with organizers. Handle bookings, attendance, and analytics — all in one place.",
+      "cta_primary": "Find Events",
+      "cta_secondary": "Book a Venue"
+    },
+    "pain": {
+      "title": "Sound familiar?",
+      "venue_label": "Bar Owners & Venue Staff",
+      "venue_item_1": "Hard to find reliable organizers you can trust",
+      "venue_item_2": "Managing schedules across multiple venues is a mess",
+      "venue_item_3": "No clear way to measure which events actually drive revenue",
+      "venue_item_4": "Booking requests and approvals take too long",
+      "eventer_label": "Organizers, DJs & Artists",
+      "eventer_item_1": "Finding a venue takes too much time every single time",
+      "eventer_item_2": "Coordination is scattered across emails and messages",
+      "eventer_item_3": "No good way to showcase your past track record",
+      "eventer_item_4": "Missing tools to build repeat audiences with coupons"
+    },
     "features": {
-      "events": { "title": "Event Management", "description": "Centralized request, approval, and time conflict checking" },
-      "multitenant": { "title": "Multi-tenant", "description": "Manage multiple venues under one organization" },
-      "participants": { "title": "Participant Management", "description": "Flexible roles: organizer, co-host, and participant" },
-      "ai": { "title": "AI Analytics", "description": "Export performance data as AI-ready text for analysis" },
-      "coupons": { "title": "Coupons", "description": "Issue venue-specific or organization-wide coupons" },
-      "fc": { "title": "FC Requests", "description": "Apply to open new venues and match based on past performance" }
+      "title": "Everything you need to run great events",
+      "events": { "title": "Event Management", "description": "Centralized booking requests, approvals, and schedule conflict checking across all your venues." },
+      "multitenant": { "title": "Multi-venue", "description": "One organization, many venues. Manage each independently while keeping a unified overview." },
+      "participants": { "title": "Attendance & Roles", "description": "Flexible roles for organizers, co-hosts, and attendees. Track capacity and RSVPs in one view." },
+      "ai": { "title": "AI-Ready Analytics", "description": "Export your performance data as structured text for AI analysis. Spot trends and popular tags fast." },
+      "coupons": { "title": "Coupons", "description": "Issue venue-specific or org-wide coupons to drive repeat attendance and reward loyal guests." },
+      "fc": { "title": "FC Requests", "description": "Let top organizers apply to open new venues, matched by past performance data." }
+    },
+    "how": {
+      "title": "Up and running in 3 steps",
+      "step_1_title": "Create an account",
+      "step_1_desc": "Sign up free with just your email. Works for venue owners and organizers alike.",
+      "step_2_title": "Choose a venue & apply",
+      "step_2_desc": "Browse available venues and submit a booking request. Proven organizers get fast-tracked.",
+      "step_3_title": "Host your event",
+      "step_3_desc": "Once approved, your event goes live. Manage RSVPs, coupons, and post-event reports — all here."
+    },
+    "cta_section": {
+      "title": "Ready to create better events?",
+      "subtitle": "Create a free account and start connecting with venues and organizers today.",
+      "button": "Get Started Free"
+    },
+    "footer": {
+      "copyright": "© 2026 E-be. All rights reserved.",
+      "terms": "Terms of Service",
+      "privacy": "Privacy Policy",
+      "contact": "Contact"
     }
   },
   "auth": {
@@ -45,6 +91,10 @@
   },
   "dashboard": {
     "title": "Dashboard",
+    "calendar_title": "Event Calendar",
+    "user_type_user": "User",
+    "user_type_venue_user": "Venue Operator",
+    "user_type_system_user": "Admin",
     "sign_out": "Sign Out",
     "orgs_title": "Your Organizations",
     "no_orgs": "You are not a member of any organization",
