@@ -1,7 +1,9 @@
-import { useTranslations } from "next-intl";
+import { getLocale, getTranslations } from "next-intl/server";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { getUser } from "@/lib/auth";
+import Link from "next/link";
 
 const featureKeys = [
   { key: "events", icon: "🎪" },
@@ -12,11 +14,37 @@ const featureKeys = [
   { key: "fc", icon: "🤝" },
 ] as const;
 
-export default function HomePage() {
-  const t = useTranslations("home");
+export default async function HomePage() {
+  const [t, locale, user] = await Promise.all([
+    getTranslations("home"),
+    getLocale(),
+    getUser(),
+  ]);
 
   return (
     <main className="min-h-screen bg-background text-foreground">
+      {/* Header */}
+      <header className="border-b">
+        <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-4">
+          <span className="font-bold">E-be</span>
+          {user ? (
+            <Link
+              href={`/${locale}/dashboard`}
+              className="inline-flex h-7 items-center rounded-lg border border-border bg-background px-2.5 text-[0.8rem] font-medium transition-all hover:bg-muted"
+            >
+              ダッシュボード
+            </Link>
+          ) : (
+            <Link
+              href={`/${locale}/auth/sign-in`}
+              className="inline-flex h-7 items-center rounded-lg border border-border bg-background px-2.5 text-[0.8rem] font-medium transition-all hover:bg-muted"
+            >
+              サインイン
+            </Link>
+          )}
+        </div>
+      </header>
+
       {/* Hero */}
       <section className="border-b">
         <div className="mx-auto max-w-5xl px-6 py-24 text-center">

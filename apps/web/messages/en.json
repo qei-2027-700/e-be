@@ -43,6 +43,32 @@
       "done_description": "We sent a confirmation link to {email}. Click the link to complete your registration."
     }
   },
+  "dashboard": {
+    "title": "Dashboard",
+    "sign_out": "Sign Out",
+    "orgs_title": "Your Organizations",
+    "no_orgs": "You are not a member of any organization",
+    "create_org": "Create Organization",
+    "role_owner": "Owner",
+    "role_member": "Member",
+    "go_to_org": "Go to Organization",
+    "org": {
+      "title": "Organization Dashboard",
+      "back": "Back to Dashboard",
+      "settings": "Settings",
+      "your_role": "Your Role",
+      "not_member": "You are not a member of this organization"
+    },
+    "settings": {
+      "title": "Organization Settings",
+      "back": "Back to Organization",
+      "owner_only": "This settings page is only accessible to owners"
+    }
+  },
+  "terms": {
+    "link_text": "Terms of Service",
+    "agreement": "I agree to the <link>Terms of Service</link>"
+  },
   "metadata": {
     "title": "E-be",
     "description": "The event bar management platform connecting venues and organizers"

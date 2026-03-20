@@ -43,6 +43,32 @@
       "done_description": "{email} に確認メールを送りました。メール内のリンクをクリックして登録を完了してください。"
     }
   },
+  "dashboard": {
+    "title": "ダッシュボード",
+    "sign_out": "サインアウト",
+    "orgs_title": "所属組織",
+    "no_orgs": "所属している組織はありません",
+    "create_org": "組織を作成",
+    "role_owner": "オーナー",
+    "role_member": "メンバー",
+    "go_to_org": "組織ダッシュボードへ",
+    "org": {
+      "title": "組織ダッシュボード",
+      "back": "ダッシュボードへ戻る",
+      "settings": "設定",
+      "your_role": "あなたのロール",
+      "not_member": "この組織のメンバーではありません"
+    },
+    "settings": {
+      "title": "組織設定",
+      "back": "組織ダッシュボードへ戻る",
+      "owner_only": "この設定はオーナーのみ閲覧できます"
+    }
+  },
+  "terms": {
+    "link_text": "利用規約",
+    "agreement": "<link>利用規約</link>に同意します"
+  },
   "metadata": {
     "title": "イーベ (E-be)",
     "description": "良いイベントを増やす、店舗と主催者をつなぐイベントバー運営プラットフォーム"
