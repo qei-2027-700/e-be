@@ -197,6 +197,24 @@ async function upsertTestEventsAndParticipations(testUserId, orgId) {
       endAt:   new Date('2026-01-10T21:00:00Z'),
       participationStatus: 'registered',
     },
+    {
+      title: '【テスト】春のカクテルナイト',
+      startAt: new Date('2026-04-05T18:00:00Z'),
+      endAt:   new Date('2026-04-05T22:00:00Z'),
+      participationStatus: 'registered',
+    },
+    {
+      title: '【テスト】ゴールデンウィーク特別イベント',
+      startAt: new Date('2026-05-03T17:00:00Z'),
+      endAt:   new Date('2026-05-03T23:00:00Z'),
+      participationStatus: 'registered',
+    },
+    {
+      title: '【テスト】初夏のビアガーデン',
+      startAt: new Date('2026-06-20T16:00:00Z'),
+      endAt:   new Date('2026-06-20T21:00:00Z'),
+      participationStatus: 'registered',
+    },
   ];
 
   for (const ev of TEST_EVENTS) {

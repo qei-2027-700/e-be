@@ -201,27 +201,32 @@ export default async function DashboardPage() {
                         ? "participation_status_cancelled"
                         : "participation_status_registered";
                     return (
-                      <li key={item.participationId} className="flex items-center justify-between gap-3 py-3">
-                        <div className="min-w-0">
-                          <p className="truncate font-medium">
-                            {item.title ?? "—"}
-                          </p>
-                          <p className="text-xs text-muted-foreground">
-                            {item.startAt
-                              ? new Date(item.startAt).toLocaleDateString(locale, {
-                                  year: "numeric",
-                                  month: "short",
-                                  day: "numeric",
-                                })
-                              : "—"}
-                          </p>
-                        </div>
-                        <Badge
-                          variant={item.participationStatus === "cancelled" ? "secondary" : "outline"}
-                          className="shrink-0"
+                      <li key={item.participationId}>
+                        <Link
+                          href={`/${locale}/dashboard/event/${item.eventId}`}
+                          className="flex items-center justify-between gap-3 py-3 hover:bg-muted/50 -mx-2 px-2 rounded-md transition-colors"
                         >
-                          {t(statusKey)}
-                        </Badge>
+                          <div className="min-w-0">
+                            <p className="truncate font-medium">
+                              {item.title ?? "—"}
+                            </p>
+                            <p className="text-xs text-muted-foreground">
+                              {item.startAt
+                                ? new Date(item.startAt).toLocaleDateString(locale, {
+                                    year: "numeric",
+                                    month: "short",
+                                    day: "numeric",
+                                  })
+                                : "—"}
+                            </p>
+                          </div>
+                          <Badge
+                            variant={item.participationStatus === "cancelled" ? "secondary" : "outline"}
+                            className="shrink-0"
+                          >
+                            {t(statusKey)}
+                          </Badge>
+                        </Link>
                       </li>
                     );
                   })}
