@@ -7,7 +7,7 @@
 
 ---
 
-## 1. テーブル構成案
+## 1. テーブル構成
 
 ### 共通カラム (mixin)
 - `id`: uuid (primary key)
@@ -15,17 +15,34 @@
 - `updatedAt`: timestamp (not null, default now)
 - `deletedAt`: timestamp (nullable)
 
+### テナント階層
+```
+companies（法人）
+└── organizations（店舗） ← brand フィールドでブランド区別
+    └── organization_members
+```
+
+---
+
 ### `users` (ユーザー)
 - `id`: uuid
 - `email`: text (unique, not null)
 - `name`: text (nullable)
 - `image`: text (nullable)
+- `userType`: text (enum: `'user' | 'venue_user' | 'system_user'`, default: `'user'`)
+
+### `companies` (法人) ← **新規**
+- `id`: uuid
+- `name`: text (not null、法人名)
+- `slug`: text (unique, not null)
 - `stripeCustomerId`: text
-- `plan`: text (enum: 'free', 'premium')
+- `plan`: text (enum: `'free' | 'premium'`)
 - `planExpiresAt`: timestamp
 
-### `organizations` (組織 / バー店舗)
+### `organizations` (店舗)
 - `id`: uuid
+- `companyId`: uuid (FK -> companies.id) ← **追加**
+- `brand`: text (nullable) ← **追加**（複数ブランドを持つ場合に使用）
 - `slug`: text (unique, not null)
 - `name`: text (not null)
 - `description`: text
@@ -33,28 +50,47 @@
 - `imageColor`: text (HEX)
 - `iconUrl`: text
 - `coverImageUrl`: text
-- `stripeCustomerId`: text
-- `plan`: text (enum: 'free', 'premium')
-- `planExpiresAt`: timestamp
 
-### `organization_members` (組織メンバーシップ)
+### `organization_members` (店舗メンバーシップ)
 - `id`: uuid
 - `orgId`: uuid (FK -> organizations.id)
 - `userId`: uuid (FK -> users.id)
-- `role`: text (enum: 'owner', 'member')
-- **制約**: `UNIQUE (org_id) WHERE role = 'owner'`
+- `role`: text (enum: `'owner' | 'member'`)
+- **制約**: `UNIQUE (org_id) WHERE role = 'owner'`（1店舗に owner は1人）
+
+### `operator_applications` (事業者登録申請) ← **新規**
+- `id`: uuid
+- `userId`: uuid (FK -> users.id)
+- `status`: text (enum: `'pending' | 'approved' | 'rejected'`)
+- `companyName`: text (not null、法人名、最大100文字)
+- `orgName`: text (not null、店舗名、最大50文字)
+- `orgSlug`: text (not null、英数字・ハイフンのみ、最大50文字)
+- `brand`: text (nullable)
+- `description`: text (nullable)
+- `address`: text (nullable)
+- `reviewedBy`: uuid (FK -> users.id, nullable)
+- `reviewedAt`: timestamp (nullable)
+- `reviewNote`: text (nullable、却下理由等)
+
+### `fc_relationships` (FC店舗閲覧権限) ← **新規**
+- `id`: uuid
+- `franchisorOrgId`: uuid (FK -> organizations.id、本部店舗)
+- `franchiseeOrgId`: uuid (FK -> organizations.id、FC加盟店)
+- `grantedBy`: uuid (FK -> users.id)
+- `grantedAt`: timestamp
+- `revokedAt`: timestamp (nullable)
 
 ### `events` (イベント)
 - `id`: uuid
 - `orgId`: uuid (FK -> organizations.id)
-- `userId`: uuid (FK -> users.id) - 作成者
-- `status`: text (enum: 'draft', 'pending', 'published', 'cancelled', 'rejected')
+- `userId`: uuid (FK -> users.id) — 作成者
+- `status`: text (enum: `'draft' | 'pending' | 'published' | 'cancelled' | 'rejected'`)
 - `title`: text
 - `description`: text
 - `startAt`: timestamp
 - `endAt`: timestamp
 - `maxParticipants`: integer
-- `location`: text (店舗内か外部かなど)
+- `location`: text
 
 ### `bar_host_permissions` (主催者許可)
 - `id`: uuid
@@ -79,7 +115,7 @@
 - `discountAmount`: integer
 - `expiresAt`: timestamp
 
-### `user_coupons` (ユーザーが保持するクーポン)
+### `user_coupons` (ユーザー保持クーポン)
 - `id`: uuid
 - `userId`: uuid (FK -> users.id)
 - `couponId`: uuid (FK -> coupons.id)
@@ -90,15 +126,15 @@
 - `id`: uuid
 - `userId`: uuid (FK -> users.id)
 - `orgId`: uuid (FK -> organizations.id, nullable)
-- `action`: text (e.g., 'event_approved', 'ownership_transferred')
-- `entityType`: text (e.g., 'event', 'member')
+- `action`: text (e.g., `'event_approved'`, `'ownership_transferred'`)
+- `entityType`: text (e.g., `'event'`, `'member'`)
 - `entityId`: uuid
 - `payload`: jsonb
 
 ### `notifications` (通知)
 - `id`: uuid
 - `userId`: uuid (FK -> users.id)
-- `type`: text (enum: 'event_approved', 'new_coupon', etc.)
+- `type`: text
 - `title`: text
 - `body`: text
 - `readAt`: timestamp
@@ -124,6 +160,6 @@
 
 1. `packages/db` ディレクトリ作成・初期化
 2. Drizzle ORM / Supabase / Postgres 依存関係の追加
-3. スキーマ定義 (`src/schema.ts` または `src/schema/`)
+3. スキーマ定義 (`src/schema.ts`)
 4. ユーティリティの実装 (`src/plans.ts`, `src/event-transitions.ts` 等)
 5. `index.ts` から export

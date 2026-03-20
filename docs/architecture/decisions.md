@@ -198,33 +198,67 @@ function getTextColor(bgHex: string): '#FFFFFF' | '#000000' {
 
 ---
 
-## 11. ロール設計（アカウントとコンテキスト）
+## 11. テナント階層・ユーザー種別・ロールの設計
 
-**決定**: ユーザーのロールはアカウント種別ではなく、組織へのメンバーシップで決まる。
+**決定**: プラットフォームは `companies`（法人）→ `organizations`（店舗）のフラット2層構造を採用する。ユーザーには「アカウント種別（userType）」と「店舗内ロール」の2層が存在する。
 
-**ロール一覧**:
+### テナント階層
 
-| ロール | スコープ | 説明 |
-|--------|----------|------|
-| `user` | プラットフォーム全体 | ログイン済みの全ユーザー。参加者にもなれる |
-| `org:owner` | 組織単位 | 事業者責任者。1組織につき必ず1人 |
-| `org:member` | 組織単位 | 従業員。イベント作成・管理が可能 |
-| `platform:admin` | 全体 | システム管理者（内部スタッフ用・緊急対応）|
+```
+companies（法人）              ← 請求・プラン管理の単位
+└── organizations（店舗）      ← brand フィールドでブランド区別
+    └── organization_members  ← 店舗レベルのロール管理
+```
+
+- `company_members` テーブルは作らない。「法人への所属」は「その法人の店舗のいずれかに所属していること」で判定する
+- 1法人が複数ブランド・複数店舗を持つ場合は `organizations.brand` フィールドで区別する
+- 請求・プランは `companies` 単位で管理する
+
+### 層1: ユーザー種別（users.userType）
+
+プラットフォーム全体に渡る種別。`users` テーブルで管理する。
+
+| userType | 説明 | 法人・店舗作成 |
+|----------|------|--------------|
+| `user` | 一般利用者。イベンター・参加者 | ✗（申請が必要） |
+| `venue_user` | 承認済み店舗事業者。法人に所属 | ✗（管理者が承認時に作成） |
+| `system_user` | システム管理者。内部スタッフ | ○（管理者画面から直接作成） |
+
+**デフォルト**: サインアップ時は `user`。事業者申請が承認されると `venue_user` に昇格。
+
+### 層2: 店舗内ロール（organization_members.role）
+
+店舗に所属してからの役割。`organization_members` テーブルで管理する。
+
+| role | スコープ | 説明 |
+|------|----------|------|
+| `owner` | 店舗単位 | 店舗責任者。1店舗につき必ず1人 |
+| `member` | 店舗単位 | スタッフ。イベント作成・管理が可能 |
 
 **理由**:
 - バーの主催者が別のバーのイベントに参加者として参加できる（同一アカウント）
-- Airbnb・Connpass と同じ「コンテキストによってロールが変わる」モデル
-- `users` テーブルに `role` 列を持たず、`organization_members` テーブルで管理
+- company_members を作らないことで構造をシンプルに保つ
+- ブランド区別は DB エンティティではなくフィールドで表現（過剰設計を避ける）
+- アカウント種別（何者か）と店舗内権限（何ができるか）を分離することで責務が明確になる
 
 **DB 設計**:
 ```ts
-// organization_members テーブル
+// users テーブル（userType 追加）
+userType: 'user' | 'venue_user' | 'system_user'  ← default: 'user'
+
+// companies テーブル（新規）
+id, name, slug, stripeCustomerId, plan, planExpiresAt, createdAt, updatedAt, deletedAt
+
+// organizations テーブル（companyId・brand 追加）
+companyId: → companies.id
+brand: text（nullable。複数ブランドを持つ場合に使用）
+
+// organization_members テーブル（変更なし）
 orgId:     → organizations.id
 userId:    → users.id
 role:      'owner' | 'member'
-deletedAt: timestamp  ← 退会はソフトデリート
-
-// 制約: UNIQUE (org_id) WHERE role = 'owner'（owner は1組織に1人）
+deletedAt: timestamp
+// 制約: UNIQUE (org_id) WHERE role = 'owner'
 ```
 
 ---
@@ -275,3 +309,86 @@ transferOwnership(orgId, fromUserId, toUserId)
 **理由**:
 - 共同経営者の交代・引き継ぎに対応
 - DB 制約（`UNIQUE (org_id) WHERE role = 'owner'`）でデータ整合性を保証
+
+---
+
+## 14. 事業者申請フロー（operator_applications）
+
+**決定**: 一般ユーザーが店舗事業者になるには「法人登録申請」→管理者承認のフローを踏む。法人・店舗の直接作成はできない。
+
+**フロー**:
+```
+利用者がフォームから法人登録を申請（法人名・最初の店舗情報を入力）
+  → operator_applications に status: 'pending' で保存
+    → 管理者が確認・申請者と連絡
+      → 承認: companies + organizations + organization_members を作成
+               users.userType を 'venue_user' に更新
+      → 却下: status を 'rejected' に更新
+```
+
+**管理者による直接作成**:
+- `userType = 'system_user'` のユーザーは管理者画面（`/admin`）から法人・店舗を直接作成できる
+- この場合 `operator_applications` を経由しない
+
+**DB 設計**:
+```ts
+// operator_applications テーブル（新規）
+id:            uuid
+userId:        uuid → users.id（申請者）
+status:        'pending' | 'approved' | 'rejected'
+// 申請時の法人情報
+companyName:   text（法人名、最大100文字）
+// 申請時の最初の店舗情報
+orgName:       text（店舗名、最大50文字）
+orgSlug:       text（英数字・ハイフンのみ、最大50文字）
+brand:         text（nullable、ブランド名）
+description:   text（nullable）
+address:       text（nullable）
+// 管理者操作
+reviewedBy:    uuid → users.id（nullable）
+reviewedAt:    timestamp（nullable）
+reviewNote:    text（nullable、却下理由等）
+// 共通
+createdAt, updatedAt, deletedAt
+```
+
+**理由**:
+- 無審査で誰でも店舗を作れると質の担保ができない
+- 管理者が申請者と直接連絡を取ることでプラットフォームの信頼性を確保する
+- 申請情報を DB に保持することで審査記録が残る（監査ログと連携）
+
+**承認時の処理**（トランザクション）:
+1. `companies` にレコードを作成
+2. `organizations` に `companyId` を紐づけてレコードを作成
+3. `organization_members` に `role: 'owner'` でレコードを作成
+4. `users.userType` を `'venue_user'` に更新
+5. `operator_applications.status` を `'approved'` に更新
+6. `audit_logs` に記録
+
+---
+
+## 15. FC店舗の閲覧権限（fc_relationships）
+
+**決定**: FC加盟店は別法人が運営するが、本部（フランチャイザー）が売上等を閲覧できる権限を `fc_relationships` テーブルで管理する。
+
+**仕組み**:
+- FC加盟店は独立した `companies` + `organizations` として登録される
+- 本部は `fc_relationships` を通じて加盟店の閲覧権限のみを持つ（管理権限なし）
+- 将来的に売上レポートや分析機能と連携する
+
+**DB 設計**:
+```ts
+// fc_relationships テーブル（新規）
+id:               uuid
+franchisorOrgId:  uuid → organizations.id（本部店舗）
+franchiseeOrgId:  uuid → organizations.id（FC加盟店）
+grantedBy:        uuid → users.id
+grantedAt:        timestamp
+revokedAt:        timestamp（nullable）
+createdAt, updatedAt, deletedAt
+```
+
+**理由**:
+- FC加盟店の実運営権限は加盟店オーナーが持つ（本部は介入しない）
+- 閲覧権限のみを軽量なテーブルで表現することでシンプルさを保つ
+- 将来の FC 機能拡張に対応できる構造
