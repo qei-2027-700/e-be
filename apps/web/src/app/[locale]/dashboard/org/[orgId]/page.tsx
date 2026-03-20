@@ -7,6 +7,8 @@ import { eq, isNull, and } from "drizzle-orm";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
+import { EventCalendar } from "@/components/event-calendar";
+import { getEventsForCalendar } from "@/lib/events";
 
 type Props = {
   params: Promise<{ locale: string; orgId: string }>;
@@ -27,11 +29,18 @@ export default async function OrgDashboardPage({ params }: Props) {
     redirect(`/${locale}/dashboard`);
   }
 
-  const [org] = await db
-    .select()
-    .from(organizations)
-    .where(and(eq(organizations.id, orgId), isNull(organizations.deletedAt)))
-    .limit(1);
+  const now = new Date();
+  const calendarFrom = new Date(now.getFullYear(), now.getMonth(), 1);
+  const calendarTo = new Date(now.getFullYear(), now.getMonth() + 3, 0);
+
+  const [[org], calendarEvents] = await Promise.all([
+    db
+      .select()
+      .from(organizations)
+      .where(and(eq(organizations.id, orgId), isNull(organizations.deletedAt)))
+      .limit(1),
+    getEventsForCalendar({ orgId, from: calendarFrom, to: calendarTo }),
+  ]);
 
   if (!org) {
     redirect(`/${locale}/dashboard`);
@@ -59,6 +68,20 @@ export default async function OrgDashboardPage({ params }: Props) {
             </Link>
           )}
         </div>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>{t("calendar_title")}</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <EventCalendar
+              events={calendarEvents}
+              initialYear={now.getFullYear()}
+              initialMonth={now.getMonth()}
+              locale={locale}
+            />
+          </CardContent>
+        </Card>
 
         <Card>
           <CardHeader>

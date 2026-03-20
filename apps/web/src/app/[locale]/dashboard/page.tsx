@@ -9,6 +9,14 @@ import Link from "next/link";
 import { db } from "@/lib/db";
 import { operatorApplications } from "@e-be/db/schema";
 import { eq, and, isNull } from "drizzle-orm";
+import { EventCalendar } from "@/components/event-calendar";
+import { getEventsForCalendar } from "@/lib/events";
+
+const USER_TYPE_VARIANT = {
+  user: "secondary",
+  venue_user: "default",
+  system_user: "destructive",
+} as const;
 
 export default async function DashboardPage() {
   const locale = await getLocale();
@@ -19,9 +27,14 @@ export default async function DashboardPage() {
     redirect(`/${locale}/auth/sign-in`);
   }
 
-  const [userOrgs, userType] = await Promise.all([
+  const now = new Date();
+  const calendarFrom = new Date(now.getFullYear(), now.getMonth(), 1);
+  const calendarTo = new Date(now.getFullYear(), now.getMonth() + 3, 0);
+
+  const [userOrgs, userType, calendarEvents] = await Promise.all([
     getUserOrgs(user.id),
     getUserType(user.id),
+    getEventsForCalendar({ from: calendarFrom, to: calendarTo }),
   ]);
 
   // 申請中かどうかを確認（userType === 'user' の場合のみ）
@@ -48,11 +61,18 @@ export default async function DashboardPage() {
     redirect(`/${locale}/auth/sign-in`);
   }
 
+  const userTypeKey = `user_type_${userType}` as const;
+
   return (
     <main className="min-h-screen bg-background p-4 md:p-6">
       <div className="mx-auto max-w-2xl space-y-6">
         <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-bold">{t("title")}</h1>
+          <div className="flex items-center gap-2">
+            <h1 className="text-2xl font-bold">{t("title")}</h1>
+            <Badge variant={USER_TYPE_VARIANT[userType]}>
+              {t(userTypeKey)}
+            </Badge>
+          </div>
           <div className="flex items-center gap-2">
             {userType === "system_user" && (
               <Link
@@ -69,6 +89,20 @@ export default async function DashboardPage() {
             </form>
           </div>
         </div>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>{t("calendar_title")}</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <EventCalendar
+              events={calendarEvents}
+              initialYear={now.getFullYear()}
+              initialMonth={now.getMonth()}
+              locale={locale}
+            />
+          </CardContent>
+        </Card>
 
         <Card>
           <CardHeader>
