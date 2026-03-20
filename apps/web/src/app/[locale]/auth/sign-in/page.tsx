@@ -13,7 +13,7 @@ import { createClient } from "@/lib/supabase/client";
 // --- BYPASS START ---
 const BYPASS_ENABLED =
   process.env.NEXT_PUBLIC_BYPASS_AUTH === "true" ||
-  process.env.NEXT_PUBLIC_VERCEL_ENV === "preview";
+  !!process.env.NEXT_PUBLIC_VERCEL_ENV;
 
 const TEST_ACCOUNTS = [
   {
