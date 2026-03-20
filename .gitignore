@@ -4,3 +4,6 @@ dist
 .turbo
 .env*.local
 *.log
+.playwright-mcp/
+.claude/ctx-export-needed
+.claude/handoff-*.md
