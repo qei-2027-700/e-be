@@ -172,8 +172,6 @@ async function upsertCompanyAndOrg(userId, { company, org }) {
 
 /** テスト用イベントと参加データを作成する（冪等） */
 async function upsertTestEventsAndParticipations(testUserId, orgId) {
-  const now = new Date();
-
   const TEST_EVENTS = [
     {
       title: '【テスト】夏の音楽フェス 2025',
