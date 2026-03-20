@@ -87,6 +87,26 @@
 | `architecture.md` | `apps/**` `packages/**` | ソフトデリート・UTC・ステートマシン等 |
 | `coding-conventions.md` | `apps/**` `packages/**` | shadcn/ui・Server Components・Tailwind |
 
+## 検証用テストアカウント
+
+サインインページにテストアカウントのパネルが表示される（`NEXT_PUBLIC_BYPASS_AUTH=true` が設定されている場合のみ）。
+
+| 種別 | メール | パスワード | userType |
+|------|-------|-----------|----------|
+| 一般ユーザー（イベンター） | `test-user@e-be.internal` | `testpass2026` | `user` |
+| 事業者（店舗管理） | `test-venue@e-be.internal` | `testpass2026` | `venue_user` |
+
+事業者アカウントは「テスト株式会社 / テストバー」に owner として紐付き済み。
+
+### アカウントを再作成・追加する場合
+
+```bash
+pnpm seed:test
+```
+
+スクリプトは冪等。既存アカウントは上書きせず、存在しないものだけ作成する。
+スクリプト本体: `apps/web/scripts/seed-test-accounts.mjs`
+
 ## ディレクトリ構成
 
 - `apps/web` — Next.js 16 Web アプリ

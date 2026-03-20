@@ -7,7 +7,8 @@
     "dev:docs": "turbo dev --filter=docs",
     "build": "turbo build",
     "lint": "turbo lint",
-    "typecheck": "turbo typecheck"
+    "typecheck": "turbo typecheck",
+    "seed:test": "node apps/web/scripts/seed-test-accounts.mjs"
   },
   "devDependencies": {
     "turbo": "^2.5.3"
