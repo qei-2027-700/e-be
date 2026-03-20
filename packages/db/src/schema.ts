@@ -20,6 +20,12 @@ export const eventStatusEnum = pgEnum('event_status', [
   'cancelled',
   'rejected',
 ]);
+export const userTypeEnum = pgEnum('user_type', ['user', 'venue_user', 'system_user']);
+export const applicationStatusEnum = pgEnum('application_status', [
+  'pending',
+  'approved',
+  'rejected',
+]);
 
 // Mixins
 const commonColumns = {
@@ -35,6 +41,16 @@ export const users = pgTable('users', {
   email: text('email').unique().notNull(),
   name: text('name'),
   image: text('image'),
+  userType: userTypeEnum('user_type').default('user').notNull(),
+  stripeCustomerId: text('stripe_customer_id'),
+  plan: planEnum('plan').default('free').notNull(),
+  planExpiresAt: timestamp('plan_expires_at'),
+});
+
+export const companies = pgTable('companies', {
+  ...commonColumns,
+  name: text('name').notNull(),
+  slug: text('slug').unique().notNull(),
   stripeCustomerId: text('stripe_customer_id'),
   plan: planEnum('plan').default('free').notNull(),
   planExpiresAt: timestamp('plan_expires_at'),
@@ -42,6 +58,10 @@ export const users = pgTable('users', {
 
 export const organizations = pgTable('organizations', {
   ...commonColumns,
+  companyId: uuid('company_id')
+    .notNull()
+    .references(() => companies.id),
+  brand: text('brand'), // 複数ブランドを持つ場合に使用
   slug: text('slug').unique().notNull(),
   name: text('name').notNull(),
   description: text('description'),
@@ -49,9 +69,6 @@ export const organizations = pgTable('organizations', {
   imageColor: text('image_color'), // HEX
   iconUrl: text('icon_url'),
   coverImageUrl: text('cover_image_url'),
-  stripeCustomerId: text('stripe_customer_id'),
-  plan: planEnum('plan').default('free').notNull(),
-  planExpiresAt: timestamp('plan_expires_at'),
 });
 
 export const organizationMembers = pgTable(
@@ -71,6 +88,38 @@ export const organizationMembers = pgTable(
     uniqueOwner: uniqueIndex('unique_org_owner').on(t.orgId).where(sql`role = 'owner'`),
   })
 );
+
+export const operatorApplications = pgTable('operator_applications', {
+  ...commonColumns,
+  userId: uuid('user_id')
+    .notNull()
+    .references(() => users.id),
+  status: applicationStatusEnum('status').default('pending').notNull(),
+  companyName: text('company_name').notNull(),
+  orgName: text('org_name').notNull(),
+  orgSlug: text('org_slug').notNull(),
+  brand: text('brand'),
+  description: text('description'),
+  address: text('address'),
+  reviewedBy: uuid('reviewed_by').references(() => users.id),
+  reviewedAt: timestamp('reviewed_at'),
+  reviewNote: text('review_note'),
+});
+
+export const fcRelationships = pgTable('fc_relationships', {
+  ...commonColumns,
+  franchisorOrgId: uuid('franchisor_org_id')
+    .notNull()
+    .references(() => organizations.id),
+  franchiseeOrgId: uuid('franchisee_org_id')
+    .notNull()
+    .references(() => organizations.id),
+  grantedBy: uuid('granted_by')
+    .notNull()
+    .references(() => users.id),
+  grantedAt: timestamp('granted_at').notNull().defaultNow(),
+  revokedAt: timestamp('revoked_at'),
+});
 
 export const events = pgTable('events', {
   ...commonColumns,
