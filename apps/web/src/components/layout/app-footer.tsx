@@ -1,8 +1,8 @@
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import Link from "next/link";
 
 export async function AppFooter({ innerClassName }: { innerClassName?: string } = {}) {
-  const t = await getTranslations("home");
+  const [t, locale] = await Promise.all([getTranslations("home"), getLocale()]);
 
   return (
     <footer className="border-t bg-muted/30">
@@ -11,13 +11,13 @@ export async function AppFooter({ innerClassName }: { innerClassName?: string } 
           <span className="font-bold text-sm">E-be</span>
           <p className="text-xs text-muted-foreground">{t("footer.copyright")}</p>
           <div className="flex gap-4 text-xs text-muted-foreground">
-            <Link href="#" className="transition-colors hover:text-foreground">
+            <Link href={`/${locale}/terms`} className="transition-colors hover:text-foreground">
               {t("footer.terms")}
             </Link>
-            <Link href="#" className="transition-colors hover:text-foreground">
+            <Link href={`/${locale}/privacy`} className="transition-colors hover:text-foreground">
               {t("footer.privacy")}
             </Link>
-            <Link href="#" className="transition-colors hover:text-foreground">
+            <Link href={`/${locale}/contact`} className="transition-colors hover:text-foreground">
               {t("footer.contact")}
             </Link>
           </div>

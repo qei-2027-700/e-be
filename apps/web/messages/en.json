@@ -215,5 +215,24 @@
     "not_found": "Event not found",
     "status_registered": "Registered",
     "status_cancelled": "Cancelled"
+  },
+  "privacy": {
+    "title": "Privacy Policy",
+    "updated_at": "Last Updated: March 20, 2026",
+    "introduction": "E-be (\"we\", \"our\", or \"the Service\") values the privacy of our users. This policy explains how we collect and use your information.",
+    "sections": {
+      "1": {
+        "title": "1. Information We Collect",
+        "content": "We collect your email address provided during account creation, as well as event participation history and venue information through your use of the Service."
+      },
+      "2": {
+        "title": "2. How We Use Information",
+        "content": "The information we collect is used to provide our services, optimize matching, maintain security, and send important notifications."
+      },
+      "3": {
+        "title": "3. Third-party Sharing",
+        "content": "We do not share your personal information with third parties without your consent, except as required by law."
+      }
+    }
   }
 }
