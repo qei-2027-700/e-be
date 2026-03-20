@@ -11,13 +11,50 @@
 
 ## AI 駆動開発ワークフロー
 
+### 全体フロー
+
 ```
-① docs/features/{feature}.md にビジネスルールを書く
-② /create-steering <issue番号> でステアリングファイルを生成
-③ AI がステアリングを読んで実装する
-④ Playwright MCP でスクリーンショットを取得して動作検証
-⑤ commit → push → PR 作成 → セルフレビュー
+① 現状確認
+   - docs/features/ と .claude/steering/ の既存ファイルを確認
+   - コードの現状（schema.ts・既存実装）を把握
+
+② Issue 起票（1セッションにつき最大 3 issue）
+   - 実装に必要な最小単位で起票する
+   - 1回の指示で起票する Issue は 3 つまで
+
+③ ステアリング生成
+   - /docs-steering <issue番号> を実行
+   - Issue 本文 + docs/features/*.md の両方を参照して .claude/steering/ に md を生成
+
+④ ブランチ作成
+   - git worktree または通常ブランチで実装用ブランチを切る
+   - ブランチ名: feat/issue-{番号}-{kebab-case}
+
+⑤ 実装
+   - ステアリングファイルを読んでから着手する
+   - TBD に遭遇したら勝手に決めず確認する
+
+⑥ Playwright MCP で自己検証
+   - 開発サーバーを起動し、実装した機能を動作確認
+   - スクリーンショットを取得（.gitignore 対象、コミットしない）
+   - エラー・表示崩れがあれば修正してから次へ進む
+
+⑦ commit → push → PR 作成
+
+⑧ PR セルフレビュー
+   - diff を確認し、意図しない変更・漏れがないか確認
+   - 問題があれば追加コミットで修正
+
+⑨ main へマージ
+
+⑩ 次の Issue に着手
 ```
+
+### 制約・ルール
+
+- **1セッション最大 3 issue**: 一度の指示で起票・着手する Issue は 3 つまで。優先度の高いものから絞る
+- **ステアリング必須**: `.claude/steering/` に実装計画がない Issue の実装は開始しない
+- **スクリーンショットはコミット対象外**: Playwright で取得した検証画像は `.gitignore` に含める
 
 ### 実装前に必ず確認すること
 
@@ -27,11 +64,17 @@
 
 ### カスタムコマンド
 
-| コマンド | 役割 |
-|---------|------|
-| `/create-steering <issue番号>` | Issue + features/ を読んでステアリング生成 |
-| `/implement-feature <issue番号>` | ステアリングを読んで実装・検証・PR まで自動実行 |
-| `/ctx-export` | セッション引き継ぎ文書を生成 |
+| コマンド | 役割 | 次の工程 |
+|---------|------|---------|
+| `/survey` | 現状確認（docs/steering/schema/実装） | → `/gh-issue` |
+| `/gh-issue` | Issue 起票（max 3、gh コマンド） | → `/docs-steering <番号>` |
+| `/docs-steering <番号>` | ステアリング生成 | → `/implement <番号>` |
+| `/implement <番号>` | ブランチ作成＋実装 | → `/pw-verify` |
+| `/pw-verify` | Playwright スクリーンショット＋動作確認 | → `/gh-ship` |
+| `/gh-ship` | commit + push | → `/gh-pr` |
+| `/gh-pr` | PR 作成 | → `/gh-rv` |
+| `/gh-rv` | 2段階セルフレビュー → squash マージ | → `/survey` or `/gh-issue` |
+| `/ctx-export` | セッション引き継ぎ文書を生成 | — |
 
 ## パス別ルール（`.claude/rules/`）
 
