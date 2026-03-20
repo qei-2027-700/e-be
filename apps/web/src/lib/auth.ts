@@ -1,16 +1,19 @@
+import { cache } from 'react';
 import { eq, and, isNull } from 'drizzle-orm';
 import { db } from './db';
 import { organizationMembers, organizations, users } from '@e-be/db/schema';
 import { createClient } from './supabase/server';
 
-/** 現在のユーザーを取得（未認証なら null） */
-export async function getUser() {
+/** 現在のユーザーを取得（未認証なら null）
+ *  React.cache() により同一リクエスト内で複数回呼ばれても Supabase への問い合わせは1回のみ
+ */
+export const getUser = cache(async () => {
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
   return user ?? null;
-}
+});
 
 /** 指定組織でのロールを取得（非メンバーなら null） */
 export async function getOrgRole(
@@ -50,10 +53,12 @@ export async function getUserOrgs(userId: string) {
     );
 }
 
-/** ユーザー種別を取得 */
-export async function getUserType(
+/** ユーザー種別を取得
+ *  React.cache() により同一リクエスト内で同じ userId なら DB 問い合わせは1回のみ
+ */
+export const getUserType = cache(async (
   userId: string
-): Promise<'user' | 'venue_user' | 'system_user'> {
+): Promise<'user' | 'venue_user' | 'system_user'> => {
   const rows = await db
     .select({ userType: users.userType })
     .from(users)
@@ -61,7 +66,7 @@ export async function getUserType(
     .limit(1);
 
   return rows[0]?.userType ?? 'user';
-}
+});
 
 /** system_user かどうかを判定 */
 export async function isAdmin(userId: string): Promise<boolean> {

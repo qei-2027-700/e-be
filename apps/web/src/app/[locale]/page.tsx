@@ -84,7 +84,7 @@ export default async function HomePage() {
         <div className="relative mx-auto max-w-5xl px-6 pb-0">
           <div className="overflow-hidden rounded-t-2xl shadow-2xl ring-1 ring-border">
             <Image
-              src="/hero-bar.png"
+              src="/hero-bar.jpg"
               alt="イベントバーとアプリの様子"
               width={1456}
               height={816}
