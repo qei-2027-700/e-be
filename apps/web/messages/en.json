@@ -31,10 +31,18 @@
       "eventer_item_1": "Finding a venue takes too much time every single time",
       "eventer_item_2": "Coordination is scattered across emails and messages",
       "eventer_item_3": "No good way to showcase your past track record",
-      "eventer_item_4": "Missing tools to build repeat audiences with coupons"
+      "eventer_item_4": "Missing tools to build repeat audiences with coupons",
+      "participant_label": "Event Participants",
+      "participant_item_1": "Never know when or where interesting events are happening",
+      "participant_item_2": "Miss out on next events by your favorite organizers",
+      "participant_item_3": "Anxious about the atmosphere of a new venue or event",
+      "participant_item_4": "Would visit more often if there were rewards or coupons"
     },
     "features": {
       "title": "Everything you need to run great events",
+      "venue_title": "For Venue Operators",
+      "eventer_title": "For Event Organizers",
+      "participant_title": "For Event Participants",
       "events": { "title": "Event Management", "description": "Centralized booking requests, approvals, and schedule conflict checking across all your venues." },
       "multitenant": { "title": "Multi-venue", "description": "One organization, many venues. Manage each independently while keeping a unified overview." },
       "participants": { "title": "Attendance & Roles", "description": "Flexible roles for organizers, co-hosts, and attendees. Track capacity and RSVPs in one view." },
