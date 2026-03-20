@@ -204,5 +204,16 @@
   "metadata": {
     "title": "イーベ (E-be)",
     "description": "良いイベントを増やす、店舗と主催者をつなぐイベントバー運営プラットフォーム"
+  },
+  "event_detail": {
+    "back": "ダッシュボードへ戻る",
+    "start_at": "開催開始",
+    "end_at": "開催終了",
+    "location": "開催場所",
+    "organizer": "主催",
+    "my_status": "参加ステータス",
+    "not_found": "イベントが見つかりません",
+    "status_registered": "参加予定",
+    "status_cancelled": "キャンセル済み"
   }
 }

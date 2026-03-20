@@ -1,5 +1,5 @@
 import { db } from "@/lib/db";
-import { events, eventParticipations } from "@e-be/db/schema";
+import { events, eventParticipations, organizations } from "@e-be/db/schema";
 import { eq, and, gte, lte, isNull, or, lt, gt, asc, desc } from "drizzle-orm";
 
 export type CalendarEventData = {
@@ -203,4 +203,66 @@ export async function getParticipationHistory(userId: string): Promise<Participa
     endAt: row.endAt?.toISOString() ?? null,
     eventStatus: row.eventStatus,
   }));
+}
+
+export type EventDetail = {
+  id: string;
+  title: string | null;
+  startAt: string | null;
+  endAt: string | null;
+  location: string | null;
+  orgName: string;
+  myParticipationStatus: "registered" | "cancelled" | null;
+};
+
+/**
+ * イベント詳細を取得する。
+ * - published かつ deleted_at IS NULL のイベントのみ
+ * - userId が一致する参加レコードがあれば参加ステータスも返す
+ */
+export async function getEventDetail(
+  eventId: string,
+  userId: string
+): Promise<EventDetail | null> {
+  const rows = await db
+    .select({
+      id: events.id,
+      title: events.title,
+      startAt: events.startAt,
+      endAt: events.endAt,
+      location: events.location,
+      orgName: organizations.name,
+      participationStatus: eventParticipations.status,
+    })
+    .from(events)
+    .innerJoin(organizations, eq(events.orgId, organizations.id))
+    .leftJoin(
+      eventParticipations,
+      and(
+        eq(eventParticipations.eventId, events.id),
+        eq(eventParticipations.userId, userId),
+        isNull(eventParticipations.deletedAt)
+      )
+    )
+    .where(
+      and(
+        eq(events.id, eventId),
+        eq(events.status, "published"),
+        isNull(events.deletedAt)
+      )
+    )
+    .limit(1);
+
+  if (rows.length === 0) return null;
+
+  const row = rows[0];
+  return {
+    id: row.id,
+    title: row.title,
+    startAt: row.startAt?.toISOString() ?? null,
+    endAt: row.endAt?.toISOString() ?? null,
+    location: row.location,
+    orgName: row.orgName,
+    myParticipationStatus: row.participationStatus ?? null,
+  };
 }
