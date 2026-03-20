@@ -105,6 +105,11 @@
     "role_member": "メンバー",
     "go_to_org": "組織ダッシュボードへ",
     "admin_link": "管理者画面へ",
+    "organizer_history_title": "主催イベント履歴",
+    "organizer_history_empty": "主催したイベントはまだありません",
+    "event_status_published_ended": "完了",
+    "event_status_cancelled": "キャンセル",
+    "event_status_rejected": "却下",
     "org": {
       "title": "組織ダッシュボード",
       "back": "ダッシュボードへ戻る",

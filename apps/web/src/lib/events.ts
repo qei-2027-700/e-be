@@ -1,6 +1,6 @@
 import { db } from "@/lib/db";
 import { events } from "@e-be/db/schema";
-import { eq, and, gte, lte, isNull } from "drizzle-orm";
+import { eq, and, gte, lte, isNull, or, lt, desc } from "drizzle-orm";
 
 export type CalendarEventData = {
   id: string;
@@ -48,5 +48,58 @@ export async function getEventsForCalendar({
     id: row.id,
     title: row.title,
     startAt: row.startAt?.toISOString() ?? null,
+  }));
+}
+
+export type OrganizerHistoryItem = {
+  id: string;
+  title: string | null;
+  startAt: string | null;
+  endAt: string | null;
+  status: string;
+  orgId: string;
+};
+
+/**
+ * ユーザーが主催したイベントの履歴を取得する。
+ * - completed 相当: published かつ endAt が過去（completed ステータスはスキーマに存在しない）
+ * - 自分のダッシュボード用に cancelled / rejected も含める
+ * - 新しい順（startAt DESC）で返す
+ */
+export async function getOrganizerHistory(userId: string): Promise<OrganizerHistoryItem[]> {
+  const now = new Date();
+
+  const rows = await db
+    .select({
+      id: events.id,
+      title: events.title,
+      startAt: events.startAt,
+      endAt: events.endAt,
+      status: events.status,
+      orgId: events.orgId,
+    })
+    .from(events)
+    .where(
+      and(
+        eq(events.userId, userId),
+        isNull(events.deletedAt),
+        or(
+          // completed 相当: published かつ終了済み
+          and(eq(events.status, "published"), lt(events.endAt, now)),
+          // 自分のダッシュボードのみ表示
+          eq(events.status, "cancelled"),
+          eq(events.status, "rejected")
+        )
+      )
+    )
+    .orderBy(desc(events.startAt));
+
+  return rows.map((row) => ({
+    id: row.id,
+    title: row.title,
+    startAt: row.startAt?.toISOString() ?? null,
+    endAt: row.endAt?.toISOString() ?? null,
+    status: row.status,
+    orgId: row.orgId,
   }));
 }
