@@ -49,13 +49,13 @@ pnpm build
 |-----------|------|------|
 | `web` | `apps/web` | Next.js 16 管理・ユーザーWeb |
 | `mobile` | `apps/mobile` | Expo + React Native（準備中）|
-| `@e-be/docs` | `docs/` | VitePress ドキュメントサイト（準備中）|
+| `@e-be/docs` | `docs/` | VitePress ドキュメントサイト |
 | `@e-be/db` | `packages/db` | Drizzle ORM スキーマ（準備中）|
 
 ## ドキュメント
 
 - ローカル: `pnpm --filter @e-be/docs dev` → http://localhost:5173
-- 公開: https://\<YOUR_USERNAME\>.github.io/e-be/
+- 公開: https://qei-2027-700.github.io/e-be/
 
 ## 技術スタック
 
