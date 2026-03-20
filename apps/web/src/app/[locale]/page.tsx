@@ -5,6 +5,7 @@ import { getUser } from "@/lib/auth";
 import Link from "next/link";
 import { NavBar } from "@/components/lp/nav-bar";
 import { LinkButton } from "@/components/lp/link-button";
+import { AppFooter } from "@/components/layout/app-footer";
 
 const featureKeys = [
   { key: "events", icon: "🎪" },
@@ -201,26 +202,7 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="bg-muted/30">
-        <div className="mx-auto max-w-5xl px-6 py-10">
-          <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-between">
-            <span className="font-bold">E-be</span>
-            <p className="text-xs text-muted-foreground">{t("footer.copyright")}</p>
-            <div className="flex gap-4 text-xs text-muted-foreground">
-              <Link href="#" className="transition-colors hover:text-foreground">
-                {t("footer.terms")}
-              </Link>
-              <Link href="#" className="transition-colors hover:text-foreground">
-                {t("footer.privacy")}
-              </Link>
-              <Link href="#" className="transition-colors hover:text-foreground">
-                {t("footer.contact")}
-              </Link>
-            </div>
-          </div>
-        </div>
-      </footer>
+      <AppFooter innerClassName="mx-auto max-w-5xl px-6 py-10" />
     </main>
   );
 }
