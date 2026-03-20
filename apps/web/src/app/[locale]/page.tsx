@@ -1,9 +1,10 @@
 import { getLocale, getTranslations } from "next-intl/server";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { getUser } from "@/lib/auth";
 import Link from "next/link";
+import { NavBar } from "@/components/lp/nav-bar";
+import { LinkButton } from "@/components/lp/link-button";
 
 const featureKeys = [
   { key: "events", icon: "🎪" },
@@ -12,6 +13,26 @@ const featureKeys = [
   { key: "ai", icon: "🤖" },
   { key: "coupons", icon: "🎫" },
   { key: "fc", icon: "🤝" },
+] as const;
+
+const venueItemKeys = [
+  "pain.venue_item_1",
+  "pain.venue_item_2",
+  "pain.venue_item_3",
+  "pain.venue_item_4",
+] as const;
+
+const eventerItemKeys = [
+  "pain.eventer_item_1",
+  "pain.eventer_item_2",
+  "pain.eventer_item_3",
+  "pain.eventer_item_4",
+] as const;
+
+const howSteps = [
+  { titleKey: "how.step_1_title", descKey: "how.step_1_desc" },
+  { titleKey: "how.step_2_title", descKey: "how.step_2_desc" },
+  { titleKey: "how.step_3_title", descKey: "how.step_3_desc" },
 ] as const;
 
 export default async function HomePage() {
@@ -23,93 +44,183 @@ export default async function HomePage() {
 
   return (
     <main className="min-h-screen bg-background text-foreground">
-      {/* Header */}
-      <header className="border-b">
-        <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-4">
-          <span className="font-bold">E-be</span>
-          {user ? (
-            <Link
-              href={`/${locale}/dashboard`}
-              className="inline-flex h-7 items-center rounded-lg border border-border bg-background px-2.5 text-[0.8rem] font-medium transition-all hover:bg-muted"
-            >
-              ダッシュボード
-            </Link>
-          ) : (
-            <Link
-              href={`/${locale}/auth/sign-in`}
-              className="inline-flex h-7 items-center rounded-lg border border-border bg-background px-2.5 text-[0.8rem] font-medium transition-all hover:bg-muted"
-            >
-              サインイン
-            </Link>
-          )}
-        </div>
-      </header>
+      <NavBar
+        locale={locale}
+        isLoggedIn={!!user}
+        labels={{
+          signIn: t("nav.sign_in"),
+          signUp: t("nav.sign_up"),
+          dashboard: t("nav.dashboard"),
+        }}
+      />
 
       {/* Hero */}
-      <section className="border-b">
-        <div className="mx-auto max-w-5xl px-6 py-24 text-center">
-          <Badge variant="outline" className="mb-6 font-mono text-xs cursor-pointer">
-            {t("badge")}
+      <section className="relative overflow-hidden border-b pt-16">
+        {/* Decorative blobs */}
+        <div className="pointer-events-none absolute -right-40 -top-40 h-96 w-96 rounded-full bg-primary/5 blur-3xl" />
+        <div className="pointer-events-none absolute -bottom-20 -left-20 h-64 w-64 rounded-full bg-primary/5 blur-3xl" />
+
+        <div className="relative mx-auto max-w-5xl px-6 py-28 text-center">
+          <Badge variant="outline" className="mb-6 cursor-pointer font-mono text-xs">
+            {t("hero.eyebrow")}
           </Badge>
-          <h1 className="mb-4 text-5xl font-bold tracking-tight">
-            {t("title")}{" "}
-            <span className="text-muted-foreground font-light">E-be</span>
+          <h1 className="mb-5 text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
+            {t("hero.title")}
           </h1>
-          <p className="mx-auto mb-8 max-w-xl text-lg text-muted-foreground">
-            {t("tagline")}
-            <br />
-            {t("description")}
+          <p className="mx-auto mb-10 max-w-lg text-base text-muted-foreground sm:text-lg">
+            {t("hero.subtitle")}
           </p>
-          <div className="flex justify-center gap-3">
-            <Button size="lg" className="transition-all duration-200 hover:scale-105 hover:shadow-md cursor-pointer">
-              {t("cta_search")}
-            </Button>
-            <Button size="lg" variant="outline" className="transition-all duration-200 hover:scale-105 hover:shadow-md cursor-pointer">
-              {t("cta_request")}
-            </Button>
+          <div className="flex flex-col items-center justify-center gap-3 sm:flex-row">
+            <LinkButton href="#" size="lg" className="w-full sm:w-auto">
+              {t("hero.cta_primary")}
+            </LinkButton>
+            <LinkButton href="#" size="lg" variant="outline" className="w-full sm:w-auto">
+              {t("hero.cta_secondary")}
+            </LinkButton>
+          </div>
+        </div>
+      </section>
+
+      {/* Pain — 課題提起 */}
+      <section className="border-b bg-muted/20">
+        <div className="mx-auto max-w-5xl px-6 py-20">
+          <h2 className="mb-12 text-center text-2xl font-semibold sm:text-3xl">
+            {t("pain.title")}
+          </h2>
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+            {/* バーオーナー */}
+            <Card>
+              <CardHeader className="pb-3">
+                <CardTitle className="flex items-center gap-2 text-base">
+                  <span className="text-2xl">🏪</span>
+                  {t("pain.venue_label")}
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <ul className="space-y-3">
+                  {venueItemKeys.map((key) => (
+                    <li key={key} className="flex items-start gap-2 text-sm text-muted-foreground">
+                      <span className="mt-0.5 shrink-0 text-destructive">✕</span>
+                      {t(key)}
+                    </li>
+                  ))}
+                </ul>
+              </CardContent>
+            </Card>
+
+            {/* イベンター */}
+            <Card>
+              <CardHeader className="pb-3">
+                <CardTitle className="flex items-center gap-2 text-base">
+                  <span className="text-2xl">🎤</span>
+                  {t("pain.eventer_label")}
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <ul className="space-y-3">
+                  {eventerItemKeys.map((key) => (
+                    <li key={key} className="flex items-start gap-2 text-sm text-muted-foreground">
+                      <span className="mt-0.5 shrink-0 text-destructive">✕</span>
+                      {t(key)}
+                    </li>
+                  ))}
+                </ul>
+              </CardContent>
+            </Card>
           </div>
         </div>
       </section>
 
       {/* Features */}
-      <section className="mx-auto max-w-5xl px-6 py-20">
-        <h2 className="mb-10 text-center text-2xl font-semibold">
-          {t("features_title")}
-        </h2>
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {featureKeys.map(({ key, icon }) => (
-            <Card key={key} className="transition-all duration-200 hover:bg-muted/50 hover:shadow-md hover:-translate-y-0.5 cursor-pointer">
-              <CardHeader className="pb-2">
-                <CardTitle className="flex items-center gap-2 text-base">
-                  <span className="text-2xl">{icon}</span>
-                  {t(`features.${key}.title`)}
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-muted-foreground">
-                  {t(`features.${key}.description`)}
-                </p>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      </section>
-
-      {/* Stack */}
-      <section className="border-t bg-muted/30">
-        <div className="mx-auto max-w-5xl px-6 py-12 text-center">
-          <p className="mb-4 text-sm text-muted-foreground">{t("stack_title")}</p>
-          <div className="flex flex-wrap justify-center gap-2">
-            {["Turborepo", "Next.js 16", "Expo", "Supabase", "Drizzle ORM", "Tailwind CSS", "shadcn/ui"].map(
-              (tech) => (
-                <Badge key={tech} variant="secondary" className="font-mono text-xs">
-                  {tech}
-                </Badge>
-              )
-            )}
+      <section className="border-b">
+        <div className="mx-auto max-w-5xl px-6 py-20">
+          <h2 className="mb-10 text-center text-2xl font-semibold sm:text-3xl">
+            {t("features.title")}
+          </h2>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {featureKeys.map(({ key, icon }) => (
+              <Card
+                key={key}
+                className="transition-all duration-200 hover:-translate-y-0.5 hover:bg-muted/50 hover:shadow-md"
+              >
+                <CardHeader className="pb-2">
+                  <CardTitle className="flex items-center gap-2 text-base">
+                    <span className="text-2xl">{icon}</span>
+                    {t(`features.${key}.title`)}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-muted-foreground">
+                    {t(`features.${key}.description`)}
+                  </p>
+                </CardContent>
+              </Card>
+            ))}
           </div>
         </div>
       </section>
+
+      {/* How it works */}
+      <section className="border-b bg-muted/20">
+        <div className="mx-auto max-w-5xl px-6 py-20">
+          <h2 className="mb-14 text-center text-2xl font-semibold sm:text-3xl">
+            {t("how.title")}
+          </h2>
+          <div className="relative grid grid-cols-1 gap-10 sm:grid-cols-3">
+            {/* Connecting line — desktop only */}
+            <div className="absolute hidden sm:block top-7 left-[calc(16.667%+28px)] right-[calc(16.667%+28px)] h-px bg-border" />
+
+            {howSteps.map(({ titleKey, descKey }, idx) => (
+              <div key={titleKey} className="flex flex-col items-center text-center">
+                <div className="relative mb-5 flex h-14 w-14 items-center justify-center rounded-full bg-foreground font-bold text-background text-lg">
+                  {String(idx + 1).padStart(2, "0")}
+                </div>
+                <h3 className="mb-2 font-semibold">{t(titleKey)}</h3>
+                <p className="text-sm text-muted-foreground">{t(descKey)}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Banner */}
+      <section className="border-b">
+        <div className="relative overflow-hidden">
+          <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-muted/40 via-background to-muted/40" />
+          <div className="relative mx-auto max-w-5xl px-6 py-24 text-center">
+            <h2 className="mb-4 text-2xl font-bold sm:text-3xl lg:text-4xl">
+              {t("cta_section.title")}
+            </h2>
+            <p className="mb-8 text-muted-foreground">
+              {t("cta_section.subtitle")}
+            </p>
+            <LinkButton href="#" size="lg" className="min-w-40">
+              {t("cta_section.button")}
+            </LinkButton>
+          </div>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="bg-muted/30">
+        <div className="mx-auto max-w-5xl px-6 py-10">
+          <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-between">
+            <span className="font-bold">E-be</span>
+            <p className="text-xs text-muted-foreground">{t("footer.copyright")}</p>
+            <div className="flex gap-4 text-xs text-muted-foreground">
+              <Link href="#" className="transition-colors hover:text-foreground">
+                {t("footer.terms")}
+              </Link>
+              <Link href="#" className="transition-colors hover:text-foreground">
+                {t("footer.privacy")}
+              </Link>
+              <Link href="#" className="transition-colors hover:text-foreground">
+                {t("footer.contact")}
+              </Link>
+            </div>
+          </div>
+        </div>
+      </footer>
     </main>
   );
 }

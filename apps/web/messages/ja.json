@@ -8,13 +8,59 @@
     "cta_request": "開催リクエスト",
     "features_title": "主要機能",
     "stack_title": "技術スタック",
+    "nav": {
+      "sign_in": "サインイン",
+      "sign_up": "無料で始める",
+      "dashboard": "ダッシュボードへ"
+    },
+    "hero": {
+      "eyebrow": "イベントバー特化プラットフォーム",
+      "title": "「良いイベント」を、もっと。",
+      "subtitle": "バーとイベンターをつなぐプラットフォーム。開催申請・参加管理・実績分析まで E-be が一括サポートします。",
+      "cta_primary": "イベントを探す",
+      "cta_secondary": "開催を申し込む"
+    },
+    "pain": {
+      "title": "こんな悩みはありませんか？",
+      "venue_label": "バーオーナー・店舗スタッフ",
+      "venue_item_1": "信頼できるイベンターをなかなか見つけられない",
+      "venue_item_2": "複数店舗の予定管理が煩雑になっている",
+      "venue_item_3": "集客効果を数字で把握・比較できていない",
+      "venue_item_4": "申込・承認のやり取りに時間がかかりすぎる",
+      "eventer_label": "イベンター・DJ・アーティスト",
+      "eventer_item_1": "会場探しに毎回多くの時間を費やしている",
+      "eventer_item_2": "申し込みや調整のやり取りが分散して管理しにくい",
+      "eventer_item_3": "過去の実績をうまくアピールする場がない",
+      "eventer_item_4": "クーポンやリピーター獲得の仕組みを持てていない"
+    },
     "features": {
-      "events": { "title": "イベント管理", "description": "開催リクエスト・承認・時間重複チェックを一元管理" },
-      "multitenant": { "title": "マルチテナント", "description": "1事業者 = N店舗の階層構造で運営をシンプルに" },
-      "participants": { "title": "参加者管理", "description": "主催者・共催者・参加者のロールを柔軟に管理" },
-      "ai": { "title": "AI分析基盤", "description": "実績データをAI分析用テキストとしてエクスポート" },
-      "coupons": { "title": "クーポン", "description": "店舗限定・事業者全店共通クーポンを発行" },
-      "fc": { "title": "FCリクエスト", "description": "新店舗オーナー立候補と過去実績マッチング" }
+      "title": "E-be の主な機能",
+      "events": { "title": "イベント管理", "description": "開催リクエスト・承認・時間重複チェックを一元管理。複数店舗の予定をひと目で把握できます。" },
+      "multitenant": { "title": "マルチテナント", "description": "1事業者 = N店舗の階層構造で運営をシンプルに。各店舗の実績を分けて管理できます。" },
+      "participants": { "title": "参加者管理", "description": "主催者・共催者・参加者のロールを柔軟に管理。定員設定や参加状況を一覧で確認。" },
+      "ai": { "title": "AI分析基盤", "description": "実績データをAI分析用テキストとしてエクスポート。集客傾向・人気タグを素早く把握。" },
+      "coupons": { "title": "クーポン発行", "description": "店舗限定・事業者全店共通クーポンを発行。リピーター獲得・次回来店促進に活用できます。" },
+      "fc": { "title": "FCリクエスト", "description": "新店舗オーナーへの立候補と過去実績マッチング。優秀なイベンターを新拠点へ繋げます。" }
+    },
+    "how": {
+      "title": "はじめ方はかんたん 3 ステップ",
+      "step_1_title": "アカウント登録",
+      "step_1_desc": "メールアドレスだけで無料登録。バーオーナー・イベンターどちらでもすぐに利用開始できます。",
+      "step_2_title": "店舗を選んで申請",
+      "step_2_desc": "気になる会場を見つけて開催申請。過去の実績があれば即承認も可能です。",
+      "step_3_title": "イベントを開催",
+      "step_3_desc": "承認後はカレンダーに掲載。参加申込・クーポン配布・実績管理まで一括対応。"
+    },
+    "cta_section": {
+      "title": "今すぐ E-be をはじめましょう",
+      "subtitle": "無料でアカウントを作成して、より良いイベント体験を。",
+      "button": "無料で始める"
+    },
+    "footer": {
+      "copyright": "© 2026 E-be. All rights reserved.",
+      "terms": "利用規約",
+      "privacy": "プライバシーポリシー",
+      "contact": "お問い合わせ"
     }
   },
   "auth": {
@@ -45,6 +91,10 @@
   },
   "dashboard": {
     "title": "ダッシュボード",
+    "calendar_title": "イベントカレンダー",
+    "user_type_user": "一般ユーザー",
+    "user_type_venue_user": "事業者",
+    "user_type_system_user": "管理者",
     "sign_out": "サインアウト",
     "orgs_title": "所属組織",
     "no_orgs": "所属している組織はありません",
