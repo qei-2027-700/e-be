@@ -1,0 +1,50 @@
+{
+  "home": {
+    "badge": "v0.1.0 — 開発中",
+    "title": "イーベ",
+    "tagline": "「良いイベント」を増やす。",
+    "description": "店舗と主催者をつなぐ、イベントバー運営・分析プラットフォーム。",
+    "cta_search": "イベントを探す",
+    "cta_request": "開催リクエスト",
+    "features_title": "主要機能",
+    "stack_title": "技術スタック",
+    "features": {
+      "events": { "title": "イベント管理", "description": "開催リクエスト・承認・時間重複チェックを一元管理" },
+      "multitenant": { "title": "マルチテナント", "description": "1事業者 = N店舗の階層構造で運営をシンプルに" },
+      "participants": { "title": "参加者管理", "description": "主催者・共催者・参加者のロールを柔軟に管理" },
+      "ai": { "title": "AI分析基盤", "description": "実績データをAI分析用テキストとしてエクスポート" },
+      "coupons": { "title": "クーポン", "description": "店舗限定・事業者全店共通クーポンを発行" },
+      "fc": { "title": "FCリクエスト", "description": "新店舗オーナー立候補と過去実績マッチング" }
+    }
+  },
+  "auth": {
+    "sign_in": {
+      "title": "サインイン",
+      "description": "メールアドレスとパスワードでサインインします",
+      "google": "Google でサインイン",
+      "or": "または",
+      "email": "メールアドレス",
+      "password": "パスワード",
+      "submit": "サインイン",
+      "loading": "サインイン中...",
+      "no_account": "アカウントをお持ちでない方は",
+      "sign_up_link": "新規登録"
+    },
+    "sign_up": {
+      "title": "新規登録",
+      "description": "メールアドレスとパスワードで登録します",
+      "email": "メールアドレス",
+      "password": "パスワード（6文字以上）",
+      "submit": "登録する",
+      "loading": "登録中...",
+      "has_account": "すでにアカウントをお持ちの方は",
+      "sign_in_link": "サインイン",
+      "done_title": "確認メールを送信しました",
+      "done_description": "{email} に確認メールを送りました。メール内のリンクをクリックして登録を完了してください。"
+    }
+  },
+  "metadata": {
+    "title": "イーベ (E-be)",
+    "description": "良いイベントを増やす、店舗と主催者をつなぐイベントバー運営プラットフォーム"
+  }
+}

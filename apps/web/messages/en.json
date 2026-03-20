@@ -1,0 +1,50 @@
+{
+  "home": {
+    "badge": "v0.1.0 — In Development",
+    "title": "E-be",
+    "tagline": "Creating more great events.",
+    "description": "The event bar management platform connecting venues and organizers.",
+    "cta_search": "Find Events",
+    "cta_request": "Request an Event",
+    "features_title": "Features",
+    "stack_title": "Tech Stack",
+    "features": {
+      "events": { "title": "Event Management", "description": "Centralized request, approval, and time conflict checking" },
+      "multitenant": { "title": "Multi-tenant", "description": "Manage multiple venues under one organization" },
+      "participants": { "title": "Participant Management", "description": "Flexible roles: organizer, co-host, and participant" },
+      "ai": { "title": "AI Analytics", "description": "Export performance data as AI-ready text for analysis" },
+      "coupons": { "title": "Coupons", "description": "Issue venue-specific or organization-wide coupons" },
+      "fc": { "title": "FC Requests", "description": "Apply to open new venues and match based on past performance" }
+    }
+  },
+  "auth": {
+    "sign_in": {
+      "title": "Sign In",
+      "description": "Sign in with your email and password",
+      "google": "Sign in with Google",
+      "or": "or",
+      "email": "Email",
+      "password": "Password",
+      "submit": "Sign In",
+      "loading": "Signing in...",
+      "no_account": "Don't have an account?",
+      "sign_up_link": "Sign up"
+    },
+    "sign_up": {
+      "title": "Create Account",
+      "description": "Sign up with your email and password",
+      "email": "Email",
+      "password": "Password (min 6 characters)",
+      "submit": "Create Account",
+      "loading": "Creating account...",
+      "has_account": "Already have an account?",
+      "sign_in_link": "Sign in",
+      "done_title": "Check your email",
+      "done_description": "We sent a confirmation link to {email}. Click the link to complete your registration."
+    }
+  },
+  "metadata": {
+    "title": "E-be",
+    "description": "The event bar management platform connecting venues and organizers"
+  }
+}
