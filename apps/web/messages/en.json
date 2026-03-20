@@ -151,7 +151,9 @@
     "participation_history_title": "Events I Joined",
     "participation_history_empty": "You have not joined any events yet",
     "participation_status_registered": "Registered",
-    "participation_status_cancelled": "Cancelled"
+    "participation_status_cancelled": "Cancelled",
+    "upcoming_participations_title": "Upcoming Events",
+    "upcoming_participations_empty": "No upcoming events."
   },
   "apply": {
     "title": "Venue Operator Application",

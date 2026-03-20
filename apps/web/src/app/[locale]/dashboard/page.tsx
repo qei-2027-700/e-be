@@ -7,7 +7,7 @@ import { db } from "@/lib/db";
 import { operatorApplications } from "@e-be/db/schema";
 import { eq, and, isNull } from "drizzle-orm";
 import { EventCalendar } from "@/components/event-calendar";
-import { getEventsForCalendar, getOrganizerHistory, getParticipationHistory } from "@/lib/events";
+import { getEventsForCalendar, getOrganizerHistory, getParticipationHistory, getUpcomingParticipations } from "@/lib/events";
 
 const USER_TYPE_VARIANT = {
   user: "secondary",
@@ -37,8 +37,9 @@ export default async function DashboardPage() {
   let hasPendingApplication = false;
   let organizerHistory: Awaited<ReturnType<typeof getOrganizerHistory>> = [];
   let participationHistory: Awaited<ReturnType<typeof getParticipationHistory>> = [];
+  let upcomingParticipations: Awaited<ReturnType<typeof getUpcomingParticipations>> = [];
   if (userType === "user") {
-    const [pendingResult, historyResult, participationResult] = await Promise.all([
+    const [pendingResult, historyResult, participationResult, upcomingResult] = await Promise.all([
       db
         .select({ id: operatorApplications.id })
         .from(operatorApplications)
@@ -52,10 +53,12 @@ export default async function DashboardPage() {
         .limit(1),
       getOrganizerHistory(user.id),
       getParticipationHistory(user.id),
+      getUpcomingParticipations(user.id),
     ]);
     hasPendingApplication = pendingResult.length > 0;
     organizerHistory = historyResult;
     participationHistory = participationResult;
+    upcomingParticipations = upcomingResult;
   }
 
   const userTypeKey = `user_type_${userType}` as const;
@@ -83,6 +86,48 @@ export default async function DashboardPage() {
             />
           </CardContent>
         </Card>
+
+        {userType === "user" && (
+          <Card>
+            <CardHeader>
+              <CardTitle>{t("upcoming_participations_title")}</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {upcomingParticipations.length === 0 ? (
+                <p className="py-4 text-center text-sm text-muted-foreground">
+                  {t("upcoming_participations_empty")}
+                </p>
+              ) : (
+                <ul className="divide-y">
+                  {upcomingParticipations.map((item) => (
+                    <li key={item.participationId}>
+                      <Link
+                        href={`/${locale}/dashboard/event/${item.eventId}`}
+                        className="flex items-center justify-between gap-3 py-3 hover:bg-muted/50 -mx-2 px-2 rounded-md transition-colors"
+                      >
+                        <div className="min-w-0">
+                          <p className="truncate font-medium">{item.title ?? "—"}</p>
+                          <p className="text-xs text-muted-foreground">
+                            {item.startAt
+                              ? new Date(item.startAt).toLocaleDateString(locale, {
+                                  year: "numeric",
+                                  month: "short",
+                                  day: "numeric",
+                                })
+                              : "—"}
+                          </p>
+                        </div>
+                        <Badge variant="outline" className="shrink-0">
+                          {t("participation_status_registered")}
+                        </Badge>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </CardContent>
+          </Card>
+        )}
 
         {userType === "user" && (
           <Card>

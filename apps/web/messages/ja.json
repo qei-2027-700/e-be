@@ -151,7 +151,9 @@
     "participation_history_title": "参加イベント履歴",
     "participation_history_empty": "参加したイベントはまだありません",
     "participation_status_registered": "参加予定",
-    "participation_status_cancelled": "キャンセル済み"
+    "participation_status_cancelled": "キャンセル済み",
+    "upcoming_participations_title": "参加予定イベント",
+    "upcoming_participations_empty": "参加予定のイベントはありません"
   },
   "apply": {
     "title": "事業者申請",
