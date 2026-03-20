@@ -1,10 +1,7 @@
-import { redirect } from "next/navigation";
 import { getLocale, getTranslations } from "next-intl/server";
 import { getUser, getUserOrgs, getUserType } from "@/lib/auth";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
 import { db } from "@/lib/db";
 import { operatorApplications } from "@e-be/db/schema";
@@ -23,9 +20,8 @@ export default async function DashboardPage() {
   const t = await getTranslations("dashboard");
 
   const user = await getUser();
-  if (!user) {
-    redirect(`/${locale}/auth/sign-in`);
-  }
+  // layout.tsx で認証チェック済みだが、型ガードのため残す
+  if (!user) return null;
 
   const now = new Date();
   const calendarFrom = new Date(now.getFullYear(), now.getMonth(), 1);
@@ -59,40 +55,16 @@ export default async function DashboardPage() {
     organizerHistory = historyResult;
   }
 
-  async function signOut() {
-    "use server";
-    const supabase = await createClient();
-    await supabase.auth.signOut();
-    redirect(`/${locale}/auth/sign-in`);
-  }
-
   const userTypeKey = `user_type_${userType}` as const;
 
   return (
-    <main className="min-h-screen bg-background p-4 md:p-6">
+    <main className="p-4 md:p-6">
       <div className="mx-auto max-w-2xl space-y-6">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <h1 className="text-2xl font-bold">{t("title")}</h1>
-            <Badge variant={USER_TYPE_VARIANT[userType]}>
-              {t(userTypeKey)}
-            </Badge>
-          </div>
-          <div className="flex items-center gap-2">
-            {userType === "system_user" && (
-              <Link
-                href={`/${locale}/admin`}
-                className="inline-flex min-h-11 items-center rounded-lg border border-border bg-background px-2.5 text-[0.8rem] font-medium transition-all hover:bg-muted"
-              >
-                {t("admin_link")}
-              </Link>
-            )}
-            <form action={signOut}>
-              <Button variant="outline" type="submit" className="min-h-11">
-                {t("sign_out")}
-              </Button>
-            </form>
-          </div>
+        <div className="flex items-center gap-2">
+          <h1 className="text-2xl font-bold">{t("title")}</h1>
+          <Badge variant={USER_TYPE_VARIANT[userType]}>
+            {t(userTypeKey)}
+          </Badge>
         </div>
 
         <Card>
