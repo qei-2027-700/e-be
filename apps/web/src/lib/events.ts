@@ -1,5 +1,5 @@
 import { db } from "@/lib/db";
-import { events } from "@e-be/db/schema";
+import { events, eventParticipations } from "@e-be/db/schema";
 import { eq, and, gte, lte, isNull, or, lt, desc } from "drizzle-orm";
 
 export type CalendarEventData = {
@@ -101,5 +101,53 @@ export async function getOrganizerHistory(userId: string): Promise<OrganizerHist
     endAt: row.endAt?.toISOString() ?? null,
     status: row.status,
     orgId: row.orgId,
+  }));
+}
+
+export type ParticipationHistoryItem = {
+  participationId: string;
+  participationStatus: string;
+  eventId: string;
+  title: string | null;
+  startAt: string | null;
+  endAt: string | null;
+  eventStatus: string;
+};
+
+/**
+ * ユーザーが参加表明したイベントの履歴を取得する。
+ * - 論理削除されていない参加レコードのみ
+ * - 新しい順（events.startAt DESC）で返す
+ */
+export async function getParticipationHistory(userId: string): Promise<ParticipationHistoryItem[]> {
+  const rows = await db
+    .select({
+      participationId: eventParticipations.id,
+      participationStatus: eventParticipations.status,
+      eventId: events.id,
+      title: events.title,
+      startAt: events.startAt,
+      endAt: events.endAt,
+      eventStatus: events.status,
+    })
+    .from(eventParticipations)
+    .innerJoin(events, eq(eventParticipations.eventId, events.id))
+    .where(
+      and(
+        eq(eventParticipations.userId, userId),
+        isNull(eventParticipations.deletedAt),
+        isNull(events.deletedAt)
+      )
+    )
+    .orderBy(desc(events.startAt));
+
+  return rows.map((row) => ({
+    participationId: row.participationId,
+    participationStatus: row.participationStatus,
+    eventId: row.eventId,
+    title: row.title,
+    startAt: row.startAt?.toISOString() ?? null,
+    endAt: row.endAt?.toISOString() ?? null,
+    eventStatus: row.eventStatus,
   }));
 }

@@ -31,16 +31,42 @@
       "eventer_item_1": "Finding a venue takes too much time every single time",
       "eventer_item_2": "Coordination is scattered across emails and messages",
       "eventer_item_3": "No good way to showcase your past track record",
-      "eventer_item_4": "Missing tools to build repeat audiences with coupons"
+      "eventer_item_4": "Missing tools to build repeat audiences with coupons",
+      "participant_label": "Event Participants",
+      "participant_item_1": "Never know when or where interesting events are happening",
+      "participant_item_2": "Miss out on next events by your favorite organizers",
+      "participant_item_3": "Anxious about the atmosphere of a new venue or event",
+      "participant_item_4": "Would visit more often if there were rewards or coupons"
     },
     "features": {
       "title": "Everything you need to run great events",
-      "events": { "title": "Event Management", "description": "Centralized booking requests, approvals, and schedule conflict checking across all your venues." },
-      "multitenant": { "title": "Multi-venue", "description": "One organization, many venues. Manage each independently while keeping a unified overview." },
-      "participants": { "title": "Attendance & Roles", "description": "Flexible roles for organizers, co-hosts, and attendees. Track capacity and RSVPs in one view." },
-      "ai": { "title": "AI-Ready Analytics", "description": "Export your performance data as structured text for AI analysis. Spot trends and popular tags fast." },
-      "coupons": { "title": "Coupons", "description": "Issue venue-specific or org-wide coupons to drive repeat attendance and reward loyal guests." },
-      "fc": { "title": "FC Requests", "description": "Let top organizers apply to open new venues, matched by past performance data." }
+      "venue_title": "For Venue Operators",
+      "eventer_title": "For Event Organizers",
+      "participant_title": "For Event Participants",
+      "events": {
+        "title": "Event Management",
+        "description": "Centralized booking requests, approvals, and schedule conflict checking across all your venues."
+      },
+      "multitenant": {
+        "title": "Multi-venue",
+        "description": "One organization, many venues. Manage each independently while keeping a unified overview."
+      },
+      "participants": {
+        "title": "Attendance & Roles",
+        "description": "Flexible roles for organizers, co-hosts, and attendees. Track capacity and RSVPs in one view."
+      },
+      "ai": {
+        "title": "AI-Ready Analytics",
+        "description": "Export your performance data as structured text for AI analysis. Spot trends and popular tags fast."
+      },
+      "coupons": {
+        "title": "Coupons",
+        "description": "Issue venue-specific or org-wide coupons to drive repeat attendance and reward loyal guests."
+      },
+      "fc": {
+        "title": "FC Requests",
+        "description": "Let top organizers apply to open new venues, matched by past performance data."
+      }
     },
     "how": {
       "title": "Up and running in 3 steps",
@@ -121,11 +147,15 @@
       "title": "Organization Settings",
       "back": "Back to Organization",
       "owner_only": "This settings page is only accessible to owners"
-    }
+    },
+    "participation_history_title": "Events I Joined",
+    "participation_history_empty": "You have not joined any events yet",
+    "participation_status_registered": "Registered",
+    "participation_status_cancelled": "Cancelled"
   },
   "apply": {
     "title": "Venue Operator Application",
-    "description": "Fill in your venue details to apply. An admin will review your application and create your organization upon approval.",
+    "description": "Venue Description",
     "company_name": "Company Name",
     "company_name_placeholder": "E-be Inc.",
     "org_name": "Venue Name",
@@ -133,7 +163,6 @@
     "org_slug": "Slug (URL)",
     "org_slug_placeholder": "e-be-shibuya",
     "org_slug_hint": "Letters, numbers and hyphens only / max 50 chars / cannot be changed later",
-    "description": "Venue Description",
     "description_placeholder": "Describe your venue (optional)",
     "address": "Address",
     "address_placeholder": "Tokyo, Shibuya...",

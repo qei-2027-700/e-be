@@ -170,8 +170,81 @@ async function upsertCompanyAndOrg(userId, { company, org }) {
   }
 }
 
+/** テスト用イベントと参加データを作成する（冪等） */
+async function upsertTestEventsAndParticipations(testUserId, orgId) {
+  const TEST_EVENTS = [
+    {
+      title: '【テスト】夏の音楽フェス 2025',
+      startAt: new Date('2025-07-20T18:00:00Z'),
+      endAt:   new Date('2025-07-20T23:00:00Z'),
+      participationStatus: 'registered',
+    },
+    {
+      title: '【テスト】秋のジャズナイト',
+      startAt: new Date('2025-10-05T19:00:00Z'),
+      endAt:   new Date('2025-10-05T22:00:00Z'),
+      participationStatus: 'registered',
+    },
+    {
+      title: '【テスト】冬の DJ パーティー（キャンセル済み）',
+      startAt: new Date('2025-12-15T20:00:00Z'),
+      endAt:   new Date('2025-12-15T23:30:00Z'),
+      participationStatus: 'cancelled',
+    },
+    {
+      title: '【テスト】新春イベント 2026',
+      startAt: new Date('2026-01-10T17:00:00Z'),
+      endAt:   new Date('2026-01-10T21:00:00Z'),
+      participationStatus: 'registered',
+    },
+  ];
+
+  for (const ev of TEST_EVENTS) {
+    // イベント取得または作成
+    const [existing] = await sql`
+      SELECT id FROM events
+      WHERE org_id = ${orgId} AND title = ${ev.title} AND deleted_at IS NULL
+      LIMIT 1
+    `;
+
+    let eventId;
+    if (existing) {
+      eventId = existing.id;
+      console.log(`  ⏭  event: "${ev.title}" は既に存在します`);
+    } else {
+      const [inserted] = await sql`
+        INSERT INTO events (org_id, user_id, status, title, start_at, end_at)
+        VALUES (${orgId}, ${testUserId}, 'published', ${ev.title}, ${ev.startAt}, ${ev.endAt})
+        RETURNING id
+      `;
+      eventId = inserted.id;
+      console.log(`  ✅ event: "${ev.title}" を作成しました`);
+    }
+
+    // 参加データ取得または作成
+    const [existingParticipation] = await sql`
+      SELECT id FROM event_participations
+      WHERE event_id = ${eventId} AND user_id = ${testUserId}
+      LIMIT 1
+    `;
+
+    if (existingParticipation) {
+      console.log(`  ⏭  participation: "${ev.title}" は既に存在します`);
+    } else {
+      await sql`
+        INSERT INTO event_participations (event_id, user_id, status)
+        VALUES (${eventId}, ${testUserId}, ${ev.participationStatus})
+      `;
+      console.log(`  ✅ participation: "${ev.title}" (${ev.participationStatus})`);
+    }
+  }
+}
+
 async function main() {
   console.log('🌱 テストアカウント作成開始\n');
+
+  let testUserId = null;
+  let testOrgId = null;
 
   for (const account of TEST_ACCOUNTS) {
     console.log(`▶ ${account.label} (${account.email})`);
@@ -179,10 +252,26 @@ async function main() {
     const userId = await upsertAuthUser(account);
     await upsertDbUser(userId, account);
 
-    if (account.company && account.org) {
-      await upsertCompanyAndOrg(userId, account);
+    if (account.email === 'test-user@e-be.internal') {
+      testUserId = userId;
     }
 
+    if (account.company && account.org) {
+      await upsertCompanyAndOrg(userId, account);
+      // venue ユーザーの org ID を取得してダミーイベントに使用
+      const [row] = await sql`
+        SELECT id FROM organizations WHERE slug = ${account.org.slug} AND deleted_at IS NULL LIMIT 1
+      `;
+      testOrgId = row?.id ?? null;
+    }
+
+    console.log();
+  }
+
+  // テスト用イベント＆参加データを作成
+  if (testUserId && testOrgId) {
+    console.log('▶ テスト用イベント・参加データ');
+    await upsertTestEventsAndParticipations(testUserId, testOrgId);
     console.log();
   }
 

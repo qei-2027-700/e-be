@@ -7,7 +7,7 @@ import { db } from "@/lib/db";
 import { operatorApplications } from "@e-be/db/schema";
 import { eq, and, isNull } from "drizzle-orm";
 import { EventCalendar } from "@/components/event-calendar";
-import { getEventsForCalendar, getOrganizerHistory } from "@/lib/events";
+import { getEventsForCalendar, getOrganizerHistory, getParticipationHistory } from "@/lib/events";
 
 const USER_TYPE_VARIANT = {
   user: "secondary",
@@ -36,8 +36,9 @@ export default async function DashboardPage() {
   // userType === 'user' のみ必要なデータを並行取得
   let hasPendingApplication = false;
   let organizerHistory: Awaited<ReturnType<typeof getOrganizerHistory>> = [];
+  let participationHistory: Awaited<ReturnType<typeof getParticipationHistory>> = [];
   if (userType === "user") {
-    const [pendingResult, historyResult] = await Promise.all([
+    const [pendingResult, historyResult, participationResult] = await Promise.all([
       db
         .select({ id: operatorApplications.id })
         .from(operatorApplications)
@@ -50,9 +51,11 @@ export default async function DashboardPage() {
         )
         .limit(1),
       getOrganizerHistory(user.id),
+      getParticipationHistory(user.id),
     ]);
     hasPendingApplication = pendingResult.length > 0;
     organizerHistory = historyResult;
+    participationHistory = participationResult;
   }
 
   const userTypeKey = `user_type_${userType}` as const;
@@ -122,6 +125,54 @@ export default async function DashboardPage() {
                               ? "secondary"
                               : "outline"
                           }
+                          className="shrink-0"
+                        >
+                          {t(statusKey)}
+                        </Badge>
+                      </li>
+                    );
+                  })}
+                </ul>
+              )}
+            </CardContent>
+          </Card>
+        )}
+
+        {userType === "user" && (
+          <Card>
+            <CardHeader>
+              <CardTitle>{t("participation_history_title")}</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {participationHistory.length === 0 ? (
+                <p className="py-4 text-center text-sm text-muted-foreground">
+                  {t("participation_history_empty")}
+                </p>
+              ) : (
+                <ul className="divide-y">
+                  {participationHistory.map((item) => {
+                    const statusKey =
+                      item.participationStatus === "cancelled"
+                        ? "participation_status_cancelled"
+                        : "participation_status_registered";
+                    return (
+                      <li key={item.participationId} className="flex items-center justify-between gap-3 py-3">
+                        <div className="min-w-0">
+                          <p className="truncate font-medium">
+                            {item.title ?? "—"}
+                          </p>
+                          <p className="text-xs text-muted-foreground">
+                            {item.startAt
+                              ? new Date(item.startAt).toLocaleDateString(locale, {
+                                  year: "numeric",
+                                  month: "short",
+                                  day: "numeric",
+                                })
+                              : "—"}
+                          </p>
+                        </div>
+                        <Badge
+                          variant={item.participationStatus === "cancelled" ? "secondary" : "outline"}
                           className="shrink-0"
                         >
                           {t(statusKey)}

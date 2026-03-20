@@ -26,6 +26,10 @@ export const applicationStatusEnum = pgEnum('application_status', [
   'approved',
   'rejected',
 ]);
+export const participationStatusEnum = pgEnum('participation_status', [
+  'registered',
+  'cancelled',
+]);
 
 // Mixins
 const commonColumns = {
@@ -185,6 +189,23 @@ export const userCoupons = pgTable('user_coupons', {
   token: uuid('token').notNull().defaultRandom(),
   usedAt: timestamp('used_at'),
 });
+
+export const eventParticipations = pgTable(
+  'event_participations',
+  {
+    ...commonColumns,
+    eventId: uuid('event_id')
+      .notNull()
+      .references(() => events.id),
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => users.id),
+    status: participationStatusEnum('status').default('registered').notNull(),
+  },
+  (t) => ({
+    uniqueParticipation: uniqueIndex('unique_event_participation').on(t.eventId, t.userId),
+  })
+);
 
 export const auditLogs = pgTable('audit_logs', {
   ...commonColumns,

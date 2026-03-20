@@ -7,15 +7,6 @@ import { NavBar } from "@/components/lp/nav-bar";
 import { LinkButton } from "@/components/lp/link-button";
 import { AppFooter } from "@/components/layout/app-footer";
 
-const featureKeys = [
-  { key: "events", icon: "🎪" },
-  { key: "multitenant", icon: "🏪" },
-  { key: "participants", icon: "👥" },
-  { key: "ai", icon: "🤖" },
-  { key: "coupons", icon: "🎫" },
-  { key: "fc", icon: "🤝" },
-] as const;
-
 const venueItemKeys = [
   "pain.venue_item_1",
   "pain.venue_item_2",
@@ -28,6 +19,13 @@ const eventerItemKeys = [
   "pain.eventer_item_2",
   "pain.eventer_item_3",
   "pain.eventer_item_4",
+] as const;
+
+const participantItemKeys = [
+  "pain.participant_item_1",
+  "pain.participant_item_2",
+  "pain.participant_item_3",
+  "pain.participant_item_4",
 ] as const;
 
 const howSteps = [
@@ -84,15 +82,15 @@ export default async function HomePage() {
 
       {/* Pain — 課題提起 */}
       <section className="border-b bg-muted/20">
-        <div className="mx-auto max-w-5xl px-6 py-20">
+        <div className="mx-auto max-w-6xl px-6 py-20">
           <h2 className="mb-12 text-center text-2xl font-semibold sm:text-3xl">
             {t("pain.title")}
           </h2>
-          <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
             {/* バーオーナー */}
-            <Card>
+            <Card className="border-t-4 border-t-blue-500">
               <CardHeader className="pb-3">
-                <CardTitle className="flex items-center gap-2 text-base">
+                <CardTitle className="flex items-center gap-2 text-base text-blue-700">
                   <span className="text-2xl">🏪</span>
                   {t("pain.venue_label")}
                 </CardTitle>
@@ -101,7 +99,7 @@ export default async function HomePage() {
                 <ul className="space-y-3">
                   {venueItemKeys.map((key) => (
                     <li key={key} className="flex items-start gap-2 text-sm text-muted-foreground">
-                      <span className="mt-0.5 shrink-0 text-destructive">✕</span>
+                      <span className="mt-0.5 shrink-0 text-blue-500">✕</span>
                       {t(key)}
                     </li>
                   ))}
@@ -110,9 +108,9 @@ export default async function HomePage() {
             </Card>
 
             {/* イベンター */}
-            <Card>
+            <Card className="border-t-4 border-t-indigo-500">
               <CardHeader className="pb-3">
-                <CardTitle className="flex items-center gap-2 text-base">
+                <CardTitle className="flex items-center gap-2 text-base text-indigo-700">
                   <span className="text-2xl">🎤</span>
                   {t("pain.eventer_label")}
                 </CardTitle>
@@ -121,7 +119,27 @@ export default async function HomePage() {
                 <ul className="space-y-3">
                   {eventerItemKeys.map((key) => (
                     <li key={key} className="flex items-start gap-2 text-sm text-muted-foreground">
-                      <span className="mt-0.5 shrink-0 text-destructive">✕</span>
+                      <span className="mt-0.5 shrink-0 text-indigo-500">✕</span>
+                      {t(key)}
+                    </li>
+                  ))}
+                </ul>
+              </CardContent>
+            </Card>
+
+            {/* 参加者 */}
+            <Card className="border-t-4 border-t-orange-500">
+              <CardHeader className="pb-3">
+                <CardTitle className="flex items-center gap-2 text-base text-orange-700">
+                  <span className="text-2xl">👥</span>
+                  {t("pain.participant_label")}
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <ul className="space-y-3">
+                  {participantItemKeys.map((key) => (
+                    <li key={key} className="flex items-start gap-2 text-sm text-muted-foreground">
+                      <span className="mt-0.5 shrink-0 text-orange-500">✕</span>
                       {t(key)}
                     </li>
                   ))}
@@ -134,29 +152,98 @@ export default async function HomePage() {
 
       {/* Features */}
       <section className="border-b">
-        <div className="mx-auto max-w-5xl px-6 py-20">
-          <h2 className="mb-10 text-center text-2xl font-semibold sm:text-3xl">
+        <div className="mx-auto max-w-6xl px-6 py-20">
+          <h2 className="mb-14 text-center text-3xl font-bold">
             {t("features.title")}
           </h2>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {featureKeys.map(({ key, icon }) => (
-              <Card
-                key={key}
-                className="transition-all duration-200 hover:-translate-y-0.5 hover:bg-muted/50 hover:shadow-md"
-              >
-                <CardHeader className="pb-2">
-                  <CardTitle className="flex items-center gap-2 text-base">
-                    <span className="text-2xl">{icon}</span>
-                    {t(`features.${key}.title`)}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-sm text-muted-foreground">
-                    {t(`features.${key}.description`)}
-                  </p>
-                </CardContent>
-              </Card>
-            ))}
+
+          <div className="space-y-16">
+            {/* 店舗管理者向け */}
+            <div className="rounded-2xl bg-blue-50/50 p-8 ring-1 ring-blue-100">
+              <h3 className="mb-8 flex items-center gap-2 text-xl font-bold text-blue-900">
+                <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-600 text-white text-sm">1</span>
+                {t("features.venue_title")}
+              </h3>
+              <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+                {[
+                  { key: "events", icon: "🎪" },
+                  { key: "multitenant", icon: "🏪" },
+                  { key: "ai", icon: "🤖" },
+                ].map(({ key, icon }) => (
+                  <Card key={key} className="border-none shadow-sm">
+                    <CardHeader className="pb-2">
+                      <CardTitle className="flex items-center gap-2 text-base">
+                        <span className="text-2xl">{icon}</span>
+                        {t(`features.${key}.title`)}
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-sm text-muted-foreground">
+                        {t(`features.${key}.description`)}
+                      </p>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </div>
+
+            {/* イベント主催者向け */}
+            <div className="rounded-2xl bg-indigo-50/50 p-8 ring-1 ring-indigo-100">
+              <h3 className="mb-8 flex items-center gap-2 text-xl font-bold text-indigo-900">
+                <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-600 text-white text-sm">2</span>
+                {t("features.eventer_title")}
+              </h3>
+              <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+                {[
+                  { key: "events", icon: "🎪" },
+                  { key: "participants", icon: "👥" },
+                  { key: "fc", icon: "🤝" },
+                ].map(({ key, icon }) => (
+                  <Card key={key} className="border-none shadow-sm">
+                    <CardHeader className="pb-2">
+                      <CardTitle className="flex items-center gap-2 text-base">
+                        <span className="text-2xl">{icon}</span>
+                        {t(`features.${key}.title`)}
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-sm text-muted-foreground">
+                        {t(`features.${key}.description`)}
+                      </p>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </div>
+
+            {/* イベント参加者向け */}
+            <div className="rounded-2xl bg-orange-50/50 p-8 ring-1 ring-orange-100">
+              <h3 className="mb-8 flex items-center gap-2 text-xl font-bold text-orange-900">
+                <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-orange-600 text-white text-sm">3</span>
+                {t("features.participant_title")}
+              </h3>
+              <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+                {[
+                  { key: "participants", icon: "👥" },
+                  { key: "coupons", icon: "🎫" },
+                  { key: "ai", icon: "🤖" }, // おすすめ分析的な意味で
+                ].map(({ key, icon }) => (
+                  <Card key={key} className="border-none shadow-sm">
+                    <CardHeader className="pb-2">
+                      <CardTitle className="flex items-center gap-2 text-base">
+                        <span className="text-2xl">{icon}</span>
+                        {t(`features.${key}.title`)}
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-sm text-muted-foreground">
+                        {t(`features.${key}.description`)}
+                      </p>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
       </section>
