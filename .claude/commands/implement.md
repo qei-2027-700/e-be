@@ -18,6 +18,16 @@
 
 ## 手順
 
+### Step 0: 引数の確認
+
+`$ARGUMENTS` が空の場合は実装を開始せず、まず Issue 一覧を表示してユーザーに番号を確認してください。
+
+```bash
+gh issue list --repo qei-2027-700/e-be --state open
+```
+
+「どの Issue を実装しますか？番号を指定してください。」と聞いてから次へ進む。
+
 ### Step 1: ステアリングの確認・生成
 
 `.claude/steering/issue-$ARGUMENTS-*.md` を探してください。
