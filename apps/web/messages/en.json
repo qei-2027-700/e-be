@@ -237,5 +237,24 @@
         "content": "We do not share your personal information with third parties without your consent, except as required by law."
       }
     }
+  },
+  "terms_page": {
+    "title": "Terms of Service",
+    "updated_at": "Last Updated: March 20, 2026",
+    "introduction": "These Terms of Service (\"Terms\") govern your use of E-be (\"the Service\"). By using our Service, you agree to these Terms.",
+    "sections": {
+      "1": {
+        "title": "Section 1 (Application)",
+        "content": "These Terms apply to all relationships between you and the Service regarding your use of E-be."
+      },
+      "2": {
+        "title": "Section 2 (Prohibited Actions)",
+        "content": "Users must not engage in any actions that violate laws or public order, harass other users, or interfere with the operation of the Service."
+      },
+      "3": {
+        "title": "Section 3 (Disclaimer)",
+        "content": "The Service is not liable for any damages incurred by users regarding the use of the Service, except in cases of intentional misconduct or gross negligence by the Service."
+      }
+    }
   }
 }
