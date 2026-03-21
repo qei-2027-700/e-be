@@ -1,5 +1,5 @@
 import { getLocale, getTranslations } from "next-intl/server";
-import { getUser, getUserOrgs, getUserType } from "@/lib/auth";
+import { getPendingApplication, getUser, getUserOrgs, getUserType } from "@/lib/auth";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
@@ -36,17 +36,20 @@ export default async function DashboardPage() {
   let participationHistory: Awaited<ReturnType<typeof getParticipationHistory>> = [];
   let upcomingParticipations: Awaited<ReturnType<typeof getUpcomingParticipations>> = [];
   let myDraftEvents: Awaited<ReturnType<typeof getMyDraftEvents>> = [];
+  let hasPendingApplication = false;
   if (userType === "user") {
-    const [historyResult, participationResult, upcomingResult, draftResult] = await Promise.all([
+    const [historyResult, participationResult, upcomingResult, draftResult, pendingResult] = await Promise.all([
       getOrganizerHistory(user.id),
       getParticipationHistory(user.id),
       getUpcomingParticipations(user.id),
       getMyDraftEvents(user.id),
+      getPendingApplication(user.id),
     ]);
     organizerHistory = historyResult;
     participationHistory = participationResult;
     upcomingParticipations = upcomingResult;
     myDraftEvents = draftResult;
+    hasPendingApplication = pendingResult;
   }
 
   const userTypeKey = `user_type_${userType}` as const;
@@ -308,6 +311,31 @@ export default async function DashboardPage() {
                       </li>
                     ))}
                   </ul>
+                </CardContent>
+              </Card>
+            )}
+
+            {userType === "user" && (
+              <Card>
+                <CardHeader>
+                  <CardTitle>{t("apply_operator_title")}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  {hasPendingApplication ? (
+                    <div className="space-y-2 py-2">
+                      <Badge variant="secondary">{t("application_pending")}</Badge>
+                      <p className="text-sm text-muted-foreground">
+                        {t("application_pending_description")}
+                      </p>
+                    </div>
+                  ) : (
+                    <Link
+                      href={`/${locale}/dashboard/apply`}
+                      className="inline-flex min-h-11 items-center rounded-lg border border-border bg-background px-4 text-[0.8rem] font-medium transition-all hover:bg-muted"
+                    >
+                      {t("apply_operator")}
+                    </Link>
+                  )}
                 </CardContent>
               </Card>
             )}
