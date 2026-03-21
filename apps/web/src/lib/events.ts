@@ -6,6 +6,44 @@ import { eq, and, gte, lte, isNull, or, lt, gt, asc, desc, ne, inArray } from "d
  * イベント作成フォームのバー選択用に公開バー一覧を取得する。
  * deletedAt IS NULL の全組織を返す。
  */
+export type MyDraftEventItem = {
+  id: string;
+  title: string | null;
+  status: 'draft' | 'pending';
+  orgName: string;
+  createdAt: string;
+};
+
+/** ユーザーが作成した draft / pending イベントを新しい順で返す */
+export async function getMyDraftEvents(userId: string): Promise<MyDraftEventItem[]> {
+  const rows = await db
+    .select({
+      id: events.id,
+      title: events.title,
+      status: events.status,
+      orgName: organizations.name,
+      createdAt: events.createdAt,
+    })
+    .from(events)
+    .innerJoin(organizations, eq(events.orgId, organizations.id))
+    .where(
+      and(
+        eq(events.userId, userId),
+        inArray(events.status, ['draft', 'pending']),
+        isNull(events.deletedAt)
+      )
+    )
+    .orderBy(desc(events.createdAt));
+
+  return rows.map((row) => ({
+    id: row.id,
+    title: row.title,
+    status: row.status as 'draft' | 'pending',
+    orgName: row.orgName,
+    createdAt: row.createdAt.toISOString(),
+  }));
+}
+
 export async function getPublicBars(): Promise<{ id: string; name: string }[]> {
   return db
     .select({ id: organizations.id, name: organizations.name })
