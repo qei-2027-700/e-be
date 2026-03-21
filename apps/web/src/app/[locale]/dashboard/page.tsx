@@ -76,7 +76,7 @@ export default async function DashboardPage() {
           </Badge>
         </div>
 
-        <Card>
+        <Card variant="glass">
           <CardHeader>
             <CardTitle>{t("calendar_title")}</CardTitle>
           </CardHeader>
