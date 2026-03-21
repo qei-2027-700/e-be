@@ -1,7 +1,7 @@
 export default function DashboardLoading() {
   return (
     <main className="p-4 md:p-6">
-      <div className="mx-auto max-w-2xl space-y-6 animate-pulse">
+      <div className="mx-auto max-w-5xl space-y-6 animate-pulse">
         {/* タイトル */}
         <div className="flex items-center gap-2">
           <div className="h-8 w-36 rounded-md bg-muted" />

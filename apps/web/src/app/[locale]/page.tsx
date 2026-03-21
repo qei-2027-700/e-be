@@ -1,3 +1,4 @@
+import { redirect } from "next/navigation";
 import { getLocale, getTranslations } from "next-intl/server";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -41,6 +42,10 @@ export default async function HomePage() {
     getLocale(),
     getUser(),
   ]);
+
+  if (user) {
+    redirect(`/${locale}/dashboard`);
+  }
 
   return (
     <main className="min-h-screen bg-background text-foreground">

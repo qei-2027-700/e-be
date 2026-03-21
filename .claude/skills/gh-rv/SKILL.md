@@ -113,12 +113,23 @@ gh pr diff {PR番号} --repo qei-2027-700/e-be
 
 ### must なし の場合
 
-1. `should` があれば Issue を起票する
+1. `should` があれば Issue を起票する（ラベル `ai-created,ai:gh-rv` を付与）
 
 ```bash
-gh issue create --repo qei-2027-700/e-be \
+gh issue create \
+  --repo qei-2027-700/e-be \
+  --label "ai-created,ai:gh-rv" \
   --title "{should の内容を簡潔に}" \
-  --body "PR #{番号} のレビューで指摘。{詳細}"
+  --body "$(cat <<'EOF'
+> 🤖 Claude Code `/gh-rv` (should判定) で起票 — PR #{PR番号} のレビューから
+
+## 概要
+{should の内容詳細}
+
+## 背景
+PR #{PR番号} のセルフレビューで指摘。
+EOF
+)"
 ```
 
 2. squash マージを実行する

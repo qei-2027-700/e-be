@@ -2,6 +2,13 @@ Playwright MCP で実装した機能を動作確認してください。
 
 ## Step 1: 開発サーバーの起動確認
 
+`node_modules` がない場合（worktree 直後など）は先にインストールしてください。
+
+```bash
+# リポジトリルートで確認
+ls node_modules 2>/dev/null || pnpm i
+```
+
 開発サーバーが起動していない場合は起動してください。
 
 ```bash

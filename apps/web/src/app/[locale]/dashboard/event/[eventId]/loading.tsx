@@ -1,7 +1,7 @@
 export default function EventDetailLoading() {
   return (
     <main className="p-4 md:p-6">
-      <div className="mx-auto max-w-2xl space-y-5 animate-pulse">
+      <div className="mx-auto max-w-3xl space-y-5 animate-pulse">
         <div className="h-4 w-28 rounded bg-muted" />
         <div className="space-y-2">
           <div className="h-8 w-3/4 rounded-md bg-muted" />

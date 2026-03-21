@@ -57,6 +57,7 @@ WORKTREE=../e-be-issue-$ARGUMENTS
 
 git worktree add $WORKTREE -b $BRANCH
 cd $WORKTREE
+pnpm i  # worktree には node_modules がないため必須
 ```
 
 以降の実装・コミット・push はすべてこの worktree ディレクトリ内で行う。

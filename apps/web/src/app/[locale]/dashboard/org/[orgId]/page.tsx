@@ -48,7 +48,7 @@ export default async function OrgDashboardPage({ params }: Props) {
 
   return (
     <main className="min-h-screen bg-background p-4 md:p-6">
-      <div className="mx-auto max-w-2xl space-y-6">
+      <div className="mx-auto max-w-3xl space-y-6">
         <div className="flex items-center justify-between gap-3">
           <div className="flex items-center gap-3 min-w-0">
             <Link

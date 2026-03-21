@@ -62,7 +62,7 @@ export default async function EventDetailPage({ params }: Props) {
 
   return (
     <main className="p-4 md:p-6">
-      <div className="mx-auto max-w-2xl space-y-5">
+      <div className="mx-auto max-w-3xl space-y-5">
 
         {/* 戻るリンク */}
         <Link

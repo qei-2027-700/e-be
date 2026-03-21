@@ -21,8 +21,19 @@ gh issue list --state open
 - **実装対象**: 変更するファイル・機能の範囲
 - **参照**: 関連する `docs/architecture/decisions.md` のセクション番号
 
+body の先頭には必ず以下のヘッダーを追加してください:
+
+```
+> 🤖 Claude Code `/gh-issue` で起票
+```
+
 ```bash
-gh issue create --title "..." --body "$(cat <<'EOF'
+gh issue create \
+  --label "ai-created,ai:gh-issue" \
+  --title "..." \
+  --body "$(cat <<'EOF'
+> 🤖 Claude Code `/gh-issue` で起票
+
 ## 概要
 ...
 
