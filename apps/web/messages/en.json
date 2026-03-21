@@ -285,7 +285,13 @@
     "status_cancelled": "Cancelled",
     "venue": "Venue",
     "charge_amount": "Cover Charge",
-    "description": "About This Event"
+    "description": "About This Event",
+    "join_button": "Join",
+    "cancel_button": "Cancel Participation",
+    "full_capacity": "Full",
+    "event_ended": "Ended",
+    "joining": "Processing...",
+    "cancelling": "Processing..."
   },
   "privacy": {
     "title": "Privacy Policy",

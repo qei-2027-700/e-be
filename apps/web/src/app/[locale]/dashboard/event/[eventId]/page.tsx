@@ -5,6 +5,7 @@ import { getEventDetail, getDraftEventForOwner } from "@/lib/events";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
+import { ParticipationButton } from "./participation-button";
 
 type Props = {
   params: Promise<{ eventId: string }>;
@@ -50,6 +51,8 @@ export default async function EventDetailPage({ params }: Props) {
 
   const isRegistered = event.myParticipationStatus === "registered";
   const isCancelled = event.myParticipationStatus === "cancelled";
+  const isBeforeEvent = !!(event.startAt && new Date(event.startAt) > new Date());
+  const isFull = event.maxParticipants !== null && event.participantCount >= event.maxParticipants;
 
   const startDate = formatDate(event.startAt);
   const startTime = formatTime(event.startAt);
@@ -175,15 +178,15 @@ export default async function EventDetailPage({ params }: Props) {
         </Card>
 
         {/* 参加ステータスカード */}
-        {event.myParticipationStatus && (
-          <Card
-            className={
-              isRegistered
-                ? "border-green-500/40 bg-green-500/5"
-                : "border-border"
-            }
-          >
-            <CardContent className="pt-4 pb-4">
+        <Card
+          className={
+            isRegistered
+              ? "border-green-500/40 bg-green-500/5"
+              : "border-border"
+          }
+        >
+          <CardContent className="pt-4 pb-4 space-y-3">
+            {event.myParticipationStatus && (
               <div className="flex items-center justify-between gap-3">
                 <div className="space-y-0.5">
                   <p className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground">
@@ -200,9 +203,21 @@ export default async function EventDetailPage({ params }: Props) {
                   {isRegistered ? "✓" : "✕"}
                 </span>
               </div>
-            </CardContent>
-          </Card>
-        )}
+            )}
+            <ParticipationButton
+              eventId={event.id}
+              myStatus={event.myParticipationStatus}
+              isFull={isFull}
+              isBeforeEvent={isBeforeEvent}
+              joinLabel={t("join_button")}
+              cancelLabel={t("cancel_button")}
+              fullLabel={t("full_capacity")}
+              endedLabel={t("event_ended")}
+              joiningLabel={t("joining")}
+              cancellingLabel={t("cancelling")}
+            />
+          </CardContent>
+        </Card>
 
       </div>
     </main>
