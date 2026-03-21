@@ -46,11 +46,20 @@ ls .claude/steering/issue-$ARGUMENTS-*.md 2>/dev/null
 - `docs/architecture/decisions.md`（関連セクション）
 - `.claude/rules/`（実装対象のパスに該当するルール）
 
-### Step 3: ブランチ作成
+### Step 3: Worktree 作成
+
+ブランチ名を決めたら、git worktree で独立した作業ディレクトリを作成する。
 
 ```bash
-git checkout -b feat/issue-$ARGUMENTS-{ステアリングのタイトルをkebab-caseに変換}
+# リポジトリルートから実行
+BRANCH=feat/issue-$ARGUMENTS-{ステアリングのタイトルをkebab-caseに変換}
+WORKTREE=../e-be-issue-$ARGUMENTS
+
+git worktree add $WORKTREE -b $BRANCH
+cd $WORKTREE
 ```
+
+以降の実装・コミット・push はすべてこの worktree ディレクトリ内で行う。
 
 ### Step 4: 実装
 
@@ -84,10 +93,22 @@ PR を作成する（`--repo qei-2027-700/e-be`）。
 2段階セルフレビューを実施する。
 
 - **要修正** → 修正コミットを追加し、`/gh-rv` を再実行する
-- **LGTM** → マージして完了
+- **LGTM** → マージしてクリーンアップ
 
 ```bash
+# PR マージ（リモートブランチも同時削除）
 gh pr merge --merge --delete-branch --repo qei-2027-700/e-be {PR番号}
+```
+
+マージコマンドが **成功した場合のみ**、以下のクリーンアップを実行する。
+失敗（CI 未通過・コンフリクト等）した場合はクリーンアップを行わず、原因を調査して修正すること。
+
+```bash
+# マージ成功後のみ実行 ↓
+cd {元のリポジトリルート（e-be/）}
+git worktree remove ../e-be-issue-$ARGUMENTS
+git branch -d feat/issue-$ARGUMENTS-{ブランチ名}
+git pull origin main
 ```
 
 ## 注意
