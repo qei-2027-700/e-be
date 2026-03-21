@@ -125,6 +125,7 @@ export type UpcomingParticipationItem = {
 /**
  * 参加予定のイベントを取得する。
  * - registered かつ events.endAt が未来のもの
+ * - events.status = 'published' のみ（cancelled/rejected イベントは表示しない）
  * - 近い順（events.startAt ASC）で返す
  */
 export async function getUpcomingParticipations(userId: string): Promise<UpcomingParticipationItem[]> {
@@ -146,7 +147,8 @@ export async function getUpcomingParticipations(userId: string): Promise<Upcomin
         eq(eventParticipations.status, "registered"),
         isNull(eventParticipations.deletedAt),
         isNull(events.deletedAt),
-        gt(events.endAt, now)
+        gt(events.endAt, now),
+        eq(events.status, "published")
       )
     )
     .orderBy(asc(events.startAt));
@@ -165,6 +167,8 @@ export async function getUpcomingParticipations(userId: string): Promise<Upcomin
  * - registered かつ endAt が過去、または cancelled
  * - 論理削除されていない参加レコードのみ
  * - 新しい順（events.startAt DESC）で返す
+ * - events.status はフィルタしない。キャンセル済みイベントも履歴として表示する設計のため
+ *   （docs/features/event-participation.md: 参加表明済み・参加済み・キャンセル済みを一覧表示）
  */
 export async function getParticipationHistory(userId: string): Promise<ParticipationHistoryItem[]> {
   const now = new Date();
