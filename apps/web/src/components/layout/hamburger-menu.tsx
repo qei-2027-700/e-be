@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { signOutAction } from '@/lib/actions/auth';
 import { useTranslations } from 'next-intl';
+import { APP_NAME } from '@/lib/config';
 
 interface HamburgerMenuProps {
   locale: string;
@@ -32,7 +33,7 @@ export function HamburgerMenu({ locale, userType }: HamburgerMenuProps) {
       <Sheet open={open} onOpenChange={setOpen}>
         <SheetContent side="right" className="w-64">
           <SheetHeader>
-            <SheetTitle>E-be</SheetTitle>
+            <SheetTitle>{APP_NAME}</SheetTitle>
           </SheetHeader>
           <nav className="mt-6 flex flex-col gap-1">
             <Link

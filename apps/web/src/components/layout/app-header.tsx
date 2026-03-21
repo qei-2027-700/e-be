@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { signOutAction } from "@/lib/actions/auth";
 import { HamburgerMenu } from "@/components/layout/hamburger-menu";
+import { APP_NAME } from "@/lib/config";
 
 interface AppHeaderProps {
   userEmail: string;
@@ -17,7 +18,7 @@ export async function AppHeader({ userEmail, userType, locale }: AppHeaderProps)
     <header className="sticky top-0 z-40 border-b bg-background/80 backdrop-blur-md">
       <div className="mx-auto flex max-w-5xl items-center justify-between px-4 h-14 md:px-6">
         <Link href={`/${locale}`} className="text-base font-bold tracking-tight">
-          E-be
+          {APP_NAME}
         </Link>
         <div className="flex items-center gap-2">
           <span className="hidden text-xs text-muted-foreground sm:block">

@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { APP_NAME } from "@/lib/config";
 
 interface NavBarProps {
   locale: string;
@@ -35,7 +36,7 @@ export function NavBar({ locale, isLoggedIn, labels }: NavBarProps) {
     >
       <div className="mx-auto flex max-w-5xl items-center justify-between px-6 h-16">
         <Link href={`/${locale}`} className="text-lg font-bold tracking-tight">
-          E-be
+          {APP_NAME}
         </Link>
         <div className="flex items-center gap-2">
           {isLoggedIn ? (
