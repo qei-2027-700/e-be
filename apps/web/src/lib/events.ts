@@ -2,6 +2,18 @@ import { db } from "@/lib/db";
 import { events, eventParticipations, organizations } from "@e-be/db/schema";
 import { eq, and, gte, lte, isNull, or, lt, gt, asc, desc } from "drizzle-orm";
 
+/**
+ * イベント作成フォームのバー選択用に公開バー一覧を取得する。
+ * deletedAt IS NULL の全組織を返す。
+ */
+export async function getPublicBars(): Promise<{ id: string; name: string }[]> {
+  return db
+    .select({ id: organizations.id, name: organizations.name })
+    .from(organizations)
+    .where(isNull(organizations.deletedAt))
+    .orderBy(asc(organizations.name));
+}
+
 export type CalendarEventData = {
   id: string;
   title: string | null;

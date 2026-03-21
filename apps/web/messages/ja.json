@@ -137,6 +137,7 @@
     "role_member": "メンバー",
     "go_to_org": "組織ダッシュボードへ",
     "admin_link": "管理者画面へ",
+    "create_event": "イベントを作成",
     "organizer_history_title": "主催イベント履歴",
     "organizer_history_empty": "主催したイベントはまだありません",
     "event_status_published_ended": "完了",
@@ -227,6 +228,24 @@
   "metadata": {
     "title": "イーベ (E-be)",
     "description": "良いイベントを増やす、店舗と主催者をつなぐイベントバー運営プラットフォーム"
+  },
+  "event_create": {
+    "title": "イベントを作成",
+    "back": "ダッシュボードへ戻る",
+    "field_bar": "開催バー",
+    "field_bar_placeholder": "バーを選択してください",
+    "field_title": "タイトル",
+    "field_title_placeholder": "例: 渋谷ジャズナイト Vol.1",
+    "field_description": "説明",
+    "field_description_placeholder": "イベントの内容・雰囲気などを書いてください",
+    "field_max_participants": "定員",
+    "field_max_participants_placeholder": "未設定の場合は定員なし",
+    "submit": "下書き保存",
+    "submitting": "保存中...",
+    "error_unauthorized": "ログインが必要です",
+    "error_forbidden": "イベント作成権限がありません",
+    "error_invalid": "入力内容を確認してください",
+    "error_unknown": "エラーが発生しました。もう一度お試しください"
   },
   "event_detail": {
     "back": "ダッシュボードへ戻る",
