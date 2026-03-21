@@ -1,7 +1,8 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { useActionState } from "react";
+import { useActionState, useEffect } from "react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -15,6 +16,15 @@ type Props = {
 export function ApplyForm({ userId, locale }: Props) {
   const t = useTranslations("apply");
   const [state, action, isPending] = useActionState(submitApplication, null);
+
+  useEffect(() => {
+    if (!state) return;
+    if (state.success) {
+      toast.success(t("toast_success"));
+    } else {
+      toast.error(t("toast_error"));
+    }
+  }, [state, t]);
 
   if (state?.success) {
     return (

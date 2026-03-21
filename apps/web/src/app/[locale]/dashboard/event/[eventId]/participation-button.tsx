@@ -2,6 +2,8 @@
 
 import { useTransition } from 'react';
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
+import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { joinEvent, cancelParticipation } from '@/lib/actions/participation';
 
@@ -32,17 +34,33 @@ export function ParticipationButton({
 }: Props) {
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
+  const t = useTranslations('event_detail');
 
   const handleJoin = () => {
     startTransition(async () => {
-      await joinEvent(eventId);
+      const result = await joinEvent(eventId);
+      if ('error' in result) {
+        const errorKey = {
+          already_registered: 'toast_already_registered',
+          full_capacity: 'toast_full_capacity',
+          event_ended: 'toast_event_ended',
+        }[result.error] ?? 'toast_error';
+        toast.error(t(errorKey as Parameters<typeof t>[0]));
+        return;
+      }
+      toast.success(t('toast_join_success'));
       router.refresh();
     });
   };
 
   const handleCancel = () => {
     startTransition(async () => {
-      await cancelParticipation(eventId);
+      const result = await cancelParticipation(eventId);
+      if ('error' in result) {
+        toast.error(t('toast_error'));
+        return;
+      }
+      toast.success(t('toast_cancel_success'));
       router.refresh();
     });
   };

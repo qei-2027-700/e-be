@@ -1,7 +1,8 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { useActionState } from "react";
+import { useActionState, useEffect } from "react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { approveApplication, rejectApplication } from "./actions";
@@ -33,15 +34,26 @@ export function ReviewActions({
   const [approveState, approveAction, isApproving] = useActionState(approveApplication, null);
   const [rejectState, rejectAction, isRejecting] = useActionState(rejectApplication, null);
 
+  useEffect(() => {
+    if (!approveState) return;
+    if ((approveState as { error?: string }).error) {
+      toast.error(t("toast_error"));
+    } else if ((approveState as { ok?: boolean }).ok) {
+      toast.success(t("toast_approve_success"));
+    }
+  }, [approveState, t]);
+
+  useEffect(() => {
+    if (!rejectState) return;
+    if ((rejectState as { error?: string }).error) {
+      toast.error(t("toast_error"));
+    } else if ((rejectState as { ok?: boolean }).ok) {
+      toast.success(t("toast_reject_success"));
+    }
+  }, [rejectState, t]);
+
   return (
     <div className="space-y-3 border-t pt-3">
-      {(approveState as { error?: string } | null)?.error && (
-        <p className="text-sm text-destructive">{(approveState as { error: string }).error}</p>
-      )}
-      {(rejectState as { error?: string } | null)?.error && (
-        <p className="text-sm text-destructive">{(rejectState as { error: string }).error}</p>
-      )}
-
       <form action={approveAction} className="inline-block mr-2">
         <input type="hidden" name="applicationId" value={applicationId} />
         <input type="hidden" name="applicantUserId" value={applicantUserId} />
