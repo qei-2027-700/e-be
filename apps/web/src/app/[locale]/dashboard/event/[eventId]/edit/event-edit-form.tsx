@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { updateEventDraft, submitEvent, publishEvent } from "@/lib/actions/event";
+import { DateTimePicker } from "@/components/ui/date-time-picker";
 import Link from "next/link";
 
 type EventData = {
@@ -29,19 +30,13 @@ type Props = {
   locale: string;
 };
 
-// ISO文字列を datetime-local input 用のフォーマットに変換
-function toDatetimeLocal(iso: string | null): string {
-  if (!iso) return "";
-  return iso.slice(0, 16); // "YYYY-MM-DDTHH:mm"
-}
-
 export function EventEditForm({ event, eventId, hasPermission, locale }: Props) {
   const t = useTranslations("event_edit");
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
-  const [startAt, setStartAt] = useState(toDatetimeLocal(event.startAt));
-  const [endAt, setEndAt] = useState(toDatetimeLocal(event.endAt));
+  const [startAt, setStartAt] = useState(event.startAt ?? "");
+  const [endAt, setEndAt] = useState(event.endAt ?? "");
 
   const hasDatetime = startAt !== "" && endAt !== "";
 
@@ -124,25 +119,27 @@ export function EventEditForm({ event, eventId, hasPermission, locale }: Props) 
 
           <div className="space-y-1">
             <Label htmlFor="startAt">{t("field_start_at")}</Label>
-            <Input
+            <DateTimePicker
               id="startAt"
               name="startAt"
-              type="datetime-local"
               value={startAt}
-              onChange={(e) => setStartAt(e.target.value)}
+              onChange={setStartAt}
               disabled={isPending}
+              locale={locale}
+              placeholder={t("field_start_at")}
             />
           </div>
 
           <div className="space-y-1">
             <Label htmlFor="endAt">{t("field_end_at")}</Label>
-            <Input
+            <DateTimePicker
               id="endAt"
               name="endAt"
-              type="datetime-local"
               value={endAt}
-              onChange={(e) => setEndAt(e.target.value)}
+              onChange={setEndAt}
               disabled={isPending}
+              locale={locale}
+              placeholder={t("field_end_at")}
             />
           </div>
 
