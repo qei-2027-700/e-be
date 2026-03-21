@@ -1,4 +1,10 @@
 {
+  "common": {
+    "confirmDialog": {
+      "confirm": "確認",
+      "cancel": "キャンセル"
+    }
+  },
   "home": {
     "badge": "v0.1.0 — 開発中",
     "title": "イーベ",
