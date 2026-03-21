@@ -15,6 +15,27 @@ export const getUser = cache(async () => {
   return user ?? null;
 });
 
+/** DB上の users レコードを取得（email で JOIN、deleted_at IS NULL 条件付き）
+ *  React.cache() により同一リクエスト内で複数回呼ばれても DB 問い合わせは1回のみ
+ */
+export const getDbUser = cache(async () => {
+  const authUser = await getUser();
+  if (!authUser?.email) return null;
+
+  const rows = await db
+    .select()
+    .from(users)
+    .where(
+      and(
+        eq(users.email, authUser.email),
+        isNull(users.deletedAt)
+      )
+    )
+    .limit(1);
+
+  return rows[0] ?? null;
+});
+
 /** 指定組織でのロールを取得（非メンバーなら null） */
 export async function getOrgRole(
   userId: string,

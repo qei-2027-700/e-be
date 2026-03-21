@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { getLocale } from "next-intl/server";
-import { getUser, getUserType } from "@/lib/auth";
+import { getUser, getDbUser, getUserType } from "@/lib/auth";
 import { AppHeader } from "@/components/layout/app-header";
 import { AppFooter } from "@/components/layout/app-footer";
 
@@ -9,9 +9,9 @@ export default async function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const [locale, user] = await Promise.all([getLocale(), getUser()]);
+  const [locale, user, dbUser] = await Promise.all([getLocale(), getUser(), getDbUser()]);
 
-  if (!user) {
+  if (!user || !dbUser) {
     redirect(`/${locale}/auth/sign-in`);
   }
 

@@ -153,7 +153,24 @@
     "participation_status_registered": "参加予定",
     "participation_status_cancelled": "キャンセル済み",
     "upcoming_participations_title": "参加予定イベント",
-    "upcoming_participations_empty": "参加予定のイベントはありません"
+    "upcoming_participations_empty": "参加予定のイベントはありません",
+    "account_settings": {
+      "title": "アカウント設定",
+      "withdrawal_section_title": "退会",
+      "withdrawal_description": "退会すると、アカウントと関連データが削除されます。この操作は取り消せません。",
+      "withdrawal_button": "退会する",
+      "withdrawal_confirm_title": "退会の確認",
+      "withdrawal_confirm_description": "退会を確定するには、下のフィールドに「退会する」と入力してください。",
+      "withdrawal_confirm_placeholder": "退会する",
+      "withdrawal_confirm_submit": "退会を確定する",
+      "withdrawal_confirm_cancel": "キャンセル",
+      "withdrawal_checking": "確認中...",
+      "withdrawal_processing": "退会処理中...",
+      "blocker_owner_title": "組織のオーナーです",
+      "blocker_owner_description": "退会前に、所有している組織のオーナー権限を他のメンバーに移譲するか、組織を削除してください。",
+      "blocker_event_title": "公開中のイベントがあります",
+      "blocker_event_description": "退会前に、開催中・今後予定されているすべてのイベントをキャンセルしてください。"
+    }
   },
   "apply": {
     "title": "事業者申請",
