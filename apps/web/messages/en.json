@@ -203,7 +203,9 @@
     "error_slug_taken": "This slug is already taken",
     "error_already_applied": "You already have a pending application",
     "success_title": "Application Received",
-    "success_description": "An admin will review your application and contact you."
+    "success_description": "An admin will review your application and contact you.",
+    "toast_success": "Application submitted",
+    "toast_error": "Something went wrong. Please try again"
   },
   "admin": {
     "title": "Admin Dashboard",
@@ -223,7 +225,10 @@
     "reject_note": "Rejection Note (optional)",
     "reject_note_placeholder": "Reason for rejection",
     "approve_confirm": "Approve this application? An organization will be created.",
-    "reject_confirm": "Reject this application?"
+    "reject_confirm": "Reject this application?",
+    "toast_approve_success": "Application approved",
+    "toast_reject_success": "Application rejected",
+    "toast_error": "Something went wrong. Please try again"
   },
   "terms": {
     "link_text": "Terms of Service",
@@ -253,7 +258,11 @@
     "error_invalid": "Please check your inputs",
     "error_not_found": "Event not found",
     "error_forbidden": "This action is not allowed",
-    "error_unauthorized": "Please sign in"
+    "error_unauthorized": "Please sign in",
+    "toast_draft_saved": "Draft saved",
+    "toast_submitted": "Submitted for approval",
+    "toast_published": "Event published",
+    "toast_error": "Something went wrong. Please try again"
   },
   "event_create": {
     "title": "Create Event",
@@ -271,7 +280,9 @@
     "error_unauthorized": "Please sign in",
     "error_forbidden": "You don't have permission to create events",
     "error_invalid": "Please check your inputs",
-    "error_unknown": "An error occurred. Please try again"
+    "error_unknown": "An error occurred. Please try again",
+    "toast_success": "Event draft saved",
+    "toast_error": "Something went wrong. Please try again"
   },
   "event_detail": {
     "back": "Back to Dashboard",
@@ -291,7 +302,13 @@
     "full_capacity": "Full",
     "event_ended": "Ended",
     "joining": "Processing...",
-    "cancelling": "Processing..."
+    "cancelling": "Processing...",
+    "toast_join_success": "You've joined the event",
+    "toast_cancel_success": "Participation cancelled",
+    "toast_already_registered": "You're already registered",
+    "toast_full_capacity": "This event is full",
+    "toast_event_ended": "This event has already ended",
+    "toast_error": "Something went wrong. Please try again"
   },
   "privacy": {
     "title": "Privacy Policy",

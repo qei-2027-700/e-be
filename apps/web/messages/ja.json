@@ -203,7 +203,9 @@
     "error_slug_taken": "このスラッグはすでに使用されています",
     "error_already_applied": "すでに申請中です",
     "success_title": "申請を受け付けました",
-    "success_description": "管理者が内容を確認後、ご連絡いたします。"
+    "success_description": "管理者が内容を確認後、ご連絡いたします。",
+    "toast_success": "申請を送信しました",
+    "toast_error": "エラーが発生しました。もう一度お試しください"
   },
   "admin": {
     "title": "管理者画面",
@@ -223,7 +225,10 @@
     "reject_note": "却下理由（任意）",
     "reject_note_placeholder": "却下理由を入力してください",
     "approve_confirm": "この申請を承認しますか？承認すると組織が作成されます。",
-    "reject_confirm": "この申請を却下しますか？"
+    "reject_confirm": "この申請を却下しますか？",
+    "toast_approve_success": "申請を承認しました",
+    "toast_reject_success": "申請を却下しました",
+    "toast_error": "エラーが発生しました。もう一度お試しください"
   },
   "terms": {
     "link_text": "利用規約",
@@ -253,7 +258,11 @@
     "error_invalid": "入力内容を確認してください",
     "error_not_found": "イベントが見つかりません",
     "error_forbidden": "この操作は許可されていません",
-    "error_unauthorized": "ログインが必要です"
+    "error_unauthorized": "ログインが必要です",
+    "toast_draft_saved": "下書きを保存しました",
+    "toast_submitted": "申請しました",
+    "toast_published": "公開しました",
+    "toast_error": "エラーが発生しました。もう一度お試しください"
   },
   "event_create": {
     "title": "イベントを作成",
@@ -271,7 +280,9 @@
     "error_unauthorized": "ログインが必要です",
     "error_forbidden": "イベント作成権限がありません",
     "error_invalid": "入力内容を確認してください",
-    "error_unknown": "エラーが発生しました。もう一度お試しください"
+    "error_unknown": "エラーが発生しました。もう一度お試しください",
+    "toast_success": "イベントを下書き保存しました",
+    "toast_error": "エラーが発生しました。もう一度お試しください"
   },
   "event_detail": {
     "back": "ダッシュボードへ戻る",
@@ -291,7 +302,13 @@
     "full_capacity": "定員満",
     "event_ended": "終了済み",
     "joining": "処理中...",
-    "cancelling": "処理中..."
+    "cancelling": "処理中...",
+    "toast_join_success": "イベントに参加しました",
+    "toast_cancel_success": "参加をキャンセルしました",
+    "toast_already_registered": "すでに参加済みです",
+    "toast_full_capacity": "定員に達しています",
+    "toast_event_ended": "開催済みのイベントです",
+    "toast_error": "エラーが発生しました。もう一度お試しください"
   },
   "privacy": {
     "title": "プライバシーポリシー",

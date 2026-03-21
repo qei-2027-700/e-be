@@ -3,6 +3,7 @@
 import { useTransition, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
+import { toast } from "sonner";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -39,8 +40,10 @@ export function EventCreateForm({ bars, locale }: Props) {
           | "error_invalid"
           | "error_unknown";
         setError(t(key));
+        toast.error(t("toast_error"));
         return;
       }
+      toast.success(t("toast_success"));
       router.push(`/${locale}/dashboard/event/${result.eventId}`);
     });
   }

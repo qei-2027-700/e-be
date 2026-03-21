@@ -3,6 +3,7 @@
 import { useTransition, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
+import { toast } from "sonner";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -52,8 +53,10 @@ export function EventEditForm({ event, eventId, hasPermission, locale }: Props) 
       const result = await updateEventDraft(eventId, formData);
       if ("error" in result) {
         setError(t(`error_${result.error}` as Parameters<typeof t>[0]));
+        toast.error(t("toast_error"));
         return;
       }
+      toast.success(t("toast_draft_saved"));
       router.refresh();
     });
   }
@@ -64,8 +67,10 @@ export function EventEditForm({ event, eventId, hasPermission, locale }: Props) 
       const result = await submitEvent(eventId);
       if ("error" in result) {
         setError(t(`error_${result.error}` as Parameters<typeof t>[0]));
+        toast.error(t("toast_error"));
         return;
       }
+      toast.success(t("toast_submitted"));
       router.push(`/${locale}/dashboard`);
     });
   }
@@ -76,8 +81,10 @@ export function EventEditForm({ event, eventId, hasPermission, locale }: Props) 
       const result = await publishEvent(eventId);
       if ("error" in result) {
         setError(t(`error_${result.error}` as Parameters<typeof t>[0]));
+        toast.error(t("toast_error"));
         return;
       }
+      toast.success(t("toast_published"));
       router.push(`/${locale}/dashboard/event/${eventId}`);
     });
   }
