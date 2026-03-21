@@ -272,7 +272,6 @@ export type PublicOrganizerHistoryItem = {
   id: string;
   title: string | null;
   startAt: string | null;
-  orgName: string;
 };
 
 /**
@@ -289,10 +288,8 @@ export async function getPublicOrganizerHistory(userId: string): Promise<PublicO
       id: events.id,
       title: events.title,
       startAt: events.startAt,
-      orgName: organizations.name,
     })
     .from(events)
-    .innerJoin(organizations, eq(events.orgId, organizations.id))
     .where(
       and(
         eq(events.userId, userId),
@@ -308,7 +305,6 @@ export async function getPublicOrganizerHistory(userId: string): Promise<PublicO
     id: row.id,
     title: row.title,
     startAt: row.startAt?.toISOString() ?? null,
-    orgName: row.orgName,
   }));
 }
 
