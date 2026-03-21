@@ -1,7 +1,21 @@
+import type { Metadata } from "next";
 import { getLocale, getTranslations } from "next-intl/server";
 import { NavBar } from "@/components/lp/nav-bar";
 import { AppFooter } from "@/components/layout/app-footer";
 import { getUser } from "@/lib/auth";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "privacy" });
+  return {
+    title: t("title"),
+    description: t("introduction"),
+  };
+}
 
 export default async function PrivacyPage() {
   const [t, locale, user, homeT] = await Promise.all([
