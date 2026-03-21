@@ -126,4 +126,12 @@
   html {
     @apply font-sans;
   }
+  button,
+  [role="button"] {
+    @apply cursor-pointer;
+  }
+  button:disabled,
+  [role="button"]:disabled {
+    @apply cursor-not-allowed;
+  }
 }
