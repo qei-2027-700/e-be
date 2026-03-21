@@ -11,11 +11,12 @@ type Props = {
 };
 
 export default async function EventDetailPage({ params }: Props) {
-  const { eventId } = await params;
-  const locale = await getLocale();
-  const t = await getTranslations("event_detail");
-
-  const user = await getUser();
+  const [{ eventId }, locale, t, user] = await Promise.all([
+    params,
+    getLocale(),
+    getTranslations("event_detail"),
+    getUser(),
+  ]);
   if (!user) notFound();
 
   const event = await getEventDetail(eventId, user.id);
