@@ -6,13 +6,17 @@ import { createClient } from './supabase/server';
 
 /** 現在のユーザーを取得（未認証なら null）
  *  React.cache() により同一リクエスト内で複数回呼ばれても Supabase への問い合わせは1回のみ
+ *
+ *  getSession() を使用してローカルJWT検証を行う（getUser() はリモートHTTP往復が発生するため使用しない）。
+ *  proxy.ts の updateSession() がセッション Cookie のリフレッシュを担うため、
+ *  Server Component ではローカル検証で十分かつ安全。
  */
 export const getUser = cache(async () => {
   const supabase = await createClient();
   const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  return user ?? null;
+    data: { session },
+  } = await supabase.auth.getSession();
+  return session?.user ?? null;
 });
 
 /** DB上の users レコードを取得（email で JOIN、deleted_at IS NULL 条件付き）
