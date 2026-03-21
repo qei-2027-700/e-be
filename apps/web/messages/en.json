@@ -153,7 +153,24 @@
     "participation_status_registered": "Registered",
     "participation_status_cancelled": "Cancelled",
     "upcoming_participations_title": "Upcoming Events",
-    "upcoming_participations_empty": "No upcoming events."
+    "upcoming_participations_empty": "No upcoming events.",
+    "account_settings": {
+      "title": "Account Settings",
+      "withdrawal_section_title": "Delete Account",
+      "withdrawal_description": "Deleting your account will permanently remove your account and all associated data. This action cannot be undone.",
+      "withdrawal_button": "Delete Account",
+      "withdrawal_confirm_title": "Confirm Account Deletion",
+      "withdrawal_confirm_description": "To confirm, type \"Delete\" in the field below.",
+      "withdrawal_confirm_placeholder": "Delete",
+      "withdrawal_confirm_submit": "Permanently Delete Account",
+      "withdrawal_confirm_cancel": "Cancel",
+      "withdrawal_checking": "Checking...",
+      "withdrawal_processing": "Processing...",
+      "blocker_owner_title": "You own an organization",
+      "blocker_owner_description": "Before deleting your account, please transfer ownership of your organizations to another member or delete them.",
+      "blocker_event_title": "You have active events",
+      "blocker_event_description": "Before deleting your account, please cancel all upcoming published events."
+    }
   },
   "apply": {
     "title": "Venue Operator Application",
