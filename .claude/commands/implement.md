@@ -48,19 +48,12 @@ ls .claude/steering/issue-$ARGUMENTS-*.md 2>/dev/null
 
 ### Step 3: Worktree 作成
 
-ブランチ名を決めたら、git worktree で独立した作業ディレクトリを作成する。
+`/worktree-setup $ARGUMENTS` を実行する。
 
-```bash
-# リポジトリルートから実行
-BRANCH=feat/issue-$ARGUMENTS-{ステアリングのタイトルをkebab-caseに変換}
-WORKTREE=../e-be-issue-$ARGUMENTS
+- worktree ディレクトリ: `../wt-$ARGUMENTS`
+- dev サーバーのポートは `/tmp/wt-$ARGUMENTS-port.txt` に保存される
 
-git worktree add $WORKTREE -b $BRANCH
-cd $WORKTREE
-pnpm i  # worktree には node_modules がないため必須
-```
-
-以降の実装・コミット・push はすべてこの worktree ディレクトリ内で行う。
+以降の実装・コミット・push はすべて `../wt-$ARGUMENTS` 内で行う。
 
 ### Step 4: 実装
 
@@ -75,15 +68,16 @@ pnpm i  # worktree には node_modules がないため必須
 Playwright MCP でスクリーンショットを取得して動作確認する。
 問題があれば修正してから次へ進む。
 
+> **worktree dev サーバーのポートを確認してから検証すること:**
+> ```bash
+> DEV_PORT=$(cat /tmp/wt-$ARGUMENTS-port.txt 2>/dev/null || echo 3000)
+> echo "検証 URL: http://localhost:$DEV_PORT"
+> ```
+> Playwright では必ず worktree のポート（3001〜など）を使う。メインリポジトリの 3000 番は使わない。
+
 ### Step 6: commit + push
 
-```bash
-git add {実装したファイルを個別に指定}
-git commit -m "feat: {実装内容の説明}
-
-Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>"
-git push -u origin {ブランチ名}
-```
+`/gh-ship` を実行する。
 
 ### Step 7: /gh-pr
 
@@ -106,8 +100,14 @@ gh pr merge --merge --delete-branch --repo qei-2027-700/e-be {PR番号}
 
 ```bash
 # マージ成功後のみ実行 ↓
+
+# worktree dev サーバーを停止
+DEV_PID=$(cat /tmp/wt-$ARGUMENTS-pid.txt 2>/dev/null)
+[ -n "$DEV_PID" ] && kill $DEV_PID 2>/dev/null
+rm -f /tmp/wt-$ARGUMENTS-pid.txt /tmp/wt-$ARGUMENTS-port.txt /tmp/wt-$ARGUMENTS-dev.log
+
 cd {元のリポジトリルート（e-be/）}
-git worktree remove ../e-be-issue-$ARGUMENTS
+git worktree remove ../wt-$ARGUMENTS
 git branch -d feat/issue-$ARGUMENTS-{ブランチ名}
 git pull origin main
 ```
@@ -164,4 +164,4 @@ ls .claude/steering/issue-*.md 2>/dev/null | sed 's/.*issue-//' | sed 's/-.*//'
 - スクリーンショットはコミット対象外（`.playwright-mcp/` は .gitignore 済み）
 - 1セッションで着手する Issue は最大 3 つまで（Step 9 のカウンターで管理）
 - カウンターファイル `/tmp/e-be-implement-count.txt` はセッション開始時にリセットされる（`/tmp` は再起動で消える）
-- `gh-ship` は使わず、`gh-pr` → `gh-rv` → merge の順で進める
+- commit + push は `/gh-ship` → `/gh-pr` → `/gh-rv` → merge の順で進める
