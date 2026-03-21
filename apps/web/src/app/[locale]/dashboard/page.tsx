@@ -7,7 +7,7 @@ import { db } from "@/lib/db";
 import { operatorApplications } from "@e-be/db/schema";
 import { eq, and, isNull } from "drizzle-orm";
 import { EventCalendar } from "@/components/event-calendar";
-import { getEventsForCalendar, getOrganizerHistory, getParticipationHistory, getUpcomingParticipations } from "@/lib/events";
+import { getEventsForCalendar, getMyDraftEvents, getOrganizerHistory, getParticipationHistory, getUpcomingParticipations } from "@/lib/events";
 
 const USER_TYPE_VARIANT = {
   user: "secondary",
@@ -38,8 +38,9 @@ export default async function DashboardPage() {
   let organizerHistory: Awaited<ReturnType<typeof getOrganizerHistory>> = [];
   let participationHistory: Awaited<ReturnType<typeof getParticipationHistory>> = [];
   let upcomingParticipations: Awaited<ReturnType<typeof getUpcomingParticipations>> = [];
+  let myDraftEvents: Awaited<ReturnType<typeof getMyDraftEvents>> = [];
   if (userType === "user") {
-    const [pendingResult, historyResult, participationResult, upcomingResult] = await Promise.all([
+    const [pendingResult, historyResult, participationResult, upcomingResult, draftResult] = await Promise.all([
       db
         .select({ id: operatorApplications.id })
         .from(operatorApplications)
@@ -54,11 +55,13 @@ export default async function DashboardPage() {
       getOrganizerHistory(user.id),
       getParticipationHistory(user.id),
       getUpcomingParticipations(user.id),
+      getMyDraftEvents(user.id),
     ]);
     hasPendingApplication = pendingResult.length > 0;
     organizerHistory = historyResult;
     participationHistory = participationResult;
     upcomingParticipations = upcomingResult;
+    myDraftEvents = draftResult;
   }
 
   const userTypeKey = `user_type_${userType}` as const;
@@ -96,6 +99,66 @@ export default async function DashboardPage() {
               {t("create_event")}
             </Link>
           </div>
+        )}
+
+        {userType === "user" && (
+          <Card>
+            <CardHeader>
+              <CardTitle>{t("my_events_title")}</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {myDraftEvents.length === 0 ? (
+                <div className="space-y-3 py-4 text-center">
+                  <p className="text-sm text-muted-foreground">{t("my_events_empty")}</p>
+                  <Link
+                    href={`/${locale}/dashboard/event/create`}
+                    className="inline-flex min-h-11 items-center rounded-lg border border-border bg-background px-4 text-[0.8rem] font-medium transition-all hover:bg-muted"
+                  >
+                    {t("create_event")}
+                  </Link>
+                </div>
+              ) : (
+                <ul className="divide-y">
+                  {myDraftEvents.map((event) => {
+                    const href =
+                      event.status === "draft"
+                        ? `/${locale}/dashboard/event/${event.id}/edit`
+                        : `/${locale}/dashboard/event/${event.id}`;
+                    const statusKey =
+                      event.status === "draft"
+                        ? "event_status_draft"
+                        : "event_status_pending";
+                    return (
+                      <li key={event.id}>
+                        <Link
+                          href={href}
+                          className="flex items-center justify-between gap-3 py-3 hover:bg-muted/50 -mx-2 px-2 rounded-md transition-colors"
+                        >
+                          <div className="min-w-0">
+                            <p className="truncate font-medium">{event.title ?? "—"}</p>
+                            <p className="text-xs text-muted-foreground">{event.orgName}</p>
+                            <p className="text-xs text-muted-foreground">
+                              {new Date(event.createdAt).toLocaleDateString(locale, {
+                                year: "numeric",
+                                month: "short",
+                                day: "numeric",
+                              })}
+                            </p>
+                          </div>
+                          <Badge
+                            variant={event.status === "draft" ? "secondary" : "outline"}
+                            className="shrink-0"
+                          >
+                            {t(statusKey)}
+                          </Badge>
+                        </Link>
+                      </li>
+                    );
+                  })}
+                </ul>
+              )}
+            </CardContent>
+          </Card>
         )}
 
         {userType === "user" && (
