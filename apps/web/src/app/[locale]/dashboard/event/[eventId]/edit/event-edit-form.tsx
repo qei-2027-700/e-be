@@ -4,7 +4,7 @@ import { useTransition, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -176,9 +176,9 @@ export function EventEditForm({ event, eventId, hasPermission, locale }: Props) 
               </Button>
             )}
 
-            <Button variant="outline" asChild>
-              <Link href={`/${locale}/dashboard`}>{t("back")}</Link>
-            </Button>
+            <Link href={`/${locale}/dashboard`} className={buttonVariants({ variant: "outline" })}>
+              {t("back")}
+            </Link>
           </div>
         </form>
       </CardContent>
