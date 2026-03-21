@@ -71,10 +71,15 @@ export default async function HomePage() {
             {t("hero.subtitle")}
           </p>
           <div className="flex flex-col items-center justify-center gap-3 sm:flex-row">
-            <LinkButton href="#" size="lg" className="w-full sm:w-auto">
+            <LinkButton href={`/${locale}/dashboard`} size="lg" className="w-full sm:w-auto">
               {t("hero.cta_primary")}
             </LinkButton>
-            <LinkButton href="#" size="lg" variant="outline" className="w-full sm:w-auto">
+            <LinkButton
+              href={user ? `/${locale}/dashboard/event/create` : `/${locale}/auth/sign-up`}
+              size="lg"
+              variant="outline"
+              className="w-full sm:w-auto"
+            >
               {t("hero.cta_secondary")}
             </LinkButton>
           </div>
@@ -297,7 +302,11 @@ export default async function HomePage() {
             <p className="mb-8 text-muted-foreground">
               {t("cta_section.subtitle")}
             </p>
-            <LinkButton href="#" size="lg" className="min-w-40">
+            <LinkButton
+              href={user ? `/${locale}/dashboard` : `/${locale}/auth/sign-up`}
+              size="lg"
+              className="min-w-40"
+            >
               {t("cta_section.button")}
             </LinkButton>
           </div>
