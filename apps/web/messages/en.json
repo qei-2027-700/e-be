@@ -229,6 +229,28 @@
     "title": "E-be",
     "description": "The event bar management platform connecting venues and organizers"
   },
+  "event_edit": {
+    "title": "Edit Event",
+    "back": "Back to Dashboard",
+    "field_title": "Title",
+    "field_description": "Description",
+    "field_start_at": "Start Date & Time",
+    "field_end_at": "End Date & Time",
+    "field_max_participants": "Capacity",
+    "save_draft": "Save Draft",
+    "submit": "Submit for Approval",
+    "publish": "Publish",
+    "submitting": "Processing...",
+    "error_conflict": "This time slot conflicts with another event",
+    "error_past_date": "Cannot set a past date",
+    "error_invalid_range": "End time must be after start time",
+    "error_datetime_required": "Start and end times are required to submit or publish",
+    "error_permission_required": "You don't have permission to publish at this venue",
+    "error_invalid": "Please check your inputs",
+    "error_not_found": "Event not found",
+    "error_forbidden": "This action is not allowed",
+    "error_unauthorized": "Please sign in"
+  },
   "event_create": {
     "title": "Create Event",
     "back": "Back to Dashboard",

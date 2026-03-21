@@ -1,6 +1,6 @@
 import { db } from "@/lib/db";
-import { events, eventParticipations, organizations } from "@e-be/db/schema";
-import { eq, and, gte, lte, isNull, or, lt, gt, asc, desc } from "drizzle-orm";
+import { events, eventParticipations, organizations, barHostPermissions, barBlocks } from "@e-be/db/schema";
+import { eq, and, gte, lte, isNull, or, lt, gt, asc, desc, ne, inArray } from "drizzle-orm";
 
 /**
  * イベント作成フォームのバー選択用に公開バー一覧を取得する。
@@ -12,6 +12,113 @@ export async function getPublicBars(): Promise<{ id: string; name: string }[]> {
     .from(organizations)
     .where(isNull(organizations.deletedAt))
     .orderBy(asc(organizations.name));
+}
+
+/** ユーザーが指定バーへの公開許可を持つか確認する */
+export async function hasBarHostPermission(userId: string, barId: string): Promise<boolean> {
+  const rows = await db
+    .select({ id: barHostPermissions.id })
+    .from(barHostPermissions)
+    .where(
+      and(
+        eq(barHostPermissions.userId, userId),
+        eq(barHostPermissions.barId, barId),
+        isNull(barHostPermissions.revokedAt),
+        isNull(barHostPermissions.deletedAt)
+      )
+    )
+    .limit(1);
+  return rows.length > 0;
+}
+
+/**
+ * 指定バー・時間帯に既存のイベント/ブロックが重複するか確認する。
+ * published / pending イベントおよび bar_blocks を対象とする。
+ * excludeEventId を指定した場合は自己競合を除外する。
+ */
+export async function checkEventConflict(
+  barId: string,
+  startAt: Date,
+  endAt: Date,
+  excludeEventId?: string
+): Promise<boolean> {
+  // イベント重複チェック（時間帯が重なる = startAt < endAt2 AND endAt > startAt2）
+  const eventConditions = and(
+    eq(events.orgId, barId),
+    inArray(events.status, ["published", "pending"]),
+    isNull(events.deletedAt),
+    lt(events.startAt, endAt),
+    gt(events.endAt, startAt),
+    ...(excludeEventId ? [ne(events.id, excludeEventId)] : [])
+  );
+
+  const conflictingEvents = await db
+    .select({ id: events.id })
+    .from(events)
+    .where(eventConditions)
+    .limit(1);
+
+  if (conflictingEvents.length > 0) return true;
+
+  // barBlocks 重複チェック
+  const blockConflicts = await db
+    .select({ id: barBlocks.id })
+    .from(barBlocks)
+    .where(
+      and(
+        eq(barBlocks.barId, barId),
+        isNull(barBlocks.deletedAt),
+        lt(barBlocks.startAt, endAt),
+        gt(barBlocks.endAt, startAt)
+      )
+    )
+    .limit(1);
+
+  return blockConflicts.length > 0;
+}
+
+/** オーナー用 draft/pending イベントを取得する（編集ページ用） */
+export async function getDraftEventForOwner(
+  eventId: string,
+  userId: string
+): Promise<{
+  id: string;
+  orgId: string;
+  status: string;
+  title: string | null;
+  description: string | null;
+  startAt: string | null;
+  endAt: string | null;
+  maxParticipants: number | null;
+} | null> {
+  const rows = await db
+    .select({
+      id: events.id,
+      orgId: events.orgId,
+      status: events.status,
+      title: events.title,
+      description: events.description,
+      startAt: events.startAt,
+      endAt: events.endAt,
+      maxParticipants: events.maxParticipants,
+    })
+    .from(events)
+    .where(
+      and(
+        eq(events.id, eventId),
+        eq(events.userId, userId),
+        isNull(events.deletedAt)
+      )
+    )
+    .limit(1);
+
+  if (rows.length === 0) return null;
+  const row = rows[0];
+  return {
+    ...row,
+    startAt: row.startAt?.toISOString() ?? null,
+    endAt: row.endAt?.toISOString() ?? null,
+  };
 }
 
 export type CalendarEventData = {
