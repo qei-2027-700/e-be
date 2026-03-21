@@ -88,6 +88,17 @@ export default async function DashboardPage() {
         </Card>
 
         {userType === "user" && (
+          <div className="flex justify-end">
+            <Link
+              href={`/${locale}/dashboard/event/create`}
+              className="inline-flex min-h-11 items-center rounded-lg bg-primary px-4 text-[0.8rem] font-medium text-primary-foreground transition-all hover:bg-primary/90"
+            >
+              {t("create_event")}
+            </Link>
+          </div>
+        )}
+
+        {userType === "user" && (
           <Card>
             <CardHeader>
               <CardTitle>{t("upcoming_participations_title")}</CardTitle>

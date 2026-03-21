@@ -137,6 +137,7 @@
     "role_member": "Member",
     "go_to_org": "Go to Organization",
     "admin_link": "Admin Dashboard",
+    "create_event": "Create Event",
     "organizer_history_title": "Organized Events",
     "organizer_history_empty": "You haven't organized any events yet",
     "event_status_published_ended": "Completed",
@@ -227,6 +228,24 @@
   "metadata": {
     "title": "E-be",
     "description": "The event bar management platform connecting venues and organizers"
+  },
+  "event_create": {
+    "title": "Create Event",
+    "back": "Back to Dashboard",
+    "field_bar": "Venue",
+    "field_bar_placeholder": "Select a venue",
+    "field_title": "Title",
+    "field_title_placeholder": "e.g. Shibuya Jazz Night Vol.1",
+    "field_description": "Description",
+    "field_description_placeholder": "Describe the event atmosphere and content",
+    "field_max_participants": "Capacity",
+    "field_max_participants_placeholder": "Leave blank for unlimited",
+    "submit": "Save Draft",
+    "submitting": "Saving...",
+    "error_unauthorized": "Please sign in",
+    "error_forbidden": "You don't have permission to create events",
+    "error_invalid": "Please check your inputs",
+    "error_unknown": "An error occurred. Please try again"
   },
   "event_detail": {
     "back": "Back to Dashboard",
