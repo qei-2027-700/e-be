@@ -116,6 +116,12 @@
     }
   },
   "dashboard": {
+    "nav": {
+      "dashboard": "ダッシュボード",
+      "account_settings": "アカウント設定",
+      "admin": "管理者画面",
+      "sign_out": "サインアウト"
+    },
     "title": "ダッシュボード",
     "calendar_title": "イベントカレンダー",
     "user_type_user": "一般ユーザー",

@@ -116,6 +116,12 @@
     }
   },
   "dashboard": {
+    "nav": {
+      "dashboard": "Dashboard",
+      "account_settings": "Account Settings",
+      "admin": "Admin Panel",
+      "sign_out": "Sign Out"
+    },
     "title": "Dashboard",
     "calendar_title": "Event Calendar",
     "user_type_user": "User",

@@ -1,8 +1,8 @@
 import { getTranslations } from "next-intl/server";
-import { redirect } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { createClient } from "@/lib/supabase/server";
+import { signOutAction } from "@/lib/actions/auth";
+import { HamburgerMenu } from "@/components/layout/hamburger-menu";
 
 interface AppHeaderProps {
   userEmail: string;
@@ -12,13 +12,6 @@ interface AppHeaderProps {
 
 export async function AppHeader({ userEmail, userType, locale }: AppHeaderProps) {
   const t = await getTranslations("dashboard");
-
-  async function signOut() {
-    "use server";
-    const supabase = await createClient();
-    await supabase.auth.signOut();
-    redirect(`/${locale}/auth/sign-in`);
-  }
 
   return (
     <header className="sticky top-0 z-40 border-b bg-background/95 backdrop-blur-sm">
@@ -33,16 +26,19 @@ export async function AppHeader({ userEmail, userType, locale }: AppHeaderProps)
           {userType === "system_user" && (
             <Link
               href={`/${locale}/admin`}
-              className="inline-flex min-h-9 items-center rounded-lg border border-border bg-background px-2.5 text-[0.8rem] font-medium transition-colors hover:bg-muted"
+              className="hidden md:inline-flex min-h-9 items-center rounded-lg border border-border bg-background px-2.5 text-[0.8rem] font-medium transition-colors hover:bg-muted"
             >
               {t("admin_link")}
             </Link>
           )}
-          <form action={signOut}>
-            <Button variant="outline" type="submit" size="sm" className="min-h-9">
+          {/* PC のみサインアウトボタン */}
+          <form action={signOutAction} className="hidden md:block">
+            <Button variant="outline" type="submit" size="sm" className="min-h-9 cursor-pointer">
               {t("sign_out")}
             </Button>
           </form>
+          {/* SP のみハンバーガーメニュー */}
+          <HamburgerMenu locale={locale} userType={userType} />
         </div>
       </div>
     </header>
