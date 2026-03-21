@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useLocale, useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
@@ -32,7 +32,6 @@ const TEST_ACCOUNTS = [
 export default function SignInPage() {
   const t = useTranslations("auth");
   const locale = useLocale();
-  const router = useRouter();
   const searchParams = useSearchParams();
   const next = searchParams.get("next") ?? `/${locale}/dashboard`;
 
@@ -57,8 +56,7 @@ export default function SignInPage() {
       return;
     }
 
-    router.push(next);
-    router.refresh();
+    window.location.href = next;
   }
 
   async function handleSubmit(e: React.FormEvent) {
