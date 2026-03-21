@@ -18,11 +18,16 @@ export default async function proxy(request: NextRequest) {
   // 1. next-intl でロケールルーティング処理
   const intlResponse = intlMiddleware(request);
 
-  // 2. Supabase セッションを更新（cookie の refresh）
+  // 2. パブリックパスはセッション更新不要（Supabase への不要な HTTP 呼び出しを省略）
+  if (isPublicPath(request.nextUrl.pathname)) {
+    return intlResponse;
+  }
+
+  // 3. Supabase セッションを更新（cookie の refresh）
   const { response, user } = await updateSession(request, intlResponse);
 
-  // 3. 未認証 + 保護ルートならサインインへリダイレクト
-  if (!user && !isPublicPath(request.nextUrl.pathname)) {
+  // 4. 未認証なら保護ルートからサインインへリダイレクト
+  if (!user) {
     const locale = request.nextUrl.pathname.split("/")[1] || routing.defaultLocale;
     const signInUrl = new URL(`/${locale}/auth/sign-in`, request.url);
     signInUrl.searchParams.set("next", request.nextUrl.pathname);
