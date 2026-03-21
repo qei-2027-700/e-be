@@ -111,8 +111,56 @@ git branch -d feat/issue-$ARGUMENTS-{ブランチ名}
 git pull origin main
 ```
 
+### Step 9: 次の Issue への継続提案（最大 3 回ループ）
+
+#### 9-1: 実行回数をカウントアップ
+
+```bash
+COUNTER_FILE="/tmp/e-be-implement-count.txt"
+COUNT=$(cat "$COUNTER_FILE" 2>/dev/null || echo 0)
+COUNT=$((COUNT + 1))
+echo $COUNT > "$COUNTER_FILE"
+echo "今セッション $COUNT 回目の implement が完了"
+```
+
+#### 9-2: 上限チェックと次の提案
+
+**COUNT が 3 以上** の場合:
+```
+セッション上限（3 Issue）に達しました。
+新しいセッションを開始するか、/ctx-export で引き継ぎ文書を生成してください。
+```
+→ ここで終了。次の提案は行わない。
+
+**COUNT が 3 未満** の場合:
+残りのオープン Issue を取得して提案する。
+
+```bash
+gh issue list --repo qei-2027-700/e-be --state open --limit 10
+```
+
+ステアリングが既にある Issue を優先して、次の 1 件を提案する:
+
+```bash
+ls .claude/steering/issue-*.md 2>/dev/null | sed 's/.*issue-//' | sed 's/-.*//'
+```
+
+出力例:
+```
+── 次の実装候補（残り {3 - COUNT} 回）──────────────────
+  #XX  {Issue タイトル} ← ステアリング済み（推奨）
+  #YY  {Issue タイトル}
+  #ZZ  {Issue タイトル}
+─────────────────────────────────────────────────────────
+次の Issue を実装しますか？番号を指定するか、「いいえ」と答えてください。
+```
+
+ユーザーが番号を指定した場合 → そのまま `/implement <番号>` を実行する（Step 0 に戻る）。
+「いいえ」または無応答の場合 → 終了。
+
 ## 注意
 
 - スクリーンショットはコミット対象外（`.playwright-mcp/` は .gitignore 済み）
-- 1セッションで着手する Issue は最大 3 つまで
+- 1セッションで着手する Issue は最大 3 つまで（Step 9 のカウンターで管理）
+- カウンターファイル `/tmp/e-be-implement-count.txt` はセッション開始時にリセットされる（`/tmp` は再起動で消える）
 - `gh-ship` は使わず、`gh-pr` → `gh-rv` → merge の順で進める
