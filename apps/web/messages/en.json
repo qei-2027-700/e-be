@@ -347,5 +347,11 @@
         "content": "The Service is not liable for any damages incurred by users regarding the use of the Service, except in cases of intentional misconduct or gross negligence by the Service."
       }
     }
+  },
+  "date_time_picker": {
+    "placeholder": "Select date & time",
+    "hour": "Hour",
+    "minute": "Minute",
+    "select_placeholder": "--"
   }
 }

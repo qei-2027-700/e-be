@@ -10,6 +10,7 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { DateTimePicker } from "@/components/ui/date-time-picker";
 import { updateEventDraft, submitEvent, publishEvent } from "@/lib/actions/event";
 import Link from "next/link";
 
@@ -29,10 +30,10 @@ type Props = {
   locale: string;
 };
 
-// ISO文字列を datetime-local input 用のフォーマットに変換
-function toDatetimeLocal(iso: string | null): string {
+// ISO文字列を "YYYY-MM-DDTHH:mm" フォーマットに変換
+function toDatetimeValue(iso: string | null): string {
   if (!iso) return "";
-  return iso.slice(0, 16); // "YYYY-MM-DDTHH:mm"
+  return iso.slice(0, 16);
 }
 
 export function EventEditForm({ event, eventId, hasPermission, locale }: Props) {
@@ -40,8 +41,8 @@ export function EventEditForm({ event, eventId, hasPermission, locale }: Props) 
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
-  const [startAt, setStartAt] = useState(toDatetimeLocal(event.startAt));
-  const [endAt, setEndAt] = useState(toDatetimeLocal(event.endAt));
+  const [startAt, setStartAt] = useState(toDatetimeValue(event.startAt));
+  const [endAt, setEndAt] = useState(toDatetimeValue(event.endAt));
 
   const hasDatetime = startAt !== "" && endAt !== "";
 
@@ -123,25 +124,21 @@ export function EventEditForm({ event, eventId, hasPermission, locale }: Props) 
           </div>
 
           <div className="space-y-1">
-            <Label htmlFor="startAt">{t("field_start_at")}</Label>
-            <Input
-              id="startAt"
+            <Label>{t("field_start_at")}</Label>
+            <DateTimePicker
               name="startAt"
-              type="datetime-local"
               value={startAt}
-              onChange={(e) => setStartAt(e.target.value)}
+              onChange={setStartAt}
               disabled={isPending}
             />
           </div>
 
           <div className="space-y-1">
-            <Label htmlFor="endAt">{t("field_end_at")}</Label>
-            <Input
-              id="endAt"
+            <Label>{t("field_end_at")}</Label>
+            <DateTimePicker
               name="endAt"
-              type="datetime-local"
               value={endAt}
-              onChange={(e) => setEndAt(e.target.value)}
+              onChange={setEndAt}
               disabled={isPending}
             />
           </div>
