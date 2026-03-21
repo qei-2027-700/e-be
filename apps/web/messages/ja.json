@@ -229,6 +229,28 @@
     "title": "イーベ (E-be)",
     "description": "良いイベントを増やす、店舗と主催者をつなぐイベントバー運営プラットフォーム"
   },
+  "event_edit": {
+    "title": "イベントを編集",
+    "back": "ダッシュボードへ戻る",
+    "field_title": "タイトル",
+    "field_description": "説明",
+    "field_start_at": "開催開始日時",
+    "field_end_at": "開催終了日時",
+    "field_max_participants": "定員",
+    "save_draft": "下書き保存",
+    "submit": "申請する",
+    "publish": "公開する",
+    "submitting": "処理中...",
+    "error_conflict": "この時間帯は他のイベントと重複しています",
+    "error_past_date": "過去の日時は設定できません",
+    "error_invalid_range": "終了日時は開始日時より後に設定してください",
+    "error_datetime_required": "申請・公開には開始・終了日時が必須です",
+    "error_permission_required": "このバーへの公開許可がありません",
+    "error_invalid": "入力内容を確認してください",
+    "error_not_found": "イベントが見つかりません",
+    "error_forbidden": "この操作は許可されていません",
+    "error_unauthorized": "ログインが必要です"
+  },
   "event_create": {
     "title": "イベントを作成",
     "back": "ダッシュボードへ戻る",

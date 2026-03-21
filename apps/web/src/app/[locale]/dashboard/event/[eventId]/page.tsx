@@ -1,7 +1,7 @@
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { getTranslations, getLocale } from "next-intl/server";
-import { getUser } from "@/lib/auth";
-import { getEventDetail } from "@/lib/events";
+import { getUser, getDbUser } from "@/lib/auth";
+import { getEventDetail, getDraftEventForOwner } from "@/lib/events";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
@@ -19,7 +19,15 @@ export default async function EventDetailPage({ params }: Props) {
   if (!user) notFound();
 
   const event = await getEventDetail(eventId, user.id);
-  if (!event) notFound();
+  if (!event) {
+    // draft/pending イベントなら編集ページへリダイレクト
+    const dbUser = await getDbUser();
+    if (dbUser) {
+      const draft = await getDraftEventForOwner(eventId, dbUser.id);
+      if (draft) redirect(`/${locale}/dashboard/event/${eventId}/edit`);
+    }
+    notFound();
+  }
 
   const formatDate = (iso: string | null) =>
     iso
