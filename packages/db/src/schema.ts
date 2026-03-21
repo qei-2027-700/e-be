@@ -140,6 +140,7 @@ export const events = pgTable('events', {
   endAt: timestamp('end_at'),
   maxParticipants: integer('max_participants'),
   location: text('location'),
+  chargeAmount: integer('charge_amount'), // チャージ料（円）null = 未設定
 });
 
 export const barHostPermissions = pgTable('bar_host_permissions', {

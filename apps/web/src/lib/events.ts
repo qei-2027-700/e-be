@@ -208,10 +208,13 @@ export async function getParticipationHistory(userId: string): Promise<Participa
 export type EventDetail = {
   id: string;
   title: string | null;
+  description: string | null;
   startAt: string | null;
   endAt: string | null;
   location: string | null;
+  chargeAmount: number | null;
   orgName: string;
+  orgAddress: string | null;
   myParticipationStatus: "registered" | "cancelled" | null;
 };
 
@@ -228,10 +231,13 @@ export async function getEventDetail(
     .select({
       id: events.id,
       title: events.title,
+      description: events.description,
       startAt: events.startAt,
       endAt: events.endAt,
       location: events.location,
+      chargeAmount: events.chargeAmount,
       orgName: organizations.name,
+      orgAddress: organizations.address,
       participationStatus: eventParticipations.status,
     })
     .from(events)
@@ -259,10 +265,13 @@ export async function getEventDetail(
   return {
     id: row.id,
     title: row.title,
+    description: row.description,
     startAt: row.startAt?.toISOString() ?? null,
     endAt: row.endAt?.toISOString() ?? null,
     location: row.location,
+    chargeAmount: row.chargeAmount ?? null,
     orgName: row.orgName,
+    orgAddress: row.orgAddress,
     myParticipationStatus: row.participationStatus ?? null,
   };
 }

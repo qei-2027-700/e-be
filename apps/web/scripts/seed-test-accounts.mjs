@@ -177,42 +177,56 @@ async function upsertTestEventsAndParticipations(testUserId, orgId) {
       title: '【テスト】夏の音楽フェス 2025',
       startAt: new Date('2025-07-20T18:00:00Z'),
       endAt:   new Date('2025-07-20T23:00:00Z'),
+      description: '夏の夜を彩る音楽フェスティバル。ジャンルを超えた豪華アーティストが集結します。ドリンク付きで楽しめる特別なイベントです。',
+      chargeAmount: 2000,
       participationStatus: 'registered',
     },
     {
       title: '【テスト】秋のジャズナイト',
       startAt: new Date('2025-10-05T19:00:00Z'),
       endAt:   new Date('2025-10-05T22:00:00Z'),
+      description: '秋の夜長に贈る、本格ジャズの夕べ。テーブルチャージ込みでゆったりとお楽しみください。',
+      chargeAmount: 1500,
       participationStatus: 'registered',
     },
     {
       title: '【テスト】冬の DJ パーティー（キャンセル済み）',
       startAt: new Date('2025-12-15T20:00:00Z'),
       endAt:   new Date('2025-12-15T23:30:00Z'),
+      description: null,
+      chargeAmount: null,
       participationStatus: 'cancelled',
     },
     {
       title: '【テスト】新春イベント 2026',
       startAt: new Date('2026-01-10T17:00:00Z'),
       endAt:   new Date('2026-01-10T21:00:00Z'),
+      description: '新年を祝う特別イベント。乾杯ドリンクのサービスあり。お早めにご参加ください。',
+      chargeAmount: 1000,
       participationStatus: 'registered',
     },
     {
       title: '【テスト】春のカクテルナイト',
       startAt: new Date('2026-04-05T18:00:00Z'),
       endAt:   new Date('2026-04-05T22:00:00Z'),
+      description: '春の訪れを祝う、カクテル特集の一夜。バーテンダーによる季節限定カクテルを楽しめます。チャージ料には1ドリンク付き。',
+      chargeAmount: 1500,
       participationStatus: 'registered',
     },
     {
       title: '【テスト】ゴールデンウィーク特別イベント',
       startAt: new Date('2026-05-03T17:00:00Z'),
       endAt:   new Date('2026-05-03T23:00:00Z'),
+      description: 'GW期間中の特別企画。複数のジャンルのアーティストが出演する大型イベントです。入場無料でお楽しみいただけます。',
+      chargeAmount: null,
       participationStatus: 'registered',
     },
     {
       title: '【テスト】初夏のビアガーデン',
       startAt: new Date('2026-06-20T16:00:00Z'),
       endAt:   new Date('2026-06-20T21:00:00Z'),
+      description: '屋外テラスで楽しむビアガーデンイベント。クラフトビールの飲み比べセットあり。軽食も充実しています。',
+      chargeAmount: 800,
       participationStatus: 'registered',
     },
   ];
@@ -231,8 +245,8 @@ async function upsertTestEventsAndParticipations(testUserId, orgId) {
       console.log(`  ⏭  event: "${ev.title}" は既に存在します`);
     } else {
       const [inserted] = await sql`
-        INSERT INTO events (org_id, user_id, status, title, start_at, end_at)
-        VALUES (${orgId}, ${testUserId}, 'published', ${ev.title}, ${ev.startAt}, ${ev.endAt})
+        INSERT INTO events (org_id, user_id, status, title, description, start_at, end_at, charge_amount)
+        VALUES (${orgId}, ${testUserId}, 'published', ${ev.title}, ${ev.description ?? null}, ${ev.startAt}, ${ev.endAt}, ${ev.chargeAmount ?? null})
         RETURNING id
       `;
       eventId = inserted.id;
