@@ -9,11 +9,12 @@ type Props = {
 };
 
 export default async function OrgSettingsPage({ params }: Props) {
-  const { orgId } = await params;
-  const locale = await getLocale();
-  const t = await getTranslations("dashboard");
-
-  const user = await getUser();
+  const [{ orgId }, locale, t, user] = await Promise.all([
+    params,
+    getLocale(),
+    getTranslations("dashboard"),
+    getUser(),
+  ]);
   if (!user) {
     redirect(`/${locale}/auth/sign-in`);
   }
