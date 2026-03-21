@@ -214,7 +214,10 @@
     "my_status": "参加ステータス",
     "not_found": "イベントが見つかりません",
     "status_registered": "参加予定",
-    "status_cancelled": "キャンセル済み"
+    "status_cancelled": "キャンセル済み",
+    "venue": "開催店舗",
+    "charge_amount": "チャージ料",
+    "description": "イベント詳細"
   },
   "privacy": {
     "title": "プライバシーポリシー",

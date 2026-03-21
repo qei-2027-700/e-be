@@ -121,6 +121,50 @@ export default async function EventDetailPage({ params }: Props) {
           </CardContent>
         </Card>
 
+        {/* イベント詳細・会場情報 */}
+        <Card>
+          <CardContent className="pt-5 pb-5 space-y-4">
+            {/* 開催店舗 */}
+            <div className="space-y-0.5">
+              <p className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground">
+                {t("venue")}
+              </p>
+              <p className="font-medium">{event.orgName}</p>
+              {event.orgAddress && (
+                <p className="text-sm text-muted-foreground">{event.orgAddress}</p>
+              )}
+            </div>
+
+            {/* チャージ料（設定されている場合のみ） */}
+            {event.chargeAmount != null && (
+              <>
+                <div className="border-t border-border" />
+                <div className="space-y-0.5">
+                  <p className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground">
+                    {t("charge_amount")}
+                  </p>
+                  <p className="text-2xl font-bold tabular-nums">
+                    ¥{event.chargeAmount.toLocaleString()}
+                  </p>
+                </div>
+              </>
+            )}
+
+            {/* イベント説明（設定されている場合のみ） */}
+            {event.description && (
+              <>
+                <div className="border-t border-border" />
+                <div className="space-y-0.5">
+                  <p className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground">
+                    {t("description")}
+                  </p>
+                  <p className="text-sm leading-relaxed whitespace-pre-wrap">{event.description}</p>
+                </div>
+              </>
+            )}
+          </CardContent>
+        </Card>
+
         {/* 参加ステータスカード */}
         {event.myParticipationStatus && (
           <Card

@@ -214,7 +214,10 @@
     "my_status": "My Status",
     "not_found": "Event not found",
     "status_registered": "Registered",
-    "status_cancelled": "Cancelled"
+    "status_cancelled": "Cancelled",
+    "venue": "Venue",
+    "charge_amount": "Cover Charge",
+    "description": "About This Event"
   },
   "privacy": {
     "title": "Privacy Policy",
