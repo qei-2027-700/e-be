@@ -15,7 +15,7 @@ export async function AppHeader({ userEmail, userType, locale }: AppHeaderProps)
 
   return (
     <header className="sticky top-0 z-40 border-b bg-background/80 backdrop-blur-md">
-      <div className="mx-auto flex max-w-2xl items-center justify-between px-4 h-14 md:px-6">
+      <div className="mx-auto flex max-w-5xl items-center justify-between px-4 h-14 md:px-6">
         <Link href={`/${locale}`} className="text-base font-bold tracking-tight">
           E-be
         </Link>

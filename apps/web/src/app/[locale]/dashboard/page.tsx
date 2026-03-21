@@ -68,7 +68,8 @@ export default async function DashboardPage() {
 
   return (
     <main className="p-4 md:p-6">
-      <div className="mx-auto max-w-2xl space-y-6">
+      <div className="mx-auto max-w-5xl space-y-6">
+        {/* タイトル行（全幅） */}
         <div className="flex items-center gap-2">
           <h1 className="text-2xl font-bold">{t("title")}</h1>
           <Badge variant={USER_TYPE_VARIANT[userType]}>
@@ -76,288 +77,297 @@ export default async function DashboardPage() {
           </Badge>
         </div>
 
-        <Card variant="glass">
-          <CardHeader>
-            <CardTitle>{t("calendar_title")}</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <EventCalendar
-              events={calendarEvents}
-              initialYear={now.getFullYear()}
-              initialMonth={now.getMonth()}
-              locale={locale}
-            />
-          </CardContent>
-        </Card>
+        {/* SP: 1カラム / PC(lg以上): 2カラムグリッド */}
+        <div className="grid gap-6 lg:grid-cols-[3fr_2fr]">
+          {/* 左カラム: カレンダー・履歴系 */}
+          <div className="space-y-6">
+            <Card variant="glass">
+              <CardHeader>
+                <CardTitle>{t("calendar_title")}</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <EventCalendar
+                  events={calendarEvents}
+                  initialYear={now.getFullYear()}
+                  initialMonth={now.getMonth()}
+                  locale={locale}
+                />
+              </CardContent>
+            </Card>
 
-        {userType === "user" && (
-          <div className="flex justify-end">
-            <Link
-              href={`/${locale}/dashboard/event/create`}
-              className="inline-flex min-h-11 items-center rounded-lg bg-primary px-4 text-[0.8rem] font-medium text-primary-foreground transition-all hover:bg-primary/90"
-            >
-              {t("create_event")}
-            </Link>
+            {userType === "user" && (
+              <Card>
+                <CardHeader>
+                  <CardTitle>{t("organizer_history_title")}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  {organizerHistory.length === 0 ? (
+                    <p className="py-4 text-center text-sm text-muted-foreground">
+                      {t("organizer_history_empty")}
+                    </p>
+                  ) : (
+                    <ul className="divide-y">
+                      {organizerHistory.map((event) => {
+                        const statusKey =
+                          event.status === "cancelled"
+                            ? "event_status_cancelled"
+                            : event.status === "rejected"
+                              ? "event_status_rejected"
+                              : "event_status_published_ended";
+                        return (
+                          <li key={event.id} className="flex items-center justify-between gap-3 py-3">
+                            <div className="min-w-0">
+                              <p className="truncate font-medium">
+                                {event.title ?? "—"}
+                              </p>
+                              <p className="text-xs text-muted-foreground">
+                                {event.startAt
+                                  ? new Date(event.startAt).toLocaleDateString(locale, {
+                                      year: "numeric",
+                                      month: "short",
+                                      day: "numeric",
+                                    })
+                                  : "—"}
+                              </p>
+                            </div>
+                            <Badge
+                              variant={
+                                event.status === "cancelled" || event.status === "rejected"
+                                  ? "secondary"
+                                  : "outline"
+                              }
+                              className="shrink-0"
+                            >
+                              {t(statusKey)}
+                            </Badge>
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  )}
+                </CardContent>
+              </Card>
+            )}
+
+            {userType === "user" && (
+              <Card>
+                <CardHeader>
+                  <CardTitle>{t("participation_history_title")}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  {participationHistory.length === 0 ? (
+                    <p className="py-4 text-center text-sm text-muted-foreground">
+                      {t("participation_history_empty")}
+                    </p>
+                  ) : (
+                    <ul className="divide-y">
+                      {participationHistory.map((item) => {
+                        const statusKey =
+                          item.participationStatus === "cancelled"
+                            ? "participation_status_cancelled"
+                            : "participation_status_registered";
+                        return (
+                          <li key={item.participationId}>
+                            <Link
+                              href={`/${locale}/dashboard/event/${item.eventId}`}
+                              className="flex items-center justify-between gap-3 py-3 hover:bg-muted/50 -mx-2 px-2 rounded-md transition-colors"
+                            >
+                              <div className="min-w-0">
+                                <p className="truncate font-medium">
+                                  {item.title ?? "—"}
+                                </p>
+                                <p className="text-xs text-muted-foreground">
+                                  {item.startAt
+                                    ? new Date(item.startAt).toLocaleDateString(locale, {
+                                        year: "numeric",
+                                        month: "short",
+                                        day: "numeric",
+                                      })
+                                    : "—"}
+                                </p>
+                              </div>
+                              <Badge
+                                variant={item.participationStatus === "cancelled" ? "secondary" : "outline"}
+                                className="shrink-0"
+                              >
+                                {t(statusKey)}
+                              </Badge>
+                            </Link>
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  )}
+                </CardContent>
+              </Card>
+            )}
           </div>
-        )}
 
-        {userType === "user" && (
-          <Card>
-            <CardHeader>
-              <CardTitle>{t("my_events_title")}</CardTitle>
-            </CardHeader>
-            <CardContent>
-              {myDraftEvents.length === 0 ? (
-                <div className="space-y-3 py-4 text-center">
-                  <p className="text-sm text-muted-foreground">{t("my_events_empty")}</p>
-                  <Link
-                    href={`/${locale}/dashboard/event/create`}
-                    className="inline-flex min-h-11 items-center rounded-lg border border-border bg-background px-4 text-[0.8rem] font-medium transition-all hover:bg-muted"
-                  >
-                    {t("create_event")}
-                  </Link>
-                </div>
-              ) : (
-                <ul className="divide-y">
-                  {myDraftEvents.map((event) => {
-                    const href =
-                      event.status === "draft"
-                        ? `/${locale}/dashboard/event/${event.id}/edit`
-                        : `/${locale}/dashboard/event/${event.id}`;
-                    const statusKey =
-                      event.status === "draft"
-                        ? "event_status_draft"
-                        : "event_status_pending";
-                    return (
-                      <li key={event.id}>
-                        <Link
-                          href={href}
-                          className="flex items-center justify-between gap-3 py-3 hover:bg-muted/50 -mx-2 px-2 rounded-md transition-colors"
-                        >
-                          <div className="min-w-0">
-                            <p className="truncate font-medium">{event.title ?? "—"}</p>
-                            <p className="text-xs text-muted-foreground">{event.orgName}</p>
-                            <p className="text-xs text-muted-foreground">
-                              {new Date(event.createdAt).toLocaleDateString(locale, {
-                                year: "numeric",
-                                month: "short",
-                                day: "numeric",
-                              })}
-                            </p>
-                          </div>
-                          <Badge
-                            variant={event.status === "draft" ? "secondary" : "outline"}
-                            className="shrink-0"
-                          >
-                            {t(statusKey)}
-                          </Badge>
-                        </Link>
-                      </li>
-                    );
-                  })}
-                </ul>
-              )}
-            </CardContent>
-          </Card>
-        )}
+          {/* 右カラム: アクション・リスト系 */}
+          <div className="space-y-6">
+            {userType === "user" && (
+              <div className="flex justify-end">
+                <Link
+                  href={`/${locale}/dashboard/event/create`}
+                  className="inline-flex min-h-11 items-center rounded-lg bg-primary px-4 text-[0.8rem] font-medium text-primary-foreground transition-all hover:bg-primary/90"
+                >
+                  {t("create_event")}
+                </Link>
+              </div>
+            )}
 
-        {userType === "user" && (
-          <Card>
-            <CardHeader>
-              <CardTitle>{t("upcoming_participations_title")}</CardTitle>
-            </CardHeader>
-            <CardContent>
-              {upcomingParticipations.length === 0 ? (
-                <p className="py-4 text-center text-sm text-muted-foreground">
-                  {t("upcoming_participations_empty")}
-                </p>
-              ) : (
-                <ul className="divide-y">
-                  {upcomingParticipations.map((item) => (
-                    <li key={item.participationId}>
+            {userType === "user" && (
+              <Card>
+                <CardHeader>
+                  <CardTitle>{t("my_events_title")}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  {myDraftEvents.length === 0 ? (
+                    <div className="space-y-3 py-4 text-center">
+                      <p className="text-sm text-muted-foreground">{t("my_events_empty")}</p>
                       <Link
-                        href={`/${locale}/dashboard/event/${item.eventId}`}
-                        className="flex items-center justify-between gap-3 py-3 hover:bg-muted/50 -mx-2 px-2 rounded-md transition-colors"
+                        href={`/${locale}/dashboard/event/create`}
+                        className="inline-flex min-h-11 items-center rounded-lg border border-border bg-background px-4 text-[0.8rem] font-medium transition-all hover:bg-muted"
                       >
-                        <div className="min-w-0">
-                          <p className="truncate font-medium">{item.title ?? "—"}</p>
-                          <p className="text-xs text-muted-foreground">
-                            {item.startAt
-                              ? new Date(item.startAt).toLocaleDateString(locale, {
-                                  year: "numeric",
-                                  month: "short",
-                                  day: "numeric",
-                                })
-                              : "—"}
-                          </p>
-                        </div>
-                        <Badge variant="outline" className="shrink-0">
-                          {t("participation_status_registered")}
-                        </Badge>
+                        {t("create_event")}
                       </Link>
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </CardContent>
-          </Card>
-        )}
-
-        {userType === "user" && (
-          <Card>
-            <CardHeader>
-              <CardTitle>{t("organizer_history_title")}</CardTitle>
-            </CardHeader>
-            <CardContent>
-              {organizerHistory.length === 0 ? (
-                <p className="py-4 text-center text-sm text-muted-foreground">
-                  {t("organizer_history_empty")}
-                </p>
-              ) : (
-                <ul className="divide-y">
-                  {organizerHistory.map((event) => {
-                    const statusKey =
-                      event.status === "cancelled"
-                        ? "event_status_cancelled"
-                        : event.status === "rejected"
-                          ? "event_status_rejected"
-                          : "event_status_published_ended";
-                    return (
-                      <li key={event.id} className="flex items-center justify-between gap-3 py-3">
-                        <div className="min-w-0">
-                          <p className="truncate font-medium">
-                            {event.title ?? "—"}
-                          </p>
-                          <p className="text-xs text-muted-foreground">
-                            {event.startAt
-                              ? new Date(event.startAt).toLocaleDateString(locale, {
-                                  year: "numeric",
-                                  month: "short",
-                                  day: "numeric",
-                                })
-                              : "—"}
-                          </p>
-                        </div>
-                        <Badge
-                          variant={
-                            event.status === "cancelled" || event.status === "rejected"
-                              ? "secondary"
-                              : "outline"
-                          }
-                          className="shrink-0"
-                        >
-                          {t(statusKey)}
-                        </Badge>
-                      </li>
-                    );
-                  })}
-                </ul>
-              )}
-            </CardContent>
-          </Card>
-        )}
-
-        {userType === "user" && (
-          <Card>
-            <CardHeader>
-              <CardTitle>{t("participation_history_title")}</CardTitle>
-            </CardHeader>
-            <CardContent>
-              {participationHistory.length === 0 ? (
-                <p className="py-4 text-center text-sm text-muted-foreground">
-                  {t("participation_history_empty")}
-                </p>
-              ) : (
-                <ul className="divide-y">
-                  {participationHistory.map((item) => {
-                    const statusKey =
-                      item.participationStatus === "cancelled"
-                        ? "participation_status_cancelled"
-                        : "participation_status_registered";
-                    return (
-                      <li key={item.participationId}>
-                        <Link
-                          href={`/${locale}/dashboard/event/${item.eventId}`}
-                          className="flex items-center justify-between gap-3 py-3 hover:bg-muted/50 -mx-2 px-2 rounded-md transition-colors"
-                        >
-                          <div className="min-w-0">
-                            <p className="truncate font-medium">
-                              {item.title ?? "—"}
-                            </p>
-                            <p className="text-xs text-muted-foreground">
-                              {item.startAt
-                                ? new Date(item.startAt).toLocaleDateString(locale, {
+                    </div>
+                  ) : (
+                    <ul className="divide-y">
+                      {myDraftEvents.map((event) => {
+                        const href =
+                          event.status === "draft"
+                            ? `/${locale}/dashboard/event/${event.id}/edit`
+                            : `/${locale}/dashboard/event/${event.id}`;
+                        const statusKey =
+                          event.status === "draft"
+                            ? "event_status_draft"
+                            : "event_status_pending";
+                        return (
+                          <li key={event.id}>
+                            <Link
+                              href={href}
+                              className="flex items-center justify-between gap-3 py-3 hover:bg-muted/50 -mx-2 px-2 rounded-md transition-colors"
+                            >
+                              <div className="min-w-0">
+                                <p className="truncate font-medium">{event.title ?? "—"}</p>
+                                <p className="text-xs text-muted-foreground">{event.orgName}</p>
+                                <p className="text-xs text-muted-foreground">
+                                  {new Date(event.createdAt).toLocaleDateString(locale, {
                                     year: "numeric",
                                     month: "short",
                                     day: "numeric",
-                                  })
-                                : "—"}
-                            </p>
-                          </div>
-                          <Badge
-                            variant={item.participationStatus === "cancelled" ? "secondary" : "outline"}
-                            className="shrink-0"
+                                  })}
+                                </p>
+                              </div>
+                              <Badge
+                                variant={event.status === "draft" ? "secondary" : "outline"}
+                                className="shrink-0"
+                              >
+                                {t(statusKey)}
+                              </Badge>
+                            </Link>
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  )}
+                </CardContent>
+              </Card>
+            )}
+
+            {userType === "user" && (
+              <Card>
+                <CardHeader>
+                  <CardTitle>{t("upcoming_participations_title")}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  {upcomingParticipations.length === 0 ? (
+                    <p className="py-4 text-center text-sm text-muted-foreground">
+                      {t("upcoming_participations_empty")}
+                    </p>
+                  ) : (
+                    <ul className="divide-y">
+                      {upcomingParticipations.map((item) => (
+                        <li key={item.participationId}>
+                          <Link
+                            href={`/${locale}/dashboard/event/${item.eventId}`}
+                            className="flex items-center justify-between gap-3 py-3 hover:bg-muted/50 -mx-2 px-2 rounded-md transition-colors"
                           >
-                            {t(statusKey)}
+                            <div className="min-w-0">
+                              <p className="truncate font-medium">{item.title ?? "—"}</p>
+                              <p className="text-xs text-muted-foreground">
+                                {item.startAt
+                                  ? new Date(item.startAt).toLocaleDateString(locale, {
+                                      year: "numeric",
+                                      month: "short",
+                                      day: "numeric",
+                                    })
+                                  : "—"}
+                              </p>
+                            </div>
+                            <Badge variant="outline" className="shrink-0">
+                              {t("participation_status_registered")}
+                            </Badge>
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </CardContent>
+              </Card>
+            )}
+
+            <Card>
+              <CardHeader>
+                <CardTitle>{t("orgs_title")}</CardTitle>
+              </CardHeader>
+              <CardContent>
+                {userOrgs.length === 0 ? (
+                  <div className="space-y-4 text-center py-4">
+                    <p className="text-sm text-muted-foreground">{t("no_orgs")}</p>
+                    {userType === "user" && (
+                      hasPendingApplication ? (
+                        <Badge variant="secondary" className="text-sm px-4 py-2">
+                          {t("application_pending")}
+                        </Badge>
+                      ) : (
+                        <Link
+                          href={`/${locale}/dashboard/apply`}
+                          className="inline-flex min-h-11 items-center rounded-lg border border-border bg-background px-4 text-[0.8rem] font-medium transition-all hover:bg-muted"
+                        >
+                          {t("apply_operator")}
+                        </Link>
+                      )
+                    )}
+                  </div>
+                ) : (
+                  <ul className="divide-y">
+                    {userOrgs.map(({ org, role }) => (
+                      <li key={org.id} className="flex items-center justify-between py-3 gap-3">
+                        <div className="flex items-center gap-3 min-w-0">
+                          <div className="min-w-0">
+                            <p className="font-medium truncate">{org.name}</p>
+                            <p className="text-xs text-muted-foreground truncate">@{org.slug}</p>
+                          </div>
+                          <Badge variant={role === "owner" ? "default" : "secondary"}>
+                            {role === "owner" ? t("role_owner") : t("role_member")}
                           </Badge>
+                        </div>
+                        <Link
+                          href={`/${locale}/dashboard/org/${org.id}`}
+                          className="inline-flex min-h-11 shrink-0 items-center rounded-lg border border-border bg-background px-2.5 text-[0.8rem] font-medium transition-all hover:bg-muted"
+                        >
+                          {t("go_to_org")}
                         </Link>
                       </li>
-                    );
-                  })}
-                </ul>
-              )}
-            </CardContent>
-          </Card>
-        )}
-
-        <Card>
-          <CardHeader>
-            <CardTitle>{t("orgs_title")}</CardTitle>
-          </CardHeader>
-          <CardContent>
-            {userOrgs.length === 0 ? (
-              <div className="space-y-4 text-center py-4">
-                <p className="text-sm text-muted-foreground">{t("no_orgs")}</p>
-                {userType === "user" && (
-                  hasPendingApplication ? (
-                    <Badge variant="secondary" className="text-sm px-4 py-2">
-                      {t("application_pending")}
-                    </Badge>
-                  ) : (
-                    <Link
-                      href={`/${locale}/dashboard/apply`}
-                      className="inline-flex min-h-11 items-center rounded-lg border border-border bg-background px-4 text-[0.8rem] font-medium transition-all hover:bg-muted"
-                    >
-                      {t("apply_operator")}
-                    </Link>
-                  )
+                    ))}
+                  </ul>
                 )}
-              </div>
-            ) : (
-              <ul className="divide-y">
-                {userOrgs.map(({ org, role }) => (
-                  <li key={org.id} className="flex items-center justify-between py-3 gap-3">
-                    <div className="flex items-center gap-3 min-w-0">
-                      <div className="min-w-0">
-                        <p className="font-medium truncate">{org.name}</p>
-                        <p className="text-xs text-muted-foreground truncate">@{org.slug}</p>
-                      </div>
-                      <Badge variant={role === "owner" ? "default" : "secondary"}>
-                        {role === "owner" ? t("role_owner") : t("role_member")}
-                      </Badge>
-                    </div>
-                    <Link
-                      href={`/${locale}/dashboard/org/${org.id}`}
-                      className="inline-flex min-h-11 shrink-0 items-center rounded-lg border border-border bg-background px-2.5 text-[0.8rem] font-medium transition-all hover:bg-muted"
-                    >
-                      {t("go_to_org")}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </CardContent>
-        </Card>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
       </div>
     </main>
   );
