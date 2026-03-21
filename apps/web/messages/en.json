@@ -1,4 +1,10 @@
 {
+  "common": {
+    "confirmDialog": {
+      "confirm": "Confirm",
+      "cancel": "Cancel"
+    }
+  },
   "home": {
     "badge": "v0.1.0 — In Development",
     "title": "E-be",
