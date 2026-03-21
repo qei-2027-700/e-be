@@ -215,6 +215,8 @@ export type OrganizerHistoryItem = {
   endAt: string | null;
   status: string;
   orgId: string;
+  orgName: string;
+  isPublic: boolean;
 };
 
 /**
@@ -234,8 +236,11 @@ export async function getOrganizerHistory(userId: string): Promise<OrganizerHist
       endAt: events.endAt,
       status: events.status,
       orgId: events.orgId,
+      orgName: organizations.name,
+      isPublic: events.isPublic,
     })
     .from(events)
+    .innerJoin(organizations, eq(events.orgId, organizations.id))
     .where(
       and(
         eq(events.userId, userId),
@@ -258,6 +263,52 @@ export async function getOrganizerHistory(userId: string): Promise<OrganizerHist
     endAt: row.endAt?.toISOString() ?? null,
     status: row.status,
     orgId: row.orgId,
+    orgName: row.orgName,
+    isPublic: row.isPublic,
+  }));
+}
+
+export type PublicOrganizerHistoryItem = {
+  id: string;
+  title: string | null;
+  startAt: string | null;
+  orgName: string;
+};
+
+/**
+ * プロフィールページ用に公開設定の主催履歴を取得する。
+ * - is_public = true かつ published かつ終了済み（completed 相当）のみ
+ * - 未ログインでも閲覧可能
+ * - 新しい順（startAt DESC）で返す
+ */
+export async function getPublicOrganizerHistory(userId: string): Promise<PublicOrganizerHistoryItem[]> {
+  const now = new Date();
+
+  const rows = await db
+    .select({
+      id: events.id,
+      title: events.title,
+      startAt: events.startAt,
+      orgName: organizations.name,
+    })
+    .from(events)
+    .innerJoin(organizations, eq(events.orgId, organizations.id))
+    .where(
+      and(
+        eq(events.userId, userId),
+        eq(events.isPublic, true),
+        eq(events.status, "published"),
+        lt(events.endAt, now),
+        isNull(events.deletedAt)
+      )
+    )
+    .orderBy(desc(events.startAt));
+
+  return rows.map((row) => ({
+    id: row.id,
+    title: row.title,
+    startAt: row.startAt?.toISOString() ?? null,
+    orgName: row.orgName,
   }));
 }
 

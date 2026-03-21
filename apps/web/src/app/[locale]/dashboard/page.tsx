@@ -8,6 +8,7 @@ import { operatorApplications } from "@e-be/db/schema";
 import { eq, and, isNull } from "drizzle-orm";
 import { EventCalendar } from "@/components/event-calendar";
 import { getEventsForCalendar, getMyDraftEvents, getOrganizerHistory, getParticipationHistory, getUpcomingParticipations } from "@/lib/events";
+import { OrganizerHistoryItem } from "./organizer-history-item";
 
 const USER_TYPE_VARIANT = {
   user: "secondary",
@@ -98,7 +99,18 @@ export default async function DashboardPage() {
             {userType === "user" && (
               <Card>
                 <CardHeader>
-                  <CardTitle>{t("organizer_history_title")}</CardTitle>
+                  <div className="flex items-center justify-between">
+                    <CardTitle>{t("organizer_history_title")}</CardTitle>
+                    {organizerHistory.length > 0 && (
+                      <a
+                        href={`/${locale}/dashboard/organizer-history/csv`}
+                        download
+                        className="inline-flex min-h-9 items-center rounded-md border border-border bg-background px-3 text-xs font-medium transition-colors hover:bg-muted"
+                      >
+                        {t("organizer_history_csv")}
+                      </a>
+                    )}
+                  </div>
                 </CardHeader>
                 <CardContent>
                   {organizerHistory.length === 0 ? (
@@ -107,42 +119,9 @@ export default async function DashboardPage() {
                     </p>
                   ) : (
                     <ul className="divide-y">
-                      {organizerHistory.map((event) => {
-                        const statusKey =
-                          event.status === "cancelled"
-                            ? "event_status_cancelled"
-                            : event.status === "rejected"
-                              ? "event_status_rejected"
-                              : "event_status_published_ended";
-                        return (
-                          <li key={event.id} className="flex items-center justify-between gap-3 py-3">
-                            <div className="min-w-0">
-                              <p className="truncate font-medium">
-                                {event.title ?? "—"}
-                              </p>
-                              <p className="text-xs text-muted-foreground">
-                                {event.startAt
-                                  ? new Date(event.startAt).toLocaleDateString(locale, {
-                                      year: "numeric",
-                                      month: "short",
-                                      day: "numeric",
-                                    })
-                                  : "—"}
-                              </p>
-                            </div>
-                            <Badge
-                              variant={
-                                event.status === "cancelled" || event.status === "rejected"
-                                  ? "secondary"
-                                  : "outline"
-                              }
-                              className="shrink-0"
-                            >
-                              {t(statusKey)}
-                            </Badge>
-                          </li>
-                        );
-                      })}
+                      {organizerHistory.map((event) => (
+                        <OrganizerHistoryItem key={event.id} event={event} locale={locale} />
+                      ))}
                     </ul>
                   )}
                 </CardContent>
