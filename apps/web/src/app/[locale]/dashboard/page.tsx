@@ -3,9 +3,6 @@ import { getUser, getUserOrgs, getUserType } from "@/lib/auth";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
-import { db } from "@/lib/db";
-import { operatorApplications } from "@e-be/db/schema";
-import { eq, and, isNull } from "drizzle-orm";
 import { EventCalendar } from "@/components/event-calendar";
 import { getEventsForCalendar, getMyDraftEvents, getOrganizerHistory, getParticipationHistory, getUpcomingParticipations } from "@/lib/events";
 import { OrganizerHistoryItem } from "./organizer-history-item";
@@ -35,30 +32,17 @@ export default async function DashboardPage() {
   ]);
 
   // userType === 'user' のみ必要なデータを並行取得
-  let hasPendingApplication = false;
   let organizerHistory: Awaited<ReturnType<typeof getOrganizerHistory>> = [];
   let participationHistory: Awaited<ReturnType<typeof getParticipationHistory>> = [];
   let upcomingParticipations: Awaited<ReturnType<typeof getUpcomingParticipations>> = [];
   let myDraftEvents: Awaited<ReturnType<typeof getMyDraftEvents>> = [];
   if (userType === "user") {
-    const [pendingResult, historyResult, participationResult, upcomingResult, draftResult] = await Promise.all([
-      db
-        .select({ id: operatorApplications.id })
-        .from(operatorApplications)
-        .where(
-          and(
-            eq(operatorApplications.userId, user.id),
-            eq(operatorApplications.status, "pending"),
-            isNull(operatorApplications.deletedAt)
-          )
-        )
-        .limit(1),
+    const [historyResult, participationResult, upcomingResult, draftResult] = await Promise.all([
       getOrganizerHistory(user.id),
       getParticipationHistory(user.id),
       getUpcomingParticipations(user.id),
       getMyDraftEvents(user.id),
     ]);
-    hasPendingApplication = pendingResult.length > 0;
     organizerHistory = historyResult;
     participationHistory = participationResult;
     upcomingParticipations = upcomingResult;
@@ -297,30 +281,12 @@ export default async function DashboardPage() {
               </Card>
             )}
 
-            <Card>
-              <CardHeader>
-                <CardTitle>{t("orgs_title")}</CardTitle>
-              </CardHeader>
-              <CardContent>
-                {userOrgs.length === 0 ? (
-                  <div className="space-y-4 text-center py-4">
-                    <p className="text-sm text-muted-foreground">{t("no_orgs")}</p>
-                    {userType === "user" && (
-                      hasPendingApplication ? (
-                        <Badge variant="secondary" className="text-sm px-4 py-2">
-                          {t("application_pending")}
-                        </Badge>
-                      ) : (
-                        <Link
-                          href={`/${locale}/dashboard/apply`}
-                          className="inline-flex min-h-11 items-center rounded-lg border border-border bg-background px-4 text-[0.8rem] font-medium transition-all hover:bg-muted"
-                        >
-                          {t("apply_operator")}
-                        </Link>
-                      )
-                    )}
-                  </div>
-                ) : (
+            {userOrgs.length > 0 && (
+              <Card>
+                <CardHeader>
+                  <CardTitle>{t("orgs_title")}</CardTitle>
+                </CardHeader>
+                <CardContent>
                   <ul className="divide-y">
                     {userOrgs.map(({ org, role }) => (
                       <li key={org.id} className="flex items-center justify-between py-3 gap-3">
@@ -342,9 +308,9 @@ export default async function DashboardPage() {
                       </li>
                     ))}
                   </ul>
-                )}
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
+            )}
           </div>
         </div>
       </div>
