@@ -61,6 +61,7 @@ export async function updateEventDraft(eventId: string, formData: FormData): Pro
   const startAtRaw = formData.get('startAt') as string | null;
   const endAtRaw = formData.get('endAt') as string | null;
   const maxParticipantsRaw = formData.get('maxParticipants') as string | null;
+  const chargeAmountRaw = formData.get('chargeAmount') as string | null;
 
   if (!title || title.length > 100) return { error: 'invalid' };
   if (!description || description.length > 2000) return { error: 'invalid' };
@@ -70,6 +71,13 @@ export async function updateEventDraft(eventId: string, formData: FormData): Pro
     const n = parseInt(maxParticipantsRaw, 10);
     if (isNaN(n) || n < 1 || n > 500) return { error: 'invalid' };
     maxParticipants = n;
+  }
+
+  let chargeAmount: number | null = null;
+  if (chargeAmountRaw && chargeAmountRaw !== '') {
+    const n = parseInt(chargeAmountRaw, 10);
+    if (isNaN(n) || n < 0) return { error: 'invalid' };
+    chargeAmount = n;
   }
 
   // 所有権チェック
@@ -87,7 +95,7 @@ export async function updateEventDraft(eventId: string, formData: FormData): Pro
 
   await db
     .update(events)
-    .set({ title, description, startAt, endAt, maxParticipants, updatedAt: new Date() })
+    .set({ title, description, startAt, endAt, maxParticipants, chargeAmount, updatedAt: new Date() })
     .where(eq(events.id, eventId));
 
   return { ok: true };
@@ -106,6 +114,7 @@ export async function submitEvent(eventId: string): Promise<ActionResult> {
 
   if (!target) return { error: 'not_found' };
   if (target.status !== 'draft') return { error: 'forbidden' };
+  if (!target.orgId) return { error: 'venue_required' };
   if (!target.startAt || !target.endAt) return { error: 'datetime_required' };
 
   const now = new Date();

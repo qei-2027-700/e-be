@@ -16,11 +16,14 @@ import Link from "next/link";
 
 type EventData = {
   id: string;
+  orgId: string;
+  orgName: string;
   title: string | null;
   description: string | null;
   startAt: string | null;
   endAt: string | null;
   maxParticipants: number | null;
+  chargeAmount: number | null;
 };
 
 type Props = {
@@ -38,7 +41,19 @@ export function EventEditForm({ event, eventId, hasPermission, locale }: Props) 
   const [startAt, setStartAt] = useState(event.startAt ?? "");
   const [endAt, setEndAt] = useState(event.endAt ?? "");
 
+  function handleStartAtChange(value: string) {
+    setStartAt(value);
+    // endAt が未設定の場合は startAt と同じ値を自動セット
+    if (!endAt && value) {
+      setEndAt(value);
+    }
+  }
+
+  const hasVenue = Boolean(event.orgId);
   const hasDatetime = startAt !== "" && endAt !== "";
+  const isDatetimeInvalid =
+    hasDatetime && new Date(startAt) >= new Date(endAt);
+  const canSubmit = hasVenue && hasDatetime && !isDatetimeInvalid;
 
   function handleSave(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -92,6 +107,14 @@ export function EventEditForm({ event, eventId, hasPermission, locale }: Props) 
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSave} className="space-y-4">
+          {/* 会場（読み取り専用） */}
+          <div className="space-y-1">
+            <Label>{t("field_venue")}</Label>
+            <p className="rounded-md border border-border bg-muted px-3 py-2 text-sm text-muted-foreground">
+              {event.orgName}
+            </p>
+          </div>
+
           <div className="space-y-1">
             <Label htmlFor="title">{t("field_title")}</Label>
             <Input
@@ -123,7 +146,7 @@ export function EventEditForm({ event, eventId, hasPermission, locale }: Props) 
               id="startAt"
               name="startAt"
               value={startAt}
-              onChange={setStartAt}
+              onChange={handleStartAtChange}
               disabled={isPending}
               locale={locale}
               placeholder={t("field_start_at")}
@@ -156,7 +179,24 @@ export function EventEditForm({ event, eventId, hasPermission, locale }: Props) 
             />
           </div>
 
+          <div className="space-y-1">
+            <Label htmlFor="chargeAmount">{t("field_charge_amount")}</Label>
+            <Input
+              id="chargeAmount"
+              name="chargeAmount"
+              type="number"
+              defaultValue={event.chargeAmount ?? ""}
+              min={0}
+              step={100}
+              placeholder={t("field_charge_amount_placeholder")}
+              disabled={isPending}
+            />
+          </div>
+
           {error && <p className="text-sm text-destructive">{error}</p>}
+          {isDatetimeInvalid && (
+            <p className="text-sm text-destructive">{t("error_invalid_range")}</p>
+          )}
 
           <div className="flex flex-col gap-2 pt-2">
             <Button type="submit" variant="outline" disabled={isPending}>
@@ -167,7 +207,7 @@ export function EventEditForm({ event, eventId, hasPermission, locale }: Props) 
             {hasPermission ? (
               <Button
                 type="button"
-                disabled={isPending || !hasDatetime}
+                disabled={isPending || !canSubmit}
                 onClick={handlePublish}
               >
                 {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
@@ -176,7 +216,7 @@ export function EventEditForm({ event, eventId, hasPermission, locale }: Props) 
             ) : (
               <Button
                 type="button"
-                disabled={isPending || !hasDatetime}
+                disabled={isPending || !canSubmit}
                 onClick={handleSubmit}
               >
                 {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}

@@ -219,11 +219,13 @@ export default async function DashboardPage() {
                                 <p className="truncate font-medium">{event.title ?? "—"}</p>
                                 <p className="text-xs text-muted-foreground">{event.orgName}</p>
                                 <p className="text-xs text-muted-foreground">
-                                  {new Date(event.createdAt).toLocaleDateString(locale, {
-                                    year: "numeric",
-                                    month: "short",
-                                    day: "numeric",
-                                  })}
+                                  {event.startAt
+                                    ? new Date(event.startAt).toLocaleDateString(locale, {
+                                        year: "numeric",
+                                        month: "short",
+                                        day: "numeric",
+                                      })
+                                    : "—"}
                                 </p>
                               </div>
                               <Badge

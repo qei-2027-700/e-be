@@ -41,6 +41,7 @@ export function DateTimePicker({
 }: DateTimePickerProps) {
   const datePickerLocale = locales[locale] || ja;
 
+  const [open, setOpen] = React.useState(false);
   const [date, setDate] = React.useState<Date | undefined>(
     value ? parseISO(value) : undefined
   );
@@ -74,6 +75,7 @@ export function DateTimePicker({
 
   const handleDateSelect = (selectedDate: Date | undefined) => {
     updateDateTime(selectedDate, hour, minute);
+    setOpen(false);
   };
 
   const handleHourChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -93,7 +95,7 @@ export function DateTimePicker({
   return (
     <div className="flex flex-col gap-2">
       <div className="flex flex-wrap items-center gap-2">
-        <Popover>
+        <Popover open={open} onOpenChange={setOpen}>
           <PopoverTrigger
             render={
               <Button

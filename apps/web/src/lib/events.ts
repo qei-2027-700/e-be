@@ -12,6 +12,7 @@ export type MyDraftEventItem = {
   status: 'draft' | 'pending';
   orgName: string;
   createdAt: string;
+  startAt: string | null;
 };
 
 /** ユーザーが作成した draft / pending イベントを新しい順で返す */
@@ -23,6 +24,7 @@ export async function getMyDraftEvents(userId: string): Promise<MyDraftEventItem
       status: events.status,
       orgName: organizations.name,
       createdAt: events.createdAt,
+      startAt: events.startAt,
     })
     .from(events)
     .innerJoin(organizations, eq(events.orgId, organizations.id))
@@ -41,6 +43,7 @@ export async function getMyDraftEvents(userId: string): Promise<MyDraftEventItem
     status: row.status as 'draft' | 'pending',
     orgName: row.orgName,
     createdAt: row.createdAt.toISOString(),
+    startAt: row.startAt?.toISOString() ?? null,
   }));
 }
 
@@ -122,25 +125,30 @@ export async function getDraftEventForOwner(
 ): Promise<{
   id: string;
   orgId: string;
+  orgName: string;
   status: string;
   title: string | null;
   description: string | null;
   startAt: string | null;
   endAt: string | null;
   maxParticipants: number | null;
+  chargeAmount: number | null;
 } | null> {
   const rows = await db
     .select({
       id: events.id,
       orgId: events.orgId,
+      orgName: organizations.name,
       status: events.status,
       title: events.title,
       description: events.description,
       startAt: events.startAt,
       endAt: events.endAt,
       maxParticipants: events.maxParticipants,
+      chargeAmount: events.chargeAmount,
     })
     .from(events)
+    .innerJoin(organizations, eq(events.orgId, organizations.id))
     .where(
       and(
         eq(events.id, eventId),
