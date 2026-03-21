@@ -392,3 +392,18 @@ createdAt, updatedAt, deletedAt
 - FC加盟店の実運営権限は加盟店オーナーが持つ（本部は介入しない）
 - 閲覧権限のみを軽量なテーブルで表現することでシンプルさを保つ
 - 将来の FC 機能拡張に対応できる構造
+
+---
+
+## 15. `@e-be/db` は dist ベースパッケージ — dev 前に build が必要
+
+**決定**: `turbo.json` の `dev` タスクに `"dependsOn": ["^build"]` を追加し、dev server 起動前に内部パッケージのビルドを保証する。
+
+**理由**:
+- `@e-be/db` は TypeScript ソースを tsup でビルドし `dist/` を公開する設計
+- `dist/` が古い（スキーマ追加後に未ビルド）場合、Drizzle ORM が `undefined` カラムを受け取り `orderSelectedFields` でランタイムクラッシュする
+- `"dependsOn": ["^build"]` により Turborepo がキャッシュを利用して自動ビルドするため、再起動のたびに手動 rebuild は不要
+
+**影響**:
+- `pnpm dev` / `pnpm dev:web` 起動時、変更がなければキャッシュヒットで即座にスキップされる
+- スキーマを変更した場合は `pnpm dev` の再起動だけで dist が更新される
