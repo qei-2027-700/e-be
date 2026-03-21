@@ -4,6 +4,7 @@ import { useTransition, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
+import { Loader2 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -162,6 +163,7 @@ export function EventEditForm({ event, eventId, hasPermission, locale }: Props) 
 
           <div className="flex flex-col gap-2 pt-2">
             <Button type="submit" variant="outline" disabled={isPending}>
+              {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               {isPending ? t("submitting") : t("save_draft")}
             </Button>
 
@@ -171,6 +173,7 @@ export function EventEditForm({ event, eventId, hasPermission, locale }: Props) 
                 disabled={isPending || !hasDatetime}
                 onClick={handlePublish}
               >
+                {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 {isPending ? t("submitting") : t("publish")}
               </Button>
             ) : (
@@ -179,6 +182,7 @@ export function EventEditForm({ event, eventId, hasPermission, locale }: Props) 
                 disabled={isPending || !hasDatetime}
                 onClick={handleSubmit}
               >
+                {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 {isPending ? t("submitting") : t("submit")}
               </Button>
             )}
