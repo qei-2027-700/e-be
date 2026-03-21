@@ -1,7 +1,7 @@
 import { cache } from 'react';
 import { eq, and, isNull } from 'drizzle-orm';
 import { db } from './db';
-import { organizationMembers, organizations, users } from '@e-be/db/schema';
+import { operatorApplications, organizationMembers, organizations, users } from '@e-be/db/schema';
 import { createClient } from './supabase/server';
 
 /** 現在のユーザーを取得（未認証なら null）
@@ -97,4 +97,21 @@ export const getUserType = cache(async (
 export async function isAdmin(userId: string): Promise<boolean> {
   const userType = await getUserType(userId);
   return userType === 'system_user';
+}
+
+/** 申請中（pending）の事業者申請が存在するかを確認 */
+export async function getPendingApplication(userId: string): Promise<boolean> {
+  const rows = await db
+    .select({ id: operatorApplications.id })
+    .from(operatorApplications)
+    .where(
+      and(
+        eq(operatorApplications.userId, userId),
+        eq(operatorApplications.status, 'pending'),
+        isNull(operatorApplications.deletedAt)
+      )
+    )
+    .limit(1);
+
+  return rows.length > 0;
 }
