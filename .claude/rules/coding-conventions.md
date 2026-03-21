@@ -1,8 +1,9 @@
 ---
 description: コーディング規約 — shadcn/ui・Server Components・Tailwind
 paths:
-  - "apps/**"
-  - "packages/**"
+  - "apps/web/src/**/*.tsx"
+  - "apps/web/src/**/*.ts"
+  - "apps/mobile/**/*.tsx"
 ---
 
 - コンポーネントは shadcn/ui を優先して使う（素の HTML + Tailwind で自作しない）

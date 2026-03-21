@@ -1,8 +1,10 @@
 ---
 description: アーキテクチャ実装ルール — ソフトデリート・UTC・ステートマシン・通知・ストレージ・監査ログ
 paths:
-  - "apps/**"
-  - "packages/**"
+  - "packages/db/**"
+  - "apps/web/src/lib/**"
+  - "apps/web/src/app/**/route.ts"
+  - "apps/web/src/app/**/actions.ts"
 ---
 
 ## ソフトデリート

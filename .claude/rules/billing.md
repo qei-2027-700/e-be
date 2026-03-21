@@ -1,8 +1,10 @@
 ---
 description: 課金・プラン設計 — canUseFeature・Stripe・スキーマ予約
 paths:
-  - "apps/**"
   - "packages/db/**"
+  - "apps/web/src/**/*billing*"
+  - "apps/web/src/**/*plan*"
+  - "apps/web/src/**/*stripe*"
 ---
 
 - プランは `'free' | 'premium'` の2種類を前提とする（将来拡張可）

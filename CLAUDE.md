@@ -2,10 +2,7 @@
 
 ## 設計原則
 
-- **シンプルさを優先する**。複雑な仕組みで解決できることが、シンプルな仕組みでも解決できるなら、必ずシンプルな方を選ぶ
-- インフラ・cron・バックグラウンドジョブは「本当に必要か」を問う。計算で導出できるならそうする
-  - 例: `ongoing` / `completed` ステータスは cron で更新せず、`start_at` / `end_at` から導出する
-- 状態は「操作によって変わるもの」と「時刻・条件から導出できるもの」を区別する。後者は DB に持たない
+- **シンプルさを優先する**。計算で導出できるものは DB に持たない（cron・バックグラウンドジョブも同様に疑う）
 - 実装時に TBD に遭遇した場合は**勝手に決めず**、ユーザーに確認する。TBD のまま実装できる範囲だけ実装し、残りをコメントで明示する
 - 機能追加のたびにこの原則に立ち返る
 
@@ -86,32 +83,5 @@
 | `billing.md` | `apps/**` `packages/db/**` | canUseFeature・Stripe・スキーマ予約 |
 | `architecture.md` | `apps/**` `packages/**` | ソフトデリート・UTC・ステートマシン等 |
 | `coding-conventions.md` | `apps/**` `packages/**` | shadcn/ui・Server Components・Tailwind |
-
-## 検証用テストアカウント
-
-サインインページにテストアカウントのパネルが表示される（`NEXT_PUBLIC_BYPASS_AUTH=true` が設定されている場合のみ）。
-
-| 種別 | メール | パスワード | userType |
-|------|-------|-----------|----------|
-| 一般ユーザー（イベンター） | `test-user@e-be.internal` | `testpass2026` | `user` |
-| 事業者（店舗管理） | `test-venue@e-be.internal` | `testpass2026` | `venue_user` |
-
-事業者アカウントは「テスト株式会社 / テストバー」に owner として紐付き済み。
-
-### アカウントを再作成・追加する場合
-
-```bash
-pnpm seed:test
-```
-
-スクリプトは冪等。既存アカウントは上書きせず、存在しないものだけ作成する。
-スクリプト本体: `apps/web/scripts/seed-test-accounts.mjs`
-
-## ディレクトリ構成
-
-- `apps/web` — Next.js 16 Web アプリ
-- `apps/mobile` — Expo モバイルアプリ
-- `docs/` — VitePress ドキュメントサイト（GitHub Pages 公開）
-- `docs/features/` — 機能別ビジネスルール（AI 実装の入力源）
-- `packages/db` — Drizzle ORM スキーマ（Web/Mobile 共有）
+| `testing.md` | `apps/web/**` | テストアカウント・seed コマンド |
 

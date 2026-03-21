@@ -1,7 +1,8 @@
 ---
 description: モバイルファースト — Tailwind レスポンシブ・タップターゲット
 paths:
-  - "apps/**"
+  - "apps/web/src/**/*.tsx"
+  - "apps/mobile/**/*.tsx"
 ---
 
 - **モバイルファーストで実装する**。Tailwind のレスポンシブ修飾子はモバイルが基底
