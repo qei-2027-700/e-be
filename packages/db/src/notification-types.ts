@@ -5,6 +5,7 @@ export const NOTIFICATION_TYPES = {
   EVENT_CANCELLED: 'event_cancelled', // 関係者向け：キャンセル
   NEW_COUPON: 'new_coupon', // ユーザー向け：新規クーポン配布
   OWNERSHIP_TRANSFERRED: 'ownership_transferred', // メンバー向け：権限移譲
+  PARTICIPATION_RECEIVED: 'participation_received', // 主催者向け：参加表明受領
 } as const;
 
 export type NotificationType = (typeof NOTIFICATION_TYPES)[keyof typeof NOTIFICATION_TYPES];

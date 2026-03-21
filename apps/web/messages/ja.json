@@ -285,7 +285,13 @@
     "status_cancelled": "キャンセル済み",
     "venue": "開催店舗",
     "charge_amount": "チャージ料",
-    "description": "イベント詳細"
+    "description": "イベント詳細",
+    "join_button": "参加する",
+    "cancel_button": "参加をキャンセル",
+    "full_capacity": "定員満",
+    "event_ended": "終了済み",
+    "joining": "処理中...",
+    "cancelling": "処理中..."
   },
   "privacy": {
     "title": "プライバシーポリシー",

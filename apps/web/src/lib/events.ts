@@ -1,6 +1,6 @@
 import { db } from "@/lib/db";
 import { events, eventParticipations, organizations, barHostPermissions, barBlocks } from "@e-be/db/schema";
-import { eq, and, gte, lte, isNull, or, lt, gt, asc, desc, ne, inArray } from "drizzle-orm";
+import { eq, and, gte, lte, isNull, or, lt, gt, asc, desc, ne, inArray, count } from "drizzle-orm";
 
 /**
  * イベント作成フォームのバー選択用に公開バー一覧を取得する。
@@ -377,7 +377,27 @@ export type EventDetail = {
   orgName: string;
   orgAddress: string | null;
   myParticipationStatus: "registered" | "cancelled" | null;
+  participantCount: number;
+  maxParticipants: number | null;
 };
+
+/**
+ * 指定イベントの現在の参加者数を返す。
+ * - status = 'registered' かつ deletedAt IS NULL の件数
+ */
+export async function getEventParticipantCount(eventId: string): Promise<number> {
+  const [{ total }] = await db
+    .select({ total: count() })
+    .from(eventParticipations)
+    .where(
+      and(
+        eq(eventParticipations.eventId, eventId),
+        eq(eventParticipations.status, "registered"),
+        isNull(eventParticipations.deletedAt)
+      )
+    );
+  return total;
+}
 
 /**
  * イベント詳細を取得する。
@@ -397,6 +417,7 @@ export async function getEventDetail(
       endAt: events.endAt,
       location: events.location,
       chargeAmount: events.chargeAmount,
+      maxParticipants: events.maxParticipants,
       orgName: organizations.name,
       orgAddress: organizations.address,
       participationStatus: eventParticipations.status,
@@ -423,6 +444,7 @@ export async function getEventDetail(
   if (rows.length === 0) return null;
 
   const row = rows[0];
+  const participantCount = await getEventParticipantCount(eventId);
   return {
     id: row.id,
     title: row.title,
@@ -431,8 +453,10 @@ export async function getEventDetail(
     endAt: row.endAt?.toISOString() ?? null,
     location: row.location,
     chargeAmount: row.chargeAmount ?? null,
+    maxParticipants: row.maxParticipants ?? null,
     orgName: row.orgName,
     orgAddress: row.orgAddress,
     myParticipationStatus: row.participationStatus ?? null,
+    participantCount,
   };
 }
