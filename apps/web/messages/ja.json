@@ -165,6 +165,11 @@
     "participation_status_cancelled": "キャンセル済み",
     "upcoming_participations_title": "参加予定イベント",
     "upcoming_participations_empty": "参加予定のイベントはありません",
+    "organizer_history_public": "公開",
+    "organizer_history_private": "非公開",
+    "organizer_history_toggle_public": "公開にする",
+    "organizer_history_toggle_private": "非公開にする",
+    "organizer_history_csv": "CSV ダウンロード",
     "account_settings": {
       "title": "アカウント設定",
       "withdrawal_section_title": "退会",
@@ -328,6 +333,11 @@
         "content": "法令に基づく場合を除き、ユーザーの同意なく個人情報を第三者に提供することはありません。"
       }
     }
+  },
+  "profile": {
+    "title": "{name} のプロフィール",
+    "organizer_history_title": "主催イベント履歴",
+    "organizer_history_empty": "公開されている主催履歴はありません"
   },
   "terms_page": {
     "title": "利用規約",

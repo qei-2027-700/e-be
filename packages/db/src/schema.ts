@@ -7,6 +7,7 @@ import {
   jsonb,
   pgEnum,
   uniqueIndex,
+  boolean,
 } from 'drizzle-orm/pg-core';
 import { sql } from 'drizzle-orm';
 
@@ -141,6 +142,7 @@ export const events = pgTable('events', {
   maxParticipants: integer('max_participants'),
   location: text('location'),
   chargeAmount: integer('charge_amount'), // チャージ料（円）null = 未設定
+  isPublic: boolean('is_public').default(true).notNull(),
 });
 
 export const barHostPermissions = pgTable('bar_host_permissions', {
