@@ -3,6 +3,9 @@
     "confirmDialog": {
       "confirm": "Confirm",
       "cancel": "Cancel"
+    },
+    "dialog": {
+      "close": "Close"
     }
   },
   "home": {

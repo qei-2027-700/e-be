@@ -3,6 +3,9 @@
     "confirmDialog": {
       "confirm": "確認",
       "cancel": "キャンセル"
+    },
+    "dialog": {
+      "close": "閉じる"
     }
   },
   "home": {
