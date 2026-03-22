@@ -206,7 +206,10 @@
       "x_url_saved": "X URL を保存しました",
       "x_url_error_invalid": "https://x.com/ または https://twitter.com/ で始まる URL を入力してください",
       "x_url_error_unknown": "保存に失敗しました"
-    }
+    },
+    "upcoming_events_title": "開催予定イベント",
+    "upcoming_events_empty": "公開中のイベントはありません",
+    "upcoming_events_see_more": "もっと見る"
   },
   "apply": {
     "title": "事業者申請",
@@ -389,5 +392,20 @@
         "content": "当サービスは、本サービスに関してユーザーに生じた損害について、当サービスの故意または重過失による場合を除き、一切の責任を負いません。"
       }
     }
+  },
+  "events": {
+    "title": "イベント一覧",
+    "filter_date": "開催日",
+    "filter_prefecture": "都道府県",
+    "filter_line": "路線",
+    "filter_search": "検索",
+    "filter_reset": "リセット",
+    "empty": "条件に合うイベントが見つかりません",
+    "charge_free": "無料",
+    "charge_amount": "¥{amount}",
+    "seats_remaining": "残席{count}",
+    "seats_full": "満席",
+    "page_prev": "前のページ",
+    "page_next": "次のページ"
   }
 }

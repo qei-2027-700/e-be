@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { EventCalendar } from "@/components/event-calendar";
-import { getEventsForCalendar, getMyDraftEvents, getOrganizerHistory, getParticipationHistory, getUpcomingParticipations } from "@/lib/events";
+import { getEventsForCalendar, getMyDraftEvents, getOrganizerHistory, getParticipationHistory, getUpcomingParticipations, searchPublicEvents } from "@/lib/events";
 import { OrganizerHistoryItem } from "./organizer-history-item";
 
 const USER_TYPE_VARIANT = {
@@ -25,10 +25,11 @@ export default async function DashboardPage() {
   const calendarFrom = new Date(now.getFullYear(), now.getMonth(), 1);
   const calendarTo = new Date(now.getFullYear(), now.getMonth() + 3, 0);
 
-  const [userOrgs, userType, calendarEvents] = await Promise.all([
+  const [userOrgs, userType, calendarEvents, upcomingPublicEvents] = await Promise.all([
     getUserOrgs(user.id),
     getUserType(user.id),
     getEventsForCalendar({ from: calendarFrom, to: calendarTo }),
+    searchPublicEvents({ limit: 3 }),
   ]);
 
   // userType === 'user' のみ必要なデータを並行取得
@@ -80,6 +81,51 @@ export default async function DashboardPage() {
                   initialMonth={now.getMonth()}
                   locale={locale}
                 />
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <CardTitle>{t("upcoming_events_title")}</CardTitle>
+                  <Link
+                    href={`/${locale}/events`}
+                    className="text-xs text-muted-foreground transition-colors hover:text-foreground"
+                  >
+                    {t("upcoming_events_see_more")} →
+                  </Link>
+                </div>
+              </CardHeader>
+              <CardContent>
+                {upcomingPublicEvents.length === 0 ? (
+                  <p className="py-4 text-center text-sm text-muted-foreground">
+                    {t("upcoming_events_empty")}
+                  </p>
+                ) : (
+                  <ul className="divide-y">
+                    {upcomingPublicEvents.map((event) => (
+                      <li key={event.id}>
+                        <Link
+                          href={`/${locale}/dashboard/event/${event.id}`}
+                          className="flex items-center justify-between gap-3 py-3 -mx-2 px-2 rounded-md transition-colors hover:bg-muted/50"
+                        >
+                          <div className="min-w-0">
+                            <p className="truncate font-medium">{event.title ?? "—"}</p>
+                            <p className="text-xs text-muted-foreground">{event.orgName}</p>
+                          </div>
+                          <span className="shrink-0 text-xs text-muted-foreground">
+                            {event.startAt
+                              ? new Date(event.startAt).toLocaleDateString(locale, {
+                                  month: "short",
+                                  day: "numeric",
+                                })
+                              : "—"}
+                          </span>
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </CardContent>
             </Card>
 

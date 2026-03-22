@@ -539,3 +539,101 @@ export async function getEventDetail(
     organizerXUrl: row.organizerXUrl ?? null,
   };
 }
+
+export type PublicEventItem = {
+  id: string;
+  title: string | null;
+  startAt: string | null;
+  endAt: string | null;
+  orgId: string;
+  orgName: string;
+  orgAddress: string | null;
+  orgPrefecture: string | null;
+  chargeAmount: number | null;
+  maxParticipants: number | null;
+  participantCount: number;
+};
+
+export type SearchEventsOptions = {
+  date?: string;        // YYYY-MM-DD（この日に開催）
+  prefecture?: string;  // 都道府県
+  line?: string;        // 路線（部分一致）
+  limit?: number;
+  offset?: number;
+};
+
+/**
+ * 公開イベントを検索する。未ログインでもアクセス可。
+ * - published かつ start_at が未来のイベントのみ
+ * - 日付・都道府県・路線でフィルタリング可能
+ */
+export async function searchPublicEvents(opts: SearchEventsOptions = {}): Promise<PublicEventItem[]> {
+  const { date, prefecture, line, limit = 20, offset = 0 } = opts;
+  const now = new Date();
+
+  const participantCountSq = db
+    .select({ count: count() })
+    .from(eventParticipations)
+    .where(
+      and(
+        eq(eventParticipations.eventId, events.id),
+        eq(eventParticipations.status, "registered"),
+        isNull(eventParticipations.deletedAt)
+      )
+    );
+
+  const conditions: ReturnType<typeof and>[] = [
+    eq(events.status, "published"),
+    isNull(events.deletedAt),
+    gt(events.startAt, now),
+    isNull(organizations.deletedAt),
+  ];
+
+  if (date) {
+    // start_at の日付部分が一致するもの (UTC日付で比較)
+    conditions.push(sql`DATE(${events.startAt}) = ${date}`);
+  }
+
+  if (prefecture) {
+    conditions.push(eq(organizations.prefecture, prefecture));
+  }
+
+  if (line) {
+    conditions.push(sql`${organizations.nearestLine} ILIKE ${'%' + line + '%'}`);
+  }
+
+  const rows = await db
+    .select({
+      id: events.id,
+      title: events.title,
+      startAt: events.startAt,
+      endAt: events.endAt,
+      orgId: events.orgId,
+      orgName: organizations.name,
+      orgAddress: organizations.address,
+      orgPrefecture: organizations.prefecture,
+      chargeAmount: events.chargeAmount,
+      maxParticipants: events.maxParticipants,
+      participantCount: sql<number>`(${participantCountSq})`,
+    })
+    .from(events)
+    .innerJoin(organizations, eq(events.orgId, organizations.id))
+    .where(and(...conditions))
+    .orderBy(asc(events.startAt))
+    .limit(limit)
+    .offset(offset);
+
+  return rows.map((row) => ({
+    id: row.id,
+    title: row.title,
+    startAt: row.startAt?.toISOString() ?? null,
+    endAt: row.endAt?.toISOString() ?? null,
+    orgId: row.orgId,
+    orgName: row.orgName,
+    orgAddress: row.orgAddress,
+    orgPrefecture: row.orgPrefecture,
+    chargeAmount: row.chargeAmount,
+    maxParticipants: row.maxParticipants,
+    participantCount: Number(row.participantCount),
+  }));
+}
