@@ -569,7 +569,10 @@ export type SearchEventsOptions = {
  */
 export async function searchPublicEvents(opts: SearchEventsOptions = {}): Promise<PublicEventItem[]> {
   const { date, prefecture, line, limit = 20, offset = 0 } = opts;
-  const now = new Date();
+
+  // 本日 00:00:00 UTC 以降のイベントを対象とする
+  const startOfToday = new Date();
+  startOfToday.setUTCHours(0, 0, 0, 0);
 
   const participantCountSq = db
     .select({ count: count() })
@@ -585,7 +588,7 @@ export async function searchPublicEvents(opts: SearchEventsOptions = {}): Promis
   const conditions: ReturnType<typeof and>[] = [
     eq(events.status, "published"),
     isNull(events.deletedAt),
-    gt(events.startAt, now),
+    gte(events.startAt, startOfToday),
     isNull(organizations.deletedAt),
   ];
 
