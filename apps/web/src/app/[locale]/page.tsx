@@ -285,7 +285,7 @@ export default async function HomePage() {
 
             {howSteps.map(({ titleKey, descKey }, idx) => (
               <div key={titleKey} className="flex flex-col items-center text-center">
-                <div className="relative mb-5 flex h-14 w-14 items-center justify-center rounded-full bg-foreground font-bold text-background text-lg">
+                <div className="relative mb-5 flex h-14 w-14 items-center justify-center rounded-full bg-brand font-bold text-brand-foreground text-lg">
                   {String(idx + 1).padStart(2, "0")}
                 </div>
                 <h3 className="mb-2 font-semibold">{t(titleKey)}</h3>
