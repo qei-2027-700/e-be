@@ -407,3 +407,35 @@ createdAt, updatedAt, deletedAt
 **影響**:
 - `pnpm dev` / `pnpm dev:web` 起動時、変更がなければキャッシュヒットで即座にスキップされる
 - スキーマを変更した場合は `pnpm dev` の再起動だけで dist が更新される
+
+---
+
+## 16. デザイントークン命名方針（Semantic Tokens）
+
+**決定**: カラートークンは色名ではなく役割名（semantic naming）で定義する。2 層構造を採用する。
+
+```
+Layer 1 — Primitive（生の値、globals.css の CSS 変数）
+  --brand:   oklch(0.769 0.188 70.08)   /* 琥珀色 */
+  --feature: oklch(0.606 0.213 293.74)  /* 紫 */
+
+Layer 2 — Semantic（Tailwind @theme inline でトークンとして公開）
+  --color-brand:   var(--brand)
+  --color-feature: var(--feature)
+```
+
+**理由**:
+- 将来「amber をやめて rose に変えたい」となった場合、`globals.css` の値だけ変更すればよく、コンポーネント側の `bg-brand` クラスは変更不要
+- shadcn/ui、Radix UI、Material Design 3、GitHub Primer など主要デザインシステムの慣例に従う
+- `--accent` は shadcn/ui が既に使用しているため使わない
+
+**現在のトークン**:
+
+| トークン | 役割 | 現在の値（ライト） |
+|---------|------|------------------|
+| `--brand` / `bg-brand` | バーらしい温かみ・CTA・バッジ | 琥珀色 |
+| `--feature` / `bg-feature` | ナイトライフ・ハイライト | 紫 |
+
+**影響**:
+- 新しい色を追加する際も semantic 名で定義する（`--status-info`, `--status-success` 等）
+- コンポーネントで `bg-brand`, `text-feature-foreground` のようにクラスとして利用する
