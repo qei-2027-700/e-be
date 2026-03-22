@@ -115,14 +115,15 @@ export async function submitEvent(eventId: string): Promise<ActionResult> {
   if (!target) return { error: 'not_found' };
   if (target.status !== 'draft') return { error: 'forbidden' };
   if (!target.orgId) return { error: 'venue_required' };
-  if (!target.startAt || !target.endAt) return { error: 'datetime_required' };
 
-  const now = new Date();
-  if (target.startAt <= now) return { error: 'past_date' };
-  if (target.endAt <= target.startAt) return { error: 'invalid_range' };
+  if (target.startAt && target.endAt) {
+    const now = new Date();
+    if (target.startAt <= now) return { error: 'past_date' };
+    if (target.endAt <= target.startAt) return { error: 'invalid_range' };
 
-  const conflict = await checkEventConflict(target.orgId, target.startAt, target.endAt, eventId);
-  if (conflict) return { error: 'conflict' };
+    const conflict = await checkEventConflict(target.orgId, target.startAt, target.endAt, eventId);
+    if (conflict) return { error: 'conflict' };
+  }
 
   await db.update(events).set({ status: 'pending', updatedAt: new Date() }).where(eq(events.id, eventId));
   return { ok: true };
