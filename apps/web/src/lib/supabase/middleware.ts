@@ -21,7 +21,10 @@ export async function updateSession(request: NextRequest, response: NextResponse
   )
 
   // セッションを更新（重要: getUser() を呼ぶことで cookie が refresh される）
-  const { data: { user } } = await supabase.auth.getUser()
+  // refresh token が無効な場合（期限切れ等）は user: null として扱う
+  const { data: { user } } = await supabase.auth.getUser().catch(() => ({
+    data: { user: null },
+  }))
 
   return { response, user }
 }
