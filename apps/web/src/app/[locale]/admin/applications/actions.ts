@@ -1,7 +1,7 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { db } from "@/lib/db";
+import { db, dbWs } from "@/lib/db";
 import {
   operatorApplications,
   companies,
@@ -28,7 +28,8 @@ export async function approveApplication(
   const locale = String(formData.get("locale") ?? "ja");
 
   // トランザクション: 会社 → 組織 → メンバー → userType 更新 → 申請ステータス更新
-  await db.transaction(async (tx) => {
+  // HTTP ドライバーはトランザクション非対応のため WebSocket ドライバー (dbWs) を使用
+  await dbWs.transaction(async (tx) => {
     // 1. companies に insert
     const [company] = await tx
       .insert(companies)
