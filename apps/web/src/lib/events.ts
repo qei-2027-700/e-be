@@ -2,6 +2,7 @@ import { db } from "@/lib/db";
 import { events, eventParticipations, organizations, barHostPermissions, barBlocks, users } from "@e-be/db/schema";
 import { eq, and, gte, lte, isNull, or, lt, gt, asc, desc, ne, inArray, count, sql, isNotNull } from "drizzle-orm";
 import { getLinesByStation, getStationsByLine } from "@e-be/db/station-lines";
+import { areaKeyToPrefectures } from "@/lib/area-regions";
 
 /**
  * イベント作成フォームのバー選択用に公開バー一覧を取得する。
@@ -562,9 +563,9 @@ export type PublicEventItem = {
 };
 
 export type SearchEventsOptions = {
-  date?: string;        // YYYY-MM-DD（この日に開催）
-  prefecture?: string;  // 都道府県
-  line?: string;        // 路線名（マスタ完全一致）
+  date?: string;    // YYYY-MM-DD（この日に開催）
+  area?: string;    // 広域エリアキー
+  line?: string;    // 路線名（マスタ完全一致）
   limit?: number;
   offset?: number;
 };
@@ -575,7 +576,7 @@ export type SearchEventsOptions = {
  * - 日付・都道府県・路線でフィルタリング可能
  */
 export async function searchPublicEvents(opts: SearchEventsOptions = {}): Promise<PublicEventItem[]> {
-  const { date, prefecture, line, limit = 20, offset = 0 } = opts;
+  const { date, area, line, limit = 20, offset = 0 } = opts;
 
   // 本日 00:00:00 UTC 以降のイベントを対象とする
   const startOfToday = new Date();
@@ -604,8 +605,13 @@ export async function searchPublicEvents(opts: SearchEventsOptions = {}): Promis
     conditions.push(sql`DATE(${events.startAt}) = ${date}`);
   }
 
-  if (prefecture) {
-    conditions.push(eq(organizations.prefecture, prefecture));
+  if (area) {
+    const prefectures = areaKeyToPrefectures(area);
+    if (prefectures.length > 0) {
+      conditions.push(inArray(organizations.prefecture, prefectures));
+    } else {
+      conditions.push(sql`FALSE`);
+    }
   }
 
   if (line) {

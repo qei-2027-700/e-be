@@ -408,7 +408,7 @@
   "events": {
     "title": "イベント一覧",
     "filter_date": "開催日",
-    "filter_prefecture": "都道府県",
+    "filter_area": "エリア",
     "filter_line": "路線",
     "filter_search": "検索",
     "filter_reset": "リセット",
