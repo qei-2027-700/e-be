@@ -27,6 +27,7 @@ type EventData = {
   endAt: string | null;
   maxParticipants: number | null;
   chargeAmount: number | null;
+  nearestStation: string | null;
 };
 
 type Props = {
@@ -265,6 +266,17 @@ export function EventEditForm({ event, eventId, hasPermission, locale, bars }: P
               min={0}
               step={100}
               placeholder={t("field_charge_amount_placeholder")}
+              disabled={isPending}
+            />
+          </div>
+
+          <div className="space-y-1">
+            <Label htmlFor="nearestStation">{t("field_nearest_station")}</Label>
+            <Input
+              id="nearestStation"
+              name="nearestStation"
+              defaultValue={event.nearestStation ?? ""}
+              placeholder={t("field_nearest_station_placeholder")}
               disabled={isPending}
             />
           </div>

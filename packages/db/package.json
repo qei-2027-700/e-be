@@ -29,11 +29,16 @@
       "types": "./dist/notification-types.d.ts",
       "import": "./dist/notification-types.mjs",
       "require": "./dist/notification-types.js"
+    },
+    "./station-lines": {
+      "types": "./dist/station-lines.d.ts",
+      "import": "./dist/station-lines.mjs",
+      "require": "./dist/station-lines.js"
     }
   },
   "scripts": {
-    "build": "tsup src/index.ts src/schema.ts src/plans.ts src/event-transitions.ts src/notification-types.ts --format cjs,esm --dts",
-    "dev": "tsup src/index.ts src/schema.ts src/plans.ts src/event-transitions.ts src/notification-types.ts --format cjs,esm --dts --watch",
+    "build": "tsup src/index.ts src/schema.ts src/plans.ts src/event-transitions.ts src/notification-types.ts src/station-lines.ts --format cjs,esm --dts",
+    "dev": "tsup src/index.ts src/schema.ts src/plans.ts src/event-transitions.ts src/notification-types.ts src/station-lines.ts --format cjs,esm --dts --watch",
     "lint": "eslint src/",
     "test": "vitest run",
     "test:watch": "vitest",

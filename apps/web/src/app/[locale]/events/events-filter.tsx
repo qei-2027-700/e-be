@@ -3,7 +3,6 @@
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { useTranslations } from "next-intl";
 
@@ -20,9 +19,10 @@ const PREFECTURES = [
 type Props = {
   defaultPrefecture?: string;
   defaultLine?: string;
+  availableLines?: string[];
 };
 
-export function EventsFilter({ defaultPrefecture, defaultLine }: Props) {
+export function EventsFilter({ defaultPrefecture, defaultLine, availableLines = [] }: Props) {
   const t = useTranslations("events");
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -67,16 +67,21 @@ export function EventsFilter({ defaultPrefecture, defaultLine }: Props) {
         </Select>
       </div>
 
-      <div className="flex flex-col gap-1.5">
-        <label className="text-xs font-medium text-muted-foreground">{t("filter_line")}</label>
-        <Input
-          type="text"
-          placeholder="例: 山手線"
-          value={line}
-          onChange={(e) => setLine(e.target.value)}
-          className="w-full sm:w-44"
-        />
-      </div>
+      {availableLines.length > 0 && (
+        <div className="flex flex-col gap-1.5">
+          <label className="text-xs font-medium text-muted-foreground">{t("filter_line")}</label>
+          <Select
+            value={line}
+            onChange={(e) => setLine(e.target.value)}
+            className="w-full sm:w-48"
+          >
+            <option value="">—</option>
+            {availableLines.map((l) => (
+              <option key={l} value={l}>{l}</option>
+            ))}
+          </Select>
+        </div>
+      )}
 
       <div className="flex gap-2">
         <Button type="submit" disabled={isPending}>

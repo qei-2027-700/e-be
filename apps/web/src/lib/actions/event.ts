@@ -21,6 +21,7 @@ export async function createEventDraft(formData: FormData): Promise<CreateEventD
   const title = (formData.get('title') as string | null)?.trim() ?? '';
   const description = (formData.get('description') as string | null)?.trim() ?? '';
   const maxParticipantsRaw = formData.get('maxParticipants') as string | null;
+  const nearestStation = (formData.get('nearestStation') as string | null)?.trim() || null;
 
   // バリデーション
   if (!orgId || !/^[0-9a-f-]{36}$/.test(orgId)) return { error: 'invalid' };
@@ -43,6 +44,7 @@ export async function createEventDraft(formData: FormData): Promise<CreateEventD
       title,
       description,
       maxParticipants,
+      nearestStation,
     })
     .returning({ id: events.id });
 
@@ -63,6 +65,7 @@ export async function updateEventDraft(eventId: string, formData: FormData): Pro
   const maxParticipantsRaw = formData.get('maxParticipants') as string | null;
   const chargeAmountRaw = formData.get('chargeAmount') as string | null;
   const orgIdRaw = (formData.get('orgId') as string | null)?.trim() ?? '';
+  const nearestStation = (formData.get('nearestStation') as string | null)?.trim() || null;
 
   if (!title || title.length > 100) return { error: 'invalid' };
   if (!description || description.length > 2000) return { error: 'invalid' };
@@ -98,7 +101,7 @@ export async function updateEventDraft(eventId: string, formData: FormData): Pro
 
   await db
     .update(events)
-    .set({ title, description, startAt, endAt, maxParticipants, chargeAmount, ...(orgId ? { orgId } : {}), updatedAt: new Date() })
+    .set({ title, description, startAt, endAt, maxParticipants, chargeAmount, nearestStation, ...(orgId ? { orgId } : {}), updatedAt: new Date() })
     .where(eq(events.id, eventId));
 
   return { ok: true };

@@ -1,0 +1,1 @@
+ALTER TABLE "events" ADD COLUMN "nearest_station" text;

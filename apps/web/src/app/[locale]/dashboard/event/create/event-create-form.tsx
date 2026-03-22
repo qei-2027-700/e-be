@@ -105,6 +105,16 @@ export function EventCreateForm({ bars, locale }: Props) {
             />
           </div>
 
+          <div className="space-y-1">
+            <Label htmlFor="nearestStation">{t("field_nearest_station")}</Label>
+            <Input
+              id="nearestStation"
+              name="nearestStation"
+              placeholder={t("field_nearest_station_placeholder")}
+              disabled={isPending}
+            />
+          </div>
+
           {error && <p className="text-sm text-destructive">{error}</p>}
 
           <div className="flex flex-col gap-2 pt-2">
