@@ -178,6 +178,9 @@
     "organizer_history_toggle_public": "公開にする",
     "organizer_history_toggle_private": "非公開にする",
     "organizer_history_csv": "CSV ダウンロード",
+    "organizer_history_participants": "参加者数",
+    "organizer_history_charge": "チャージ料",
+    "organizer_history_sales": "売上",
     "account_settings": {
       "title": "アカウント設定",
       "withdrawal_section_title": "退会",

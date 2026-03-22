@@ -14,6 +14,8 @@ type Props = {
     status: string;
     orgName: string;
     isPublic: boolean;
+    chargeAmount: number | null;
+    participantCount: number;
   };
   locale: string;
 };
@@ -43,44 +45,69 @@ export function OrganizerHistoryItem({ event, locale }: Props) {
     });
   };
 
+  const salesAmount =
+    event.chargeAmount != null ? event.chargeAmount * event.participantCount : null;
+
   return (
-    <li className="flex items-center justify-between gap-3 py-3">
-      <div className="min-w-0">
-        <p className="truncate font-medium">{event.title ?? '—'}</p>
-        <p className="text-xs text-muted-foreground">{event.orgName}</p>
-        <p className="text-xs text-muted-foreground">
-          {event.startAt
-            ? new Date(event.startAt).toLocaleDateString(locale, {
-                year: 'numeric',
-                month: 'short',
-                day: 'numeric',
-              })
-            : '—'}
-        </p>
+    <li className="py-3">
+      <div className="flex items-start justify-between gap-3">
+        <div className="min-w-0">
+          <p className="truncate font-medium">{event.title ?? '—'}</p>
+          <p className="text-xs text-muted-foreground">{event.orgName}</p>
+          <p className="text-xs text-muted-foreground">
+            {event.startAt
+              ? new Date(event.startAt).toLocaleDateString(locale, {
+                  year: 'numeric',
+                  month: 'short',
+                  day: 'numeric',
+                })
+              : '—'}
+          </p>
+        </div>
+        <div className="flex shrink-0 items-center gap-2">
+          {isCompleted && (
+            <div className="flex items-center gap-1.5">
+              <span className="text-xs text-muted-foreground">
+                {isPublic ? t('organizer_history_public') : t('organizer_history_private')}
+              </span>
+              <Switch
+                checked={isPublic}
+                onCheckedChange={handleToggle}
+                disabled={isPending}
+                aria-label={isPublic ? t('organizer_history_toggle_private') : t('organizer_history_toggle_public')}
+              />
+            </div>
+          )}
+          <Badge
+            variant={
+              event.status === 'cancelled' || event.status === 'rejected'
+                ? 'secondary'
+                : 'outline'
+            }
+          >
+            {t(statusKey)}
+          </Badge>
+        </div>
       </div>
-      <div className="flex shrink-0 items-center gap-2">
-        {isCompleted && (
-          <div className="flex items-center gap-1.5">
-            <span className="text-xs text-muted-foreground">
-              {isPublic ? t('organizer_history_public') : t('organizer_history_private')}
-            </span>
-            <Switch
-              checked={isPublic}
-              onCheckedChange={handleToggle}
-              disabled={isPending}
-              aria-label={isPublic ? t('organizer_history_toggle_private') : t('organizer_history_toggle_public')}
-            />
-          </div>
-        )}
-        <Badge
-          variant={
-            event.status === 'cancelled' || event.status === 'rejected'
-              ? 'secondary'
-              : 'outline'
-          }
-        >
-          {t(statusKey)}
-        </Badge>
+      <div className="mt-1.5 flex flex-wrap gap-x-4 gap-y-1">
+        <span className="text-xs text-muted-foreground">
+          {t('organizer_history_participants')}:{' '}
+          <span className="font-medium text-foreground">{event.participantCount}</span>
+        </span>
+        <span className="text-xs text-muted-foreground">
+          {t('organizer_history_charge')}:{' '}
+          <span className="font-medium text-foreground">
+            {event.chargeAmount != null
+              ? `¥${event.chargeAmount.toLocaleString()}`
+              : '—'}
+          </span>
+        </span>
+        <span className="text-xs text-muted-foreground">
+          {t('organizer_history_sales')}:{' '}
+          <span className="font-medium text-foreground">
+            {salesAmount != null ? `¥${salesAmount.toLocaleString()}` : '—'}
+          </span>
+        </span>
       </div>
     </li>
   );
