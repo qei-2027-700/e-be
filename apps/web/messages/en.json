@@ -206,7 +206,10 @@
       "x_url_saved": "X URL saved",
       "x_url_error_invalid": "Please enter a URL starting with https://x.com/ or https://twitter.com/",
       "x_url_error_unknown": "Failed to save"
-    }
+    },
+    "upcoming_events_title": "Upcoming Events",
+    "upcoming_events_empty": "No public events available",
+    "upcoming_events_see_more": "See more"
   },
   "apply": {
     "title": "Venue Operator Application",
@@ -389,5 +392,20 @@
         "content": "The Service is not liable for any damages incurred by users regarding the use of the Service, except in cases of intentional misconduct or gross negligence by the Service."
       }
     }
+  },
+  "events": {
+    "title": "Events",
+    "filter_date": "Date",
+    "filter_prefecture": "Prefecture",
+    "filter_line": "Train Line",
+    "filter_search": "Search",
+    "filter_reset": "Reset",
+    "empty": "No events found matching your criteria",
+    "charge_free": "Free",
+    "charge_amount": "¥{amount}",
+    "seats_remaining": "{count} seats left",
+    "seats_full": "Full",
+    "page_prev": "Previous",
+    "page_next": "Next"
   }
 }

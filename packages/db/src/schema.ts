@@ -75,6 +75,8 @@ export const organizations = pgTable('organizations', {
   imageColor: text('image_color'), // HEX
   iconUrl: text('icon_url'),
   coverImageUrl: text('cover_image_url'),
+  prefecture: text('prefecture'), // 都道府県
+  nearestLine: text('nearest_line'), // 最寄り路線
 });
 
 export const organizationMembers = pgTable(
