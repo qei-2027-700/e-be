@@ -1,5 +1,5 @@
 import { and, eq, gt, isNull } from 'drizzle-orm';
-import { db, dbWs } from './db';
+import { db } from './db';
 import {
   users,
   organizationMembers,
@@ -58,8 +58,7 @@ export async function checkWithdrawalBlockers(
 export async function withdrawUser(dbUserId: string): Promise<void> {
   const now = new Date();
 
-  // HTTP ドライバーはトランザクション非対応のため WebSocket ドライバー (dbWs) を使用
-  await dbWs.transaction(async (tx) => {
+  await db.transaction(async (tx) => {
     // ブロック条件の最終チェック（競合対策）
     const [ownerCheck, eventCheck] = await Promise.all([
       tx
