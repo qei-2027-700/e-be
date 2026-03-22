@@ -554,9 +554,11 @@ export type PublicEventItem = {
   orgName: string;
   orgAddress: string | null;
   orgPrefecture: string | null;
+  nearestStation: string | null;
   chargeAmount: number | null;
   maxParticipants: number | null;
   participantCount: number;
+  thumbnailUrl: string | null;
 };
 
 export type SearchEventsOptions = {
@@ -626,9 +628,11 @@ export async function searchPublicEvents(opts: SearchEventsOptions = {}): Promis
       orgName: organizations.name,
       orgAddress: organizations.address,
       orgPrefecture: organizations.prefecture,
+      nearestStation: events.nearestStation,
       chargeAmount: events.chargeAmount,
       maxParticipants: events.maxParticipants,
       participantCount: sql<number>`(${participantCountSq})`,
+      thumbnailUrl: events.thumbnailUrl,
     })
     .from(events)
     .innerJoin(organizations, eq(events.orgId, organizations.id))
@@ -646,9 +650,11 @@ export async function searchPublicEvents(opts: SearchEventsOptions = {}): Promis
     orgName: row.orgName,
     orgAddress: row.orgAddress,
     orgPrefecture: row.orgPrefecture,
+    nearestStation: row.nearestStation,
     chargeAmount: row.chargeAmount,
     maxParticipants: row.maxParticipants,
     participantCount: Number(row.participantCount),
+    thumbnailUrl: row.thumbnailUrl,
   }));
 }
 

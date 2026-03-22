@@ -147,6 +147,7 @@ export const events = pgTable('events', {
   chargeAmount: integer('charge_amount'), // チャージ料（円）null = 未設定
   isPublic: boolean('is_public').default(true).notNull(),
   nearestStation: text('nearest_station'), // 最寄り駅（任意）例: "渋谷", "新宿"
+  thumbnailUrl: text('thumbnail_url'), // サムネイル画像 URL（任意）
 });
 
 export const barHostPermissions = pgTable('bar_host_permissions', {
