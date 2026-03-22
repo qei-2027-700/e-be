@@ -262,6 +262,7 @@
     "field_start_at": "Start Date & Time",
     "field_end_at": "End Date & Time",
     "field_venue": "Venue",
+    "field_venue_placeholder": "Select a bar",
     "field_max_participants": "Capacity",
     "field_charge_amount": "Cover Charge",
     "field_charge_amount_placeholder": "Leave blank to hide (e.g. 0 for free)",

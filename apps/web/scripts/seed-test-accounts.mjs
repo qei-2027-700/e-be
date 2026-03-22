@@ -295,6 +295,26 @@ async function main() {
         SELECT id FROM organizations WHERE slug = ${account.org.slug} AND deleted_at IS NULL LIMIT 1
       `;
       testOrgId = row?.id ?? null;
+
+      // セレクトボックス検証用に2件目のバーを作成（冪等）
+      const companyRow = await sql`
+        SELECT id FROM companies WHERE slug = ${account.company.slug} AND deleted_at IS NULL LIMIT 1
+      `;
+      if (companyRow[0]) {
+        const companyId = companyRow[0].id;
+        const [existingBar2] = await sql`
+          SELECT id FROM organizations WHERE slug = 'test-bar-2' AND deleted_at IS NULL LIMIT 1
+        `;
+        if (!existingBar2) {
+          await sql`
+            INSERT INTO organizations (company_id, name, slug, description)
+            VALUES (${companyId}, 'テストバー2', 'test-bar-2', '検証用の2件目テストバーです')
+          `;
+          console.log('  ✅ organization: テストバー2 を作成しました');
+        } else {
+          console.log('  ⏭  organization: test-bar-2 は既に存在します');
+        }
+      }
     }
 
     console.log();

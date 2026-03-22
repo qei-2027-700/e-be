@@ -62,9 +62,12 @@ export async function updateEventDraft(eventId: string, formData: FormData): Pro
   const endAtRaw = formData.get('endAt') as string | null;
   const maxParticipantsRaw = formData.get('maxParticipants') as string | null;
   const chargeAmountRaw = formData.get('chargeAmount') as string | null;
+  const orgIdRaw = (formData.get('orgId') as string | null)?.trim() ?? '';
 
   if (!title || title.length > 100) return { error: 'invalid' };
   if (!description || description.length > 2000) return { error: 'invalid' };
+
+  const orgId = orgIdRaw && /^[0-9a-f-]{36}$/.test(orgIdRaw) ? orgIdRaw : undefined;
 
   let maxParticipants: number | null = null;
   if (maxParticipantsRaw && maxParticipantsRaw !== '') {
@@ -95,7 +98,7 @@ export async function updateEventDraft(eventId: string, formData: FormData): Pro
 
   await db
     .update(events)
-    .set({ title, description, startAt, endAt, maxParticipants, chargeAmount, updatedAt: new Date() })
+    .set({ title, description, startAt, endAt, maxParticipants, chargeAmount, ...(orgId ? { orgId } : {}), updatedAt: new Date() })
     .where(eq(events.id, eventId));
 
   return { ok: true };

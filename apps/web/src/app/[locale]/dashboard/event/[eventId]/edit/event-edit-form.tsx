@@ -10,6 +10,7 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Select } from "@/components/ui/select";
 import { updateEventDraft, submitEvent, publishEvent } from "@/lib/actions/event";
 import { DateTimePicker } from "@/components/ui/date-time-picker";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
@@ -19,6 +20,7 @@ type EventData = {
   id: string;
   orgId: string;
   orgName: string;
+  status: string;
   title: string | null;
   description: string | null;
   startAt: string | null;
@@ -32,16 +34,20 @@ type Props = {
   eventId: string;
   hasPermission: boolean;
   locale: string;
+  bars: { id: string; name: string }[];
 };
 
-export function EventEditForm({ event, eventId, hasPermission, locale }: Props) {
+export function EventEditForm({ event, eventId, hasPermission, locale, bars }: Props) {
   const t = useTranslations("event_edit");
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
   const [startAt, setStartAt] = useState(event.startAt ?? "");
   const [endAt, setEndAt] = useState(event.endAt ?? "");
+  const [orgId, setOrgId] = useState(event.orgId);
   const [confirmOpen, setConfirmOpen] = useState(false);
+
+  const isDraft = event.status === "draft";
 
   function handleStartAtChange(value: string) {
     setStartAt(value);
@@ -51,16 +57,19 @@ export function EventEditForm({ event, eventId, hasPermission, locale }: Props) 
     }
   }
 
-  const hasVenue = Boolean(event.orgId);
+  const hasVenue = Boolean(orgId);
   const hasDatetime = startAt !== "" && endAt !== "";
   const isDatetimeInvalid =
     hasDatetime && new Date(startAt) >= new Date(endAt);
   const canSubmit = hasVenue && !isDatetimeInvalid;
   const canPublish = hasVenue && hasDatetime && !isDatetimeInvalid;
 
+  const selectedBar = bars.find((b) => b.id === orgId);
+
   function handleSave(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
+    formData.set("orgId", orgId);
     setError(null);
 
     startTransition(async () => {
@@ -108,7 +117,7 @@ export function EventEditForm({ event, eventId, hasPermission, locale }: Props) 
     <span className="flex flex-col gap-1 text-sm">
       <span className="flex gap-2">
         <span className="text-muted-foreground shrink-0">{t("submit_confirm_venue")}:</span>
-        <span>{event.orgName}</span>
+        <span>{selectedBar?.name ?? event.orgName}</span>
       </span>
       <span className="flex gap-2">
         <span className="text-muted-foreground shrink-0">{t("submit_confirm_datetime")}:</span>
@@ -124,12 +133,27 @@ export function EventEditForm({ event, eventId, hasPermission, locale }: Props) 
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSave} className="space-y-4">
-          {/* 会場（読み取り専用） */}
+          {/* 会場 */}
           <div className="space-y-1">
             <Label>{t("field_venue")}</Label>
-            <p className="rounded-md border border-border bg-muted px-3 py-2 text-sm text-muted-foreground">
-              {event.orgName}
-            </p>
+            {isDraft ? (
+              <Select
+                value={orgId}
+                onChange={(e) => setOrgId(e.target.value)}
+                disabled={isPending}
+              >
+                <option value="" disabled>{t("field_venue_placeholder")}</option>
+                {bars.map((bar) => (
+                  <option key={bar.id} value={bar.id}>
+                    {bar.name}
+                  </option>
+                ))}
+              </Select>
+            ) : (
+              <p className="rounded-md border border-border bg-muted px-3 py-2 text-sm text-muted-foreground">
+                {event.orgName}
+              </p>
+            )}
           </div>
 
           <div className="space-y-1">

@@ -262,6 +262,7 @@
     "field_start_at": "開催開始日時",
     "field_end_at": "開催終了日時",
     "field_venue": "会場",
+    "field_venue_placeholder": "バーを選択してください",
     "field_max_participants": "定員",
     "field_charge_amount": "チャージ料",
     "field_charge_amount_placeholder": "未入力の場合は非公開（例: 0 で無料）",
