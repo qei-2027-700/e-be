@@ -348,7 +348,9 @@
     "toast_full_capacity": "定員に達しています",
     "toast_event_ended": "開催済みのイベントです",
     "toast_error": "エラーが発生しました。もう一度お試しください",
-    "organizer_x": "主催者 X (Twitter)"
+    "organizer_x": "主催者 X (Twitter)",
+    "back_to_events": "イベント一覧へ戻る",
+    "sign_in_to_join": "サインインして参加する"
   },
   "privacy": {
     "title": "プライバシーポリシー",

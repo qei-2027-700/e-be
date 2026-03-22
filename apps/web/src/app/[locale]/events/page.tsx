@@ -87,7 +87,7 @@ export default async function EventsPage({ searchParams }: { searchParams: Searc
                 return (
                   <li key={event.id}>
                     <Link
-                      href={`/${locale}/dashboard/event/${event.id}`}
+                      href={`/${locale}/events/${event.id}`}
                       className="flex flex-col gap-1 px-4 py-4 transition-colors hover:bg-muted/50 sm:flex-row sm:items-center sm:justify-between sm:gap-4"
                     >
                       <div className="min-w-0 space-y-0.5">
