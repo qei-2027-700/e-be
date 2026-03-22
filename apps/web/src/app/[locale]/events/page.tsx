@@ -10,13 +10,13 @@ import { getUser } from "@/lib/auth";
 const PAGE_SIZE = 20;
 
 type SearchParams = Promise<{
-  prefecture?: string;
+  area?: string;
   line?: string;
   page?: string;
 }>;
 
 export default async function EventsPage({ searchParams }: { searchParams: SearchParams }) {
-  const [{ prefecture, line, page }, user, availableLines] = await Promise.all([
+  const [{ area, line, page }, user, availableLines] = await Promise.all([
     searchParams,
     getUser(),
     getAvailableLines(),
@@ -29,7 +29,7 @@ export default async function EventsPage({ searchParams }: { searchParams: Searc
 
   // 1件多く取得してページ送りの有無を判断する
   const items = await searchPublicEvents({
-    prefecture,
+    area,
     line,
     limit: PAGE_SIZE + 1,
     offset,
@@ -40,7 +40,7 @@ export default async function EventsPage({ searchParams }: { searchParams: Searc
 
   function buildPageUrl(p: number) {
     const params = new URLSearchParams();
-    if (prefecture) params.set("prefecture", prefecture);
+    if (area) params.set("area", area);
     if (line) params.set("line", line);
     if (p > 1) params.set("page", String(p));
     const qs = params.toString();
@@ -55,7 +55,7 @@ export default async function EventsPage({ searchParams }: { searchParams: Searc
           <h1 className="text-2xl font-bold">{t("title")}</h1>
 
           <EventsFilter
-            defaultPrefecture={prefecture}
+            defaultArea={area}
             defaultLine={line}
             availableLines={availableLines}
           />

@@ -5,36 +5,27 @@ import { useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import { Select } from "@/components/ui/select";
 import { useTranslations } from "next-intl";
-
-const PREFECTURES = [
-  "北海道", "青森県", "岩手県", "宮城県", "秋田県", "山形県", "福島県",
-  "茨城県", "栃木県", "群馬県", "埼玉県", "千葉県", "東京都", "神奈川県",
-  "新潟県", "富山県", "石川県", "福井県", "山梨県", "長野県", "岐阜県",
-  "静岡県", "愛知県", "三重県", "滋賀県", "京都府", "大阪府", "兵庫県",
-  "奈良県", "和歌山県", "鳥取県", "島根県", "岡山県", "広島県", "山口県",
-  "徳島県", "香川県", "愛媛県", "高知県", "福岡県", "佐賀県", "長崎県",
-  "熊本県", "大分県", "宮崎県", "鹿児島県", "沖縄県",
-];
+import { AREA_KEYS, AREA_REGIONS } from "@/lib/area-regions";
 
 type Props = {
-  defaultPrefecture?: string;
+  defaultArea?: string;
   defaultLine?: string;
   availableLines?: string[];
 };
 
-export function EventsFilter({ defaultPrefecture, defaultLine, availableLines = [] }: Props) {
+export function EventsFilter({ defaultArea, defaultLine, availableLines = [] }: Props) {
   const t = useTranslations("events");
   const router = useRouter();
   const searchParams = useSearchParams();
   const [isPending, startTransition] = useTransition();
 
-  const [prefecture, setPrefecture] = useState(defaultPrefecture ?? "");
+  const [area, setArea] = useState(defaultArea ?? "");
   const [line, setLine] = useState(defaultLine ?? "");
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     const params = new URLSearchParams();
-    if (prefecture) params.set("prefecture", prefecture);
+    if (area) params.set("area", area);
     if (line) params.set("line", line);
     startTransition(() => {
       router.push(`?${params.toString()}`);
@@ -42,27 +33,27 @@ export function EventsFilter({ defaultPrefecture, defaultLine, availableLines = 
   }
 
   function handleReset() {
-    setPrefecture("");
+    setArea("");
     setLine("");
     startTransition(() => {
       router.push("?");
     });
   }
 
-  const hasFilters = searchParams.get("prefecture") || searchParams.get("line");
+  const hasFilters = searchParams.get("area") || searchParams.get("line");
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-end">
       <div className="flex flex-col gap-1.5">
-        <label className="text-xs font-medium text-muted-foreground">{t("filter_prefecture")}</label>
+        <label className="text-xs font-medium text-muted-foreground">{t("filter_area")}</label>
         <Select
-          value={prefecture}
-          onChange={(e) => setPrefecture(e.target.value)}
+          value={area}
+          onChange={(e) => setArea(e.target.value)}
           className="w-full sm:w-40"
         >
           <option value="">—</option>
-          {PREFECTURES.map((p) => (
-            <option key={p} value={p}>{p}</option>
+          {AREA_KEYS.map((key) => (
+            <option key={key} value={key}>{AREA_REGIONS[key].label}</option>
           ))}
         </Select>
       </div>

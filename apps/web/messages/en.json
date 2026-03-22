@@ -408,7 +408,7 @@
   "events": {
     "title": "Events",
     "filter_date": "Date",
-    "filter_prefecture": "Prefecture",
+    "filter_area": "Area",
     "filter_line": "Train Line",
     "filter_search": "Search",
     "filter_reset": "Reset",
