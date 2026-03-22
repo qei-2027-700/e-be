@@ -406,6 +406,7 @@
     "seats_remaining": "残席{count}",
     "seats_full": "満席",
     "page_prev": "前のページ",
-    "page_next": "次のページ"
+    "page_next": "次のページ",
+    "filter_searching": "検索中..."
   }
 }

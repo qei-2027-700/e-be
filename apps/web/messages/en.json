@@ -406,6 +406,7 @@
     "seats_remaining": "{count} seats left",
     "seats_full": "Full",
     "page_prev": "Previous",
-    "page_next": "Next"
+    "page_next": "Next",
+    "filter_searching": "Searching..."
   }
 }

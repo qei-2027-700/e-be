@@ -1,11 +1,12 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
-import { useRef } from "react";
-import { Input } from "@/components/ui/input";
+import { useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
-import { useTranslations } from "next-intl";
+import { DatePicker } from "@/components/ui/date-picker";
+import { useTranslations, useLocale } from "next-intl";
 
 const PREFECTURES = [
   "北海道", "青森県", "岩手県", "宮城県", "秋田県", "山形県", "福島県",
@@ -25,26 +26,33 @@ type Props = {
 
 export function EventsFilter({ defaultDate, defaultPrefecture, defaultLine }: Props) {
   const t = useTranslations("events");
+  const locale = useLocale();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const dateRef = useRef<HTMLInputElement>(null);
-  const lineRef = useRef<HTMLInputElement>(null);
-  const prefectureRef = useRef<HTMLSelectElement>(null);
+  const [isPending, startTransition] = useTransition();
+
+  const [date, setDate] = useState(defaultDate ?? "");
+  const [prefecture, setPrefecture] = useState(defaultPrefecture ?? "");
+  const [line, setLine] = useState(defaultLine ?? "");
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     const params = new URLSearchParams();
-    const date = dateRef.current?.value;
-    const line = lineRef.current?.value;
-    const prefecture = prefectureRef.current?.value;
     if (date) params.set("date", date);
     if (prefecture) params.set("prefecture", prefecture);
     if (line) params.set("line", line);
-    router.push(`?${params.toString()}`);
+    startTransition(() => {
+      router.push(`?${params.toString()}`);
+    });
   }
 
   function handleReset() {
-    router.push("?");
+    setDate("");
+    setPrefecture("");
+    setLine("");
+    startTransition(() => {
+      router.push("?");
+    });
   }
 
   const hasFilters = searchParams.get("date") || searchParams.get("prefecture") || searchParams.get("line");
@@ -53,19 +61,19 @@ export function EventsFilter({ defaultDate, defaultPrefecture, defaultLine }: Pr
     <form onSubmit={handleSubmit} className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-end">
       <div className="flex flex-col gap-1.5">
         <label className="text-xs font-medium text-muted-foreground">{t("filter_date")}</label>
-        <Input
-          ref={dateRef}
-          type="date"
-          defaultValue={defaultDate}
-          className="w-full sm:w-44"
+        <DatePicker
+          value={date}
+          onChange={setDate}
+          placeholder={t("filter_date")}
+          locale={locale}
         />
       </div>
 
       <div className="flex flex-col gap-1.5">
         <label className="text-xs font-medium text-muted-foreground">{t("filter_prefecture")}</label>
         <Select
-          ref={prefectureRef}
-          defaultValue={defaultPrefecture ?? ""}
+          value={prefecture}
+          onChange={(e) => setPrefecture(e.target.value)}
           className="w-full sm:w-40"
         >
           <option value="">—</option>
@@ -78,17 +86,26 @@ export function EventsFilter({ defaultDate, defaultPrefecture, defaultLine }: Pr
       <div className="flex flex-col gap-1.5">
         <label className="text-xs font-medium text-muted-foreground">{t("filter_line")}</label>
         <Input
-          ref={lineRef}
           type="text"
           placeholder="例: 山手線"
-          defaultValue={defaultLine}
+          value={line}
+          onChange={(e) => setLine(e.target.value)}
           className="w-full sm:w-44"
         />
       </div>
 
       <div className="flex gap-2">
-        <Button type="submit">{t("filter_search")}</Button>
-        {hasFilters && (
+        <Button type="submit" disabled={isPending}>
+          {isPending ? (
+            <span className="flex items-center gap-1.5">
+              <span className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-current border-t-transparent" />
+              {t("filter_searching")}
+            </span>
+          ) : (
+            t("filter_search")
+          )}
+        </Button>
+        {hasFilters && !isPending && (
           <Button type="button" variant="outline" onClick={handleReset}>
             {t("filter_reset")}
           </Button>
