@@ -1,6 +1,6 @@
 import { getLocale, getTranslations } from "next-intl/server";
 import Link from "next/link";
-import { searchPublicEvents } from "@/lib/events";
+import { searchPublicEvents, getAvailableLines } from "@/lib/events";
 import { EventsFilter } from "./events-filter";
 import { AppFooter } from "@/components/layout/app-footer";
 import { PublicHeader } from "@/components/layout/public-header";
@@ -15,9 +15,10 @@ type SearchParams = Promise<{
 }>;
 
 export default async function EventsPage({ searchParams }: { searchParams: SearchParams }) {
-  const [{ prefecture, line, page }, user] = await Promise.all([
+  const [{ prefecture, line, page }, user, availableLines] = await Promise.all([
     searchParams,
     getUser(),
+    getAvailableLines(),
   ]);
   const locale = await getLocale();
   const t = await getTranslations("events");
@@ -55,6 +56,7 @@ export default async function EventsPage({ searchParams }: { searchParams: Searc
           <EventsFilter
             defaultPrefecture={prefecture}
             defaultLine={line}
+            availableLines={availableLines}
           />
 
           {events.length === 0 ? (

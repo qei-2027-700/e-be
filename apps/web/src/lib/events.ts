@@ -1,6 +1,7 @@
 import { db } from "@/lib/db";
 import { events, eventParticipations, organizations, barHostPermissions, barBlocks, users } from "@e-be/db/schema";
-import { eq, and, gte, lte, isNull, or, lt, gt, asc, desc, ne, inArray, count, sql } from "drizzle-orm";
+import { eq, and, gte, lte, isNull, or, lt, gt, asc, desc, ne, inArray, count, sql, isNotNull } from "drizzle-orm";
+import { getLinesByStation, getStationsByLine } from "@e-be/db/station-lines";
 
 /**
  * イベント作成フォームのバー選択用に公開バー一覧を取得する。
@@ -133,6 +134,7 @@ export async function getDraftEventForOwner(
   endAt: string | null;
   maxParticipants: number | null;
   chargeAmount: number | null;
+  nearestStation: string | null;
 } | null> {
   const rows = await db
     .select({
@@ -146,6 +148,7 @@ export async function getDraftEventForOwner(
       endAt: events.endAt,
       maxParticipants: events.maxParticipants,
       chargeAmount: events.chargeAmount,
+      nearestStation: events.nearestStation,
     })
     .from(events)
     .innerJoin(organizations, eq(events.orgId, organizations.id))
@@ -559,7 +562,7 @@ export type PublicEventItem = {
 export type SearchEventsOptions = {
   date?: string;        // YYYY-MM-DD（この日に開催）
   prefecture?: string;  // 都道府県
-  line?: string;        // 路線（部分一致）
+  line?: string;        // 路線名（マスタ完全一致）
   limit?: number;
   offset?: number;
 };
@@ -604,7 +607,13 @@ export async function searchPublicEvents(opts: SearchEventsOptions = {}): Promis
   }
 
   if (line) {
-    conditions.push(sql`${organizations.nearestLine} ILIKE ${'%' + line + '%'}`);
+    const stations = getStationsByLine(line);
+    if (stations.length > 0) {
+      conditions.push(inArray(events.nearestStation, stations));
+    } else {
+      // 該当駅なし → 結果ゼロになるよう FALSE 条件を追加
+      conditions.push(sql`FALSE`);
+    }
   }
 
   const rows = await db
@@ -641,4 +650,31 @@ export async function searchPublicEvents(opts: SearchEventsOptions = {}): Promis
     maxParticipants: row.maxParticipants,
     participantCount: Number(row.participantCount),
   }));
+}
+
+/**
+ * DB に登録済みの nearest_station から算出した路線名一覧を返す。
+ * セレクトボックスに表示する路線を動的に絞り込むために使用する。
+ */
+export async function getAvailableLines(): Promise<string[]> {
+  const rows = await db
+    .selectDistinct({ nearestStation: events.nearestStation })
+    .from(events)
+    .where(
+      and(
+        eq(events.status, "published"),
+        isNull(events.deletedAt),
+        isNotNull(events.nearestStation)
+      )
+    );
+
+  const lineSet = new Set<string>();
+  for (const row of rows) {
+    if (row.nearestStation) {
+      for (const line of getLinesByStation(row.nearestStation)) {
+        lineSet.add(line);
+      }
+    }
+  }
+  return Array.from(lineSet).sort();
 }
