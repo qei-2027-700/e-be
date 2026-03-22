@@ -399,6 +399,12 @@
       }
     }
   },
+  "contact_page": {
+    "title": "お問い合わせ",
+    "unavailable_heading": "現在、お問い合わせフォームは準備中です",
+    "unavailable_body": "ご不便をおかけして申し訳ありません。お問い合わせフォームは現在準備中です。今しばらくお待ちください。",
+    "submit": "送信する（準備中）"
+  },
   "events": {
     "title": "イベント一覧",
     "filter_date": "開催日",

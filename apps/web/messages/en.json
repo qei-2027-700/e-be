@@ -399,6 +399,12 @@
       }
     }
   },
+  "contact_page": {
+    "title": "Contact",
+    "unavailable_heading": "Contact form is currently unavailable",
+    "unavailable_body": "We apologize for the inconvenience. Our contact form is currently under construction. Please check back later.",
+    "submit": "Submit (Coming Soon)"
+  },
   "events": {
     "title": "Events",
     "filter_date": "Date",
