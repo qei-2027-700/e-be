@@ -439,3 +439,31 @@ Layer 2 — Semantic（Tailwind @theme inline でトークンとして公開）
 **影響**:
 - 新しい色を追加する際も semantic 名で定義する（`--status-info`, `--status-success` 等）
 - コンポーネントで `bg-brand`, `text-feature-foreground` のようにクラスとして利用する
+
+---
+
+## 17. Supabase 認証：getUser() と getSession() の関係
+
+**決定**: サーバーサイドでユーザー情報が必要な場合は `getUser()` を使う。`getSession()` を直接呼ぶことは原則しない。
+
+**背景**:
+
+`getUser()` の内部では `getSession()` が呼ばれる。Supabase はアクセストークンの期限切れを検知した場合、この流れの中で**自動的にリフレッシュを試みる**。
+
+```
+getUser()
+  └─ getSession()
+       └─ アクセストークン期限切れ？
+            └─ はい → リフレッシュトークンで自動更新
+                └─ 更新成功 → 新しいセッションでユーザー情報を返す
+```
+
+**ミドルウェアとの関係**:
+
+ミドルウェア（`middleware.ts`）でも Supabase クライアントを通じてセッションを維持しているが、`getUser()` のトークン自動リフレッシュはそれとは**独立した別レイヤー**での処理。ミドルウェア側の修正と混同しないこと。
+
+**影響**:
+
+- `getUser()` を呼ぶ箇所でネットワークリクエストが発生することがある（リフレッシュ時）
+- Server Component や Route Handler で `getUser()` を使う場合、レスポンスヘッダーに Set-Cookie が付く場合がある（リフレッシュ後の新トークンをクライアントに返すため）
+- `getSession()` を直接呼ぶとリフレッシュが行われないケースがあるため、認証状態の確認には必ず `getUser()` を使う

@@ -4,6 +4,7 @@
   "scripts": {
     "dev": "turbo dev",
     "dev:web": "turbo dev --filter=web",
+    "dev:web:clean": "rm -rf apps/web/.next && turbo dev --filter=web",
     "dev:docs": "turbo dev --filter=docs",
     "build": "turbo build",
     "lint": "turbo lint",
