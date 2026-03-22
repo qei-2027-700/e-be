@@ -9,7 +9,8 @@
     "build": "turbo build",
     "lint": "turbo lint",
     "typecheck": "turbo typecheck",
-    "seed:test": "node apps/web/scripts/seed-test-accounts.mjs"
+    "seed:test": "node apps/web/scripts/seed-test-accounts.mjs",
+    "seed:events": "node apps/web/scripts/seed-events.mjs"
   },
   "devDependencies": {
     "turbo": "^2.5.3"
