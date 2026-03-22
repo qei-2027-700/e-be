@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { getUser, getDbUser } from '@/lib/auth';
 import { db } from '@/lib/db';
 import { events, organizations, eventParticipations } from '@e-be/db/schema';
-import { eq, and, isNull, or, lt, count } from 'drizzle-orm';
+import { eq, and, isNull, or, lt, count, inArray } from 'drizzle-orm';
 
 export async function GET() {
   const [, dbUser] = await Promise.all([getUser(), getDbUser()]);
@@ -48,6 +48,7 @@ export async function GET() {
       .from(eventParticipations)
       .where(
         and(
+          inArray(eventParticipations.eventId, eventIds),
           eq(eventParticipations.status, 'registered'),
           isNull(eventParticipations.deletedAt)
         )
