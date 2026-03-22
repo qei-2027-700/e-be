@@ -98,14 +98,14 @@ export function OrganizerHistoryItem({ event, locale }: Props) {
           {t('organizer_history_charge')}:{' '}
           <span className="font-medium text-foreground">
             {event.chargeAmount != null
-              ? `¥${event.chargeAmount.toLocaleString()}`
+              ? `¥${event.chargeAmount.toLocaleString(locale)}`
               : '—'}
           </span>
         </span>
         <span className="text-xs text-muted-foreground">
           {t('organizer_history_sales')}:{' '}
           <span className="font-medium text-foreground">
-            {salesAmount != null ? `¥${salesAmount.toLocaleString()}` : '—'}
+            {salesAmount != null ? `¥${salesAmount.toLocaleString(locale)}` : '—'}
           </span>
         </span>
       </div>
