@@ -1,6 +1,6 @@
 import { db } from "@/lib/db";
 import { events, eventParticipations, organizations, barHostPermissions, barBlocks } from "@e-be/db/schema";
-import { eq, and, gte, lte, isNull, or, lt, gt, asc, desc, ne, inArray, count } from "drizzle-orm";
+import { eq, and, gte, lte, isNull, or, lt, gt, asc, desc, ne, inArray, count, sql } from "drizzle-orm";
 
 /**
  * イベント作成フォームのバー選択用に公開バー一覧を取得する。
@@ -225,6 +225,8 @@ export type OrganizerHistoryItem = {
   orgId: string;
   orgName: string;
   isPublic: boolean;
+  chargeAmount: number | null;
+  participantCount: number;
 };
 
 /**
@@ -236,6 +238,17 @@ export type OrganizerHistoryItem = {
 export async function getOrganizerHistory(userId: string): Promise<OrganizerHistoryItem[]> {
   const now = new Date();
 
+  const participantCountSq = db
+    .select({ count: count() })
+    .from(eventParticipations)
+    .where(
+      and(
+        eq(eventParticipations.eventId, events.id),
+        eq(eventParticipations.status, "registered"),
+        isNull(eventParticipations.deletedAt)
+      )
+    );
+
   const rows = await db
     .select({
       id: events.id,
@@ -246,6 +259,8 @@ export async function getOrganizerHistory(userId: string): Promise<OrganizerHist
       orgId: events.orgId,
       orgName: organizations.name,
       isPublic: events.isPublic,
+      chargeAmount: events.chargeAmount,
+      participantCount: sql<number>`(${participantCountSq})`,
     })
     .from(events)
     .innerJoin(organizations, eq(events.orgId, organizations.id))
@@ -273,6 +288,8 @@ export async function getOrganizerHistory(userId: string): Promise<OrganizerHist
     orgId: row.orgId,
     orgName: row.orgName,
     isPublic: row.isPublic,
+    chargeAmount: row.chargeAmount,
+    participantCount: Number(row.participantCount),
   }));
 }
 

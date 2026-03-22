@@ -178,6 +178,9 @@
     "organizer_history_toggle_public": "Make public",
     "organizer_history_toggle_private": "Make private",
     "organizer_history_csv": "Download CSV",
+    "organizer_history_participants": "Participants",
+    "organizer_history_charge": "Charge",
+    "organizer_history_sales": "Sales",
     "account_settings": {
       "title": "Account Settings",
       "withdrawal_section_title": "Delete Account",
