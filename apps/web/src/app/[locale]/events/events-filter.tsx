@@ -5,8 +5,7 @@ import { useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
-import { DatePicker } from "@/components/ui/date-picker";
-import { useTranslations, useLocale } from "next-intl";
+import { useTranslations } from "next-intl";
 
 const PREFECTURES = [
   "北海道", "青森県", "岩手県", "宮城県", "秋田県", "山形県", "福島県",
@@ -19,26 +18,22 @@ const PREFECTURES = [
 ];
 
 type Props = {
-  defaultDate?: string;
   defaultPrefecture?: string;
   defaultLine?: string;
 };
 
-export function EventsFilter({ defaultDate, defaultPrefecture, defaultLine }: Props) {
+export function EventsFilter({ defaultPrefecture, defaultLine }: Props) {
   const t = useTranslations("events");
-  const locale = useLocale();
   const router = useRouter();
   const searchParams = useSearchParams();
   const [isPending, startTransition] = useTransition();
 
-  const [date, setDate] = useState(defaultDate ?? "");
   const [prefecture, setPrefecture] = useState(defaultPrefecture ?? "");
   const [line, setLine] = useState(defaultLine ?? "");
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     const params = new URLSearchParams();
-    if (date) params.set("date", date);
     if (prefecture) params.set("prefecture", prefecture);
     if (line) params.set("line", line);
     startTransition(() => {
@@ -47,7 +42,6 @@ export function EventsFilter({ defaultDate, defaultPrefecture, defaultLine }: Pr
   }
 
   function handleReset() {
-    setDate("");
     setPrefecture("");
     setLine("");
     startTransition(() => {
@@ -55,21 +49,10 @@ export function EventsFilter({ defaultDate, defaultPrefecture, defaultLine }: Pr
     });
   }
 
-  const hasFilters = searchParams.get("date") || searchParams.get("prefecture") || searchParams.get("line");
+  const hasFilters = searchParams.get("prefecture") || searchParams.get("line");
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-end">
-      <div className="flex flex-col gap-1.5">
-        <label className="text-xs font-medium text-muted-foreground">{t("filter_date")}</label>
-        <DatePicker
-          value={date}
-          onChange={setDate}
-          placeholder={t("filter_date")}
-          locale={locale}
-          clearable
-        />
-      </div>
-
       <div className="flex flex-col gap-1.5">
         <label className="text-xs font-medium text-muted-foreground">{t("filter_prefecture")}</label>
         <Select
