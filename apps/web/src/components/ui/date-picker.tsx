@@ -3,7 +3,7 @@
 import * as React from "react";
 import { format, parse, isValid, type Locale } from "date-fns";
 import { ja, enUS } from "date-fns/locale";
-import { CalendarIcon } from "lucide-react";
+import { CalendarIcon, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
@@ -17,6 +17,8 @@ interface DatePickerProps {
   onChange?: (value: string) => void;
   placeholder?: string;
   disabled?: boolean;
+  /** true にすると値が入っているときに X クリアボタンを表示する */
+  clearable?: boolean;
   locale?: string;
   className?: string;
 }
@@ -31,6 +33,7 @@ export function DatePicker({
   onChange,
   placeholder = "日付を選択",
   disabled,
+  clearable = false,
   locale = "ja",
   className,
 }: DatePickerProps) {
@@ -49,36 +52,51 @@ export function DatePicker({
   }
 
   return (
-    <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger
-        render={
-          <Button
-            variant="outline"
-            disabled={disabled}
-            className={cn(
-              "w-44 justify-start text-left font-normal",
-              !selected && "text-muted-foreground",
-              className
-            )}
+    <div className="relative inline-flex">
+      <Popover open={open} onOpenChange={setOpen}>
+        <PopoverTrigger
+          render={
+            <Button
+              variant="outline"
+              disabled={disabled}
+              className={cn(
+                "w-44 justify-start text-left font-normal",
+                !selected && "text-muted-foreground",
+                clearable && selected && "pr-8",
+                className
+              )}
+            />
+          }
+        >
+          <CalendarIcon className="mr-2 h-4 w-4 shrink-0" />
+          {selected ? (
+            format(selected, "PPP", { locale: dateFnsLocale })
+          ) : (
+            <span>{placeholder}</span>
+          )}
+        </PopoverTrigger>
+        <PopoverContent className="w-auto p-0" align="start">
+          <Calendar
+            mode="single"
+            selected={selected}
+            onSelect={handleSelect}
+            initialFocus
+            locale={dateFnsLocale}
           />
-        }
-      >
-        <CalendarIcon className="mr-2 h-4 w-4 shrink-0" />
-        {selected ? (
-          format(selected, "PPP", { locale: dateFnsLocale })
-        ) : (
-          <span>{placeholder}</span>
-        )}
-      </PopoverTrigger>
-      <PopoverContent className="w-auto p-0" align="start">
-        <Calendar
-          mode="single"
-          selected={selected}
-          onSelect={handleSelect}
-          initialFocus
-          locale={dateFnsLocale}
-        />
-      </PopoverContent>
-    </Popover>
+        </PopoverContent>
+      </Popover>
+
+      {clearable && selected && (
+        <button
+          type="button"
+          onClick={() => onChange?.("")}
+          disabled={disabled}
+          aria-label="日付をクリア"
+          className="absolute right-2 top-1/2 -translate-y-1/2 rounded-sm p-0.5 text-muted-foreground transition-colors hover:text-foreground disabled:pointer-events-none"
+        >
+          <X className="h-3.5 w-3.5" />
+        </button>
+      )}
+    </div>
   );
 }

@@ -66,6 +66,7 @@ export function EventsFilter({ defaultDate, defaultPrefecture, defaultLine }: Pr
           onChange={setDate}
           placeholder={t("filter_date")}
           locale={locale}
+          clearable
         />
       </div>
 
