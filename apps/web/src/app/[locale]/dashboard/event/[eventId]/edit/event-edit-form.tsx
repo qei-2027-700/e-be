@@ -12,6 +12,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { updateEventDraft, submitEvent, publishEvent } from "@/lib/actions/event";
 import { DateTimePicker } from "@/components/ui/date-time-picker";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import Link from "next/link";
 
 type EventData = {
@@ -40,6 +41,7 @@ export function EventEditForm({ event, eventId, hasPermission, locale }: Props) 
   const [error, setError] = useState<string | null>(null);
   const [startAt, setStartAt] = useState(event.startAt ?? "");
   const [endAt, setEndAt] = useState(event.endAt ?? "");
+  const [confirmOpen, setConfirmOpen] = useState(false);
 
   function handleStartAtChange(value: string) {
     setStartAt(value);
@@ -53,7 +55,8 @@ export function EventEditForm({ event, eventId, hasPermission, locale }: Props) 
   const hasDatetime = startAt !== "" && endAt !== "";
   const isDatetimeInvalid =
     hasDatetime && new Date(startAt) >= new Date(endAt);
-  const canSubmit = hasVenue && hasDatetime && !isDatetimeInvalid;
+  const canSubmit = hasVenue && !isDatetimeInvalid;
+  const canPublish = hasVenue && hasDatetime && !isDatetimeInvalid;
 
   function handleSave(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -73,6 +76,7 @@ export function EventEditForm({ event, eventId, hasPermission, locale }: Props) 
   }
 
   function handleSubmit() {
+    setConfirmOpen(false);
     setError(null);
     startTransition(async () => {
       const result = await submitEvent(eventId);
@@ -99,6 +103,19 @@ export function EventEditForm({ event, eventId, hasPermission, locale }: Props) 
       router.push(`/${locale}/dashboard/event/${eventId}`);
     });
   }
+
+  const confirmDescription = (
+    <span className="flex flex-col gap-1 text-sm">
+      <span className="flex gap-2">
+        <span className="text-muted-foreground shrink-0">{t("submit_confirm_venue")}:</span>
+        <span>{event.orgName}</span>
+      </span>
+      <span className="flex gap-2">
+        <span className="text-muted-foreground shrink-0">{t("submit_confirm_datetime")}:</span>
+        <span>{hasDatetime ? `${startAt} 〜 ${endAt}` : t("submit_confirm_not_set")}</span>
+      </span>
+    </span>
+  );
 
   return (
     <Card>
@@ -197,6 +214,9 @@ export function EventEditForm({ event, eventId, hasPermission, locale }: Props) 
           {isDatetimeInvalid && (
             <p className="text-sm text-destructive">{t("error_invalid_range")}</p>
           )}
+          {!hasPermission && !hasDatetime && !isDatetimeInvalid && (
+            <p className="text-sm text-amber-600 dark:text-amber-400">{t("warning_no_datetime")}</p>
+          )}
 
           <div className="flex flex-col gap-2 pt-2">
             <Button type="submit" variant="outline" disabled={isPending}>
@@ -207,7 +227,7 @@ export function EventEditForm({ event, eventId, hasPermission, locale }: Props) 
             {hasPermission ? (
               <Button
                 type="button"
-                disabled={isPending || !canSubmit}
+                disabled={isPending || !canPublish}
                 onClick={handlePublish}
               >
                 {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
@@ -217,7 +237,7 @@ export function EventEditForm({ event, eventId, hasPermission, locale }: Props) 
               <Button
                 type="button"
                 disabled={isPending || !canSubmit}
-                onClick={handleSubmit}
+                onClick={() => setConfirmOpen(true)}
               >
                 {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 {isPending ? t("submitting") : t("submit")}
@@ -229,6 +249,16 @@ export function EventEditForm({ event, eventId, hasPermission, locale }: Props) 
             </Link>
           </div>
         </form>
+
+        <ConfirmDialog
+          open={confirmOpen}
+          onOpenChange={setConfirmOpen}
+          title={t("submit_confirm_title")}
+          description={confirmDescription}
+          confirmLabel={t("submit_confirm_label")}
+          onConfirm={handleSubmit}
+          isPending={isPending}
+        />
       </CardContent>
     </Card>
   );

@@ -279,7 +279,13 @@
     "toast_draft_saved": "Draft saved",
     "toast_submitted": "Submitted for approval",
     "toast_published": "Event published",
-    "toast_error": "Something went wrong. Please try again"
+    "toast_error": "Something went wrong. Please try again",
+    "warning_no_datetime": "No date set. Please coordinate with the venue after submitting.",
+    "submit_confirm_title": "Confirm Submission",
+    "submit_confirm_venue": "Venue",
+    "submit_confirm_datetime": "Date & Time",
+    "submit_confirm_not_set": "Not set",
+    "submit_confirm_label": "Submit"
   },
   "event_create": {
     "title": "Create Event",

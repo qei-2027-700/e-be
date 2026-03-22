@@ -279,7 +279,13 @@
     "toast_draft_saved": "下書きを保存しました",
     "toast_submitted": "申請しました",
     "toast_published": "公開しました",
-    "toast_error": "エラーが発生しました。もう一度お試しください"
+    "toast_error": "エラーが発生しました。もう一度お試しください",
+    "warning_no_datetime": "日程が未設定です。申請後にバー側と調整してください",
+    "submit_confirm_title": "申請内容の確認",
+    "submit_confirm_venue": "会場",
+    "submit_confirm_datetime": "日時",
+    "submit_confirm_not_set": "未設定",
+    "submit_confirm_label": "申請する"
   },
   "event_create": {
     "title": "イベントを作成",
