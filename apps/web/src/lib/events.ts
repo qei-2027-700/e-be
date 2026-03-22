@@ -1,5 +1,5 @@
 import { db } from "@/lib/db";
-import { events, eventParticipations, organizations, barHostPermissions, barBlocks } from "@e-be/db/schema";
+import { events, eventParticipations, organizations, barHostPermissions, barBlocks, users } from "@e-be/db/schema";
 import { eq, and, gte, lte, isNull, or, lt, gt, asc, desc, ne, inArray, count, sql } from "drizzle-orm";
 
 /**
@@ -451,6 +451,8 @@ export type EventDetail = {
   myParticipationStatus: "registered" | "cancelled" | null;
   participantCount: number;
   maxParticipants: number | null;
+  organizerUserId: string;
+  organizerXUrl: string | null;
 };
 
 /**
@@ -493,9 +495,12 @@ export async function getEventDetail(
       orgName: organizations.name,
       orgAddress: organizations.address,
       participationStatus: eventParticipations.status,
+      organizerUserId: events.userId,
+      organizerXUrl: users.xUrl,
     })
     .from(events)
     .innerJoin(organizations, eq(events.orgId, organizations.id))
+    .innerJoin(users, eq(events.userId, users.id))
     .leftJoin(
       eventParticipations,
       and(
@@ -530,5 +535,7 @@ export async function getEventDetail(
     orgAddress: row.orgAddress,
     myParticipationStatus: row.participationStatus ?? null,
     participantCount,
+    organizerUserId: row.organizerUserId,
+    organizerXUrl: row.organizerXUrl ?? null,
   };
 }

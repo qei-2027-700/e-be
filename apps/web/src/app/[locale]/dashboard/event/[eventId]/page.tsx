@@ -174,6 +174,26 @@ export default async function EventDetailPage({ params }: Props) {
                 </div>
               </>
             )}
+
+            {/* 主催者 X (Twitter) リンク */}
+            {event.organizerXUrl && (
+              <>
+                <div className="border-t border-border" />
+                <div className="space-y-0.5">
+                  <p className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground">
+                    {t("organizer_x")}
+                  </p>
+                  <a
+                    href={event.organizerXUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-sm text-primary hover:underline break-all"
+                  >
+                    {event.organizerXUrl}
+                  </a>
+                </div>
+              </>
+            )}
           </CardContent>
         </Card>
 

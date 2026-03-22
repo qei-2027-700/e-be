@@ -50,6 +50,7 @@ export const users = pgTable('users', {
   stripeCustomerId: text('stripe_customer_id'),
   plan: planEnum('plan').default('free').notNull(),
   planExpiresAt: timestamp('plan_expires_at'),
+  xUrl: text('x_url'),
 });
 
 export const companies = pgTable('companies', {
