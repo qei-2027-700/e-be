@@ -3,6 +3,8 @@ import Link from "next/link";
 import { searchPublicEvents } from "@/lib/events";
 import { EventsFilter } from "./events-filter";
 import { AppFooter } from "@/components/layout/app-footer";
+import { PublicHeader } from "@/components/layout/public-header";
+import { getUser } from "@/lib/auth";
 
 const PAGE_SIZE = 20;
 
@@ -14,7 +16,10 @@ type SearchParams = Promise<{
 }>;
 
 export default async function EventsPage({ searchParams }: { searchParams: SearchParams }) {
-  const { date, prefecture, line, page } = await searchParams;
+  const [{ date, prefecture, line, page }, user] = await Promise.all([
+    searchParams,
+    getUser(),
+  ]);
   const locale = await getLocale();
   const t = await getTranslations("events");
 
@@ -45,6 +50,7 @@ export default async function EventsPage({ searchParams }: { searchParams: Searc
 
   return (
     <div className="relative flex min-h-screen flex-col bg-background">
+      <PublicHeader isLoggedIn={!!user} />
       <main className="flex-1 px-4 py-8 md:px-6">
         <div className="mx-auto max-w-5xl space-y-6">
           <h1 className="text-2xl font-bold">{t("title")}</h1>
