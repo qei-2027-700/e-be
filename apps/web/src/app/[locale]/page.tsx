@@ -113,9 +113,9 @@ export default async function HomePage() {
           </h2>
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
             {/* バーオーナー */}
-            <Card className="border-t-4 border-t-blue-500">
+            <Card className="border-t-4 border-t-feature">
               <CardHeader className="pb-3">
-                <CardTitle className="flex items-center gap-2 text-base text-blue-700">
+                <CardTitle className="flex items-center gap-2 text-base text-feature">
                   <span className="text-2xl">🏪</span>
                   {t("pain.venue_label")}
                 </CardTitle>
@@ -124,7 +124,7 @@ export default async function HomePage() {
                 <ul className="space-y-3">
                   {venueItemKeys.map((key) => (
                     <li key={key} className="flex items-start gap-2 text-sm text-muted-foreground">
-                      <span className="mt-0.5 shrink-0 text-blue-500">✕</span>
+                      <span className="mt-0.5 shrink-0 text-feature">✕</span>
                       {t(key)}
                     </li>
                   ))}
@@ -133,9 +133,9 @@ export default async function HomePage() {
             </Card>
 
             {/* イベンター */}
-            <Card className="border-t-4 border-t-indigo-500">
+            <Card className="border-t-4 border-t-feature">
               <CardHeader className="pb-3">
-                <CardTitle className="flex items-center gap-2 text-base text-indigo-700">
+                <CardTitle className="flex items-center gap-2 text-base text-feature">
                   <span className="text-2xl">🎤</span>
                   {t("pain.eventer_label")}
                 </CardTitle>
@@ -144,7 +144,7 @@ export default async function HomePage() {
                 <ul className="space-y-3">
                   {eventerItemKeys.map((key) => (
                     <li key={key} className="flex items-start gap-2 text-sm text-muted-foreground">
-                      <span className="mt-0.5 shrink-0 text-indigo-500">✕</span>
+                      <span className="mt-0.5 shrink-0 text-feature">✕</span>
                       {t(key)}
                     </li>
                   ))}
@@ -153,9 +153,9 @@ export default async function HomePage() {
             </Card>
 
             {/* 参加者 */}
-            <Card className="border-t-4 border-t-orange-500">
+            <Card className="border-t-4 border-t-brand">
               <CardHeader className="pb-3">
-                <CardTitle className="flex items-center gap-2 text-base text-orange-700">
+                <CardTitle className="flex items-center gap-2 text-base text-brand">
                   <span className="text-2xl">👥</span>
                   {t("pain.participant_label")}
                 </CardTitle>
@@ -164,7 +164,7 @@ export default async function HomePage() {
                 <ul className="space-y-3">
                   {participantItemKeys.map((key) => (
                     <li key={key} className="flex items-start gap-2 text-sm text-muted-foreground">
-                      <span className="mt-0.5 shrink-0 text-orange-500">✕</span>
+                      <span className="mt-0.5 shrink-0 text-brand">✕</span>
                       {t(key)}
                     </li>
                   ))}
@@ -184,9 +184,9 @@ export default async function HomePage() {
 
           <div className="space-y-16">
             {/* 店舗管理者向け */}
-            <div className="rounded-2xl bg-blue-50/50 p-8 ring-1 ring-blue-100">
-              <h3 className="mb-8 flex items-center gap-2 text-xl font-bold text-blue-900">
-                <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-600 text-white text-sm">1</span>
+            <div className="rounded-2xl bg-feature/5 p-8 ring-1 ring-feature/20">
+              <h3 className="mb-8 flex items-center gap-2 text-xl font-bold text-feature">
+                <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-feature text-white text-sm">1</span>
                 {t("features.venue_title")}
               </h3>
               <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
@@ -213,9 +213,9 @@ export default async function HomePage() {
             </div>
 
             {/* イベント主催者向け */}
-            <div className="rounded-2xl bg-indigo-50/50 p-8 ring-1 ring-indigo-100">
-              <h3 className="mb-8 flex items-center gap-2 text-xl font-bold text-indigo-900">
-                <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-600 text-white text-sm">2</span>
+            <div className="rounded-2xl bg-feature/5 p-8 ring-1 ring-feature/20">
+              <h3 className="mb-8 flex items-center gap-2 text-xl font-bold text-feature">
+                <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-feature text-white text-sm">2</span>
                 {t("features.eventer_title")}
               </h3>
               <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
@@ -242,9 +242,9 @@ export default async function HomePage() {
             </div>
 
             {/* イベント参加者向け */}
-            <div className="rounded-2xl bg-orange-50/50 p-8 ring-1 ring-orange-100">
-              <h3 className="mb-8 flex items-center gap-2 text-xl font-bold text-orange-900">
-                <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-orange-600 text-white text-sm">3</span>
+            <div className="rounded-2xl bg-brand/5 p-8 ring-1 ring-brand/20">
+              <h3 className="mb-8 flex items-center gap-2 text-xl font-bold text-brand">
+                <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand text-white text-sm">3</span>
                 {t("features.participant_title")}
               </h3>
               <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
