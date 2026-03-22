@@ -37,6 +37,37 @@ type Props = {
   bars: { id: string; name: string }[];
 };
 
+function formatDatetimeRange(startIso: string, endIso: string, locale: string): string {
+  const start = new Date(startIso);
+  const end = new Date(endIso);
+
+  const dateOpts: Intl.DateTimeFormatOptions = {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    weekday: "short",
+  };
+  const timeOpts: Intl.DateTimeFormatOptions = {
+    hour: "2-digit",
+    minute: "2-digit",
+  };
+
+  const startDateStr = start.toLocaleDateString(locale, dateOpts);
+  const startTimeStr = start.toLocaleTimeString(locale, timeOpts);
+  const endTimeStr = end.toLocaleTimeString(locale, timeOpts);
+
+  const isSameDay =
+    start.getFullYear() === end.getFullYear() &&
+    start.getMonth() === end.getMonth() &&
+    start.getDate() === end.getDate();
+
+  if (isSameDay) {
+    return `${startDateStr} ${startTimeStr} 〜 ${endTimeStr}`;
+  }
+  const endDateStr = end.toLocaleDateString(locale, dateOpts);
+  return `${startDateStr} ${startTimeStr} 〜 ${endDateStr} ${endTimeStr}`;
+}
+
 export function EventEditForm({ event, eventId, hasPermission, locale, bars }: Props) {
   const t = useTranslations("event_edit");
   const router = useRouter();
@@ -121,7 +152,11 @@ export function EventEditForm({ event, eventId, hasPermission, locale, bars }: P
       </span>
       <span className="flex gap-2">
         <span className="text-muted-foreground shrink-0">{t("submit_confirm_datetime")}:</span>
-        <span>{hasDatetime ? `${startAt} 〜 ${endAt}` : t("submit_confirm_not_set")}</span>
+        <span>
+          {hasDatetime
+            ? formatDatetimeRange(startAt, endAt, locale)
+            : t("submit_confirm_not_set")}
+        </span>
       </span>
     </span>
   );
