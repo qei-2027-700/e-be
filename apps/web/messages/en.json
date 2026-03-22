@@ -348,7 +348,9 @@
     "toast_full_capacity": "This event is full",
     "toast_event_ended": "This event has already ended",
     "toast_error": "Something went wrong. Please try again",
-    "organizer_x": "Organizer X (Twitter)"
+    "organizer_x": "Organizer X (Twitter)",
+    "back_to_events": "Back to Events",
+    "sign_in_to_join": "Sign in to Join"
   },
   "privacy": {
     "title": "Privacy Policy",

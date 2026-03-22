@@ -480,7 +480,7 @@ export async function getEventParticipantCount(eventId: string): Promise<number>
  */
 export async function getEventDetail(
   eventId: string,
-  userId: string
+  userId?: string
 ): Promise<EventDetail | null> {
   const rows = await db
     .select({
@@ -503,11 +503,13 @@ export async function getEventDetail(
     .innerJoin(users, eq(events.userId, users.id))
     .leftJoin(
       eventParticipations,
-      and(
-        eq(eventParticipations.eventId, events.id),
-        eq(eventParticipations.userId, userId),
-        isNull(eventParticipations.deletedAt)
-      )
+      userId
+        ? and(
+            eq(eventParticipations.eventId, events.id),
+            eq(eventParticipations.userId, userId),
+            isNull(eventParticipations.deletedAt)
+          )
+        : sql`false`
     )
     .where(
       and(
