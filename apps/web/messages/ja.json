@@ -199,7 +199,13 @@
       "blocker_owner_title": "組織のオーナーです",
       "blocker_owner_description": "退会前に、所有している組織のオーナー権限を他のメンバーに移譲するか、組織を削除してください。",
       "blocker_event_title": "公開中のイベントがあります",
-      "blocker_event_description": "退会前に、開催中・今後予定されているすべてのイベントをキャンセルしてください。"
+      "blocker_event_description": "退会前に、開催中・今後予定されているすべてのイベントをキャンセルしてください。",
+      "x_url_label": "X (Twitter) URL",
+      "x_url_placeholder": "https://x.com/username",
+      "x_url_save": "保存",
+      "x_url_saved": "X URL を保存しました",
+      "x_url_error_invalid": "https://x.com/ または https://twitter.com/ で始まる URL を入力してください",
+      "x_url_error_unknown": "保存に失敗しました"
     }
   },
   "apply": {
@@ -338,7 +344,8 @@
     "toast_already_registered": "すでに参加済みです",
     "toast_full_capacity": "定員に達しています",
     "toast_event_ended": "開催済みのイベントです",
-    "toast_error": "エラーが発生しました。もう一度お試しください"
+    "toast_error": "エラーが発生しました。もう一度お試しください",
+    "organizer_x": "主催者 X (Twitter)"
   },
   "privacy": {
     "title": "プライバシーポリシー",

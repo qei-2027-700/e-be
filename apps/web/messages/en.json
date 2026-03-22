@@ -199,7 +199,13 @@
       "blocker_owner_title": "You own an organization",
       "blocker_owner_description": "Before deleting your account, please transfer ownership of your organizations to another member or delete them.",
       "blocker_event_title": "You have active events",
-      "blocker_event_description": "Before deleting your account, please cancel all upcoming published events."
+      "blocker_event_description": "Before deleting your account, please cancel all upcoming published events.",
+      "x_url_label": "X (Twitter) URL",
+      "x_url_placeholder": "https://x.com/username",
+      "x_url_save": "Save",
+      "x_url_saved": "X URL saved",
+      "x_url_error_invalid": "Please enter a URL starting with https://x.com/ or https://twitter.com/",
+      "x_url_error_unknown": "Failed to save"
     }
   },
   "apply": {
@@ -338,7 +344,8 @@
     "toast_already_registered": "You're already registered",
     "toast_full_capacity": "This event is full",
     "toast_event_ended": "This event has already ended",
-    "toast_error": "Something went wrong. Please try again"
+    "toast_error": "Something went wrong. Please try again",
+    "organizer_x": "Organizer X (Twitter)"
   },
   "privacy": {
     "title": "Privacy Policy",

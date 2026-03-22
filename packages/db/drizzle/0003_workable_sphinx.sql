@@ -1,0 +1,1 @@
+ALTER TABLE "users" ADD COLUMN "x_url" text;

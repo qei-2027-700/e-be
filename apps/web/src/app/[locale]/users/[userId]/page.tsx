@@ -15,7 +15,7 @@ export default async function UserProfilePage({ params }: Props) {
   const [t, locale] = await Promise.all([getTranslations('profile'), getLocale()]);
 
   const rows = await db
-    .select({ id: users.id, name: users.name })
+    .select({ id: users.id, name: users.name, xUrl: users.xUrl })
     .from(users)
     .where(and(eq(users.id, userId), isNull(users.deletedAt)))
     .limit(1);
@@ -31,6 +31,17 @@ export default async function UserProfilePage({ params }: Props) {
         <h1 className="text-2xl font-bold">
           {t('title', { name: profileUser.name ?? userId })}
         </h1>
+
+        {profileUser.xUrl && (
+          <a
+            href={profileUser.xUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 text-sm text-primary hover:underline"
+          >
+            X (Twitter)
+          </a>
+        )}
 
         <Card>
           <CardHeader>
