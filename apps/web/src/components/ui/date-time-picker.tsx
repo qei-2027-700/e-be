@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { format, parseISO, isValid, setHours, setMinutes, startOfMinute } from "date-fns";
-import { ja, enUS } from "date-fns/locale";
+import { ja, enUS, type Locale } from "date-fns/locale";
 import { Calendar as CalendarIcon } from "lucide-react";
 
 import { cn } from "@/lib/utils";
@@ -31,7 +31,7 @@ interface DateTimePickerProps {
   locale?: string;
 }
 
-const locales: Record<string, any> = {
+const locales: Record<string, Locale> = {
   ja: ja,
   en: enUS,
 };
