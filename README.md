@@ -11,14 +11,14 @@
 
 ## 必要な環境
 
-- Node.js 20.9+
-- pnpm 9+
+- [mise](https://mise.jdx.dev/) （Node.js / pnpm のバージョン管理）
 
 ## セットアップ
 
 ```bash
 git clone https://github.com/<YOUR_USERNAME>/e-be.git
 cd e-be
+mise install   # Node 20.9.0 + pnpm 9.7.1 を自動インストール
 pnpm install
 ```
 
