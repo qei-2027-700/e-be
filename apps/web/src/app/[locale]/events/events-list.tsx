@@ -93,13 +93,12 @@ export function EventsList({ initialEvents, initialHasNext, area, line }: Props)
                 : t("seats_remaining", { count: event.maxParticipants - event.participantCount });
 
           return (
-            <Link
+            <div
               key={event.id}
-              href={`/${locale}/events/${event.id}`}
               className="group flex flex-col overflow-hidden rounded-lg border bg-card transition-colors hover:bg-muted/50"
             >
               {/* サムネイル */}
-              <div className="relative aspect-video w-full overflow-hidden bg-muted">
+              <Link href={`/${locale}/events/${event.id}`} className="relative aspect-video w-full overflow-hidden bg-muted block">
                 {event.thumbnailUrl ? (
                   <Image
                     src={event.thumbnailUrl}
@@ -131,16 +130,28 @@ export function EventsList({ initialEvents, initialHasNext, area, line }: Props)
                     </svg>
                   </div>
                 )}
-              </div>
+              </Link>
 
               {/* カード本文 */}
               <div className="flex flex-1 flex-col gap-2 p-4">
-                <p className="line-clamp-2 font-medium leading-snug">
+                <Link
+                  href={`/${locale}/events/${event.id}`}
+                  className="line-clamp-2 font-medium leading-snug hover:underline"
+                >
                   {event.title ?? "—"}
-                </p>
+                </Link>
 
                 <div className="space-y-0.5 text-xs text-muted-foreground">
-                  <p className="truncate">{event.orgName}</p>
+                  {event.orgSlug ? (
+                    <Link
+                      href={`/${locale}/stores/${event.orgSlug}`}
+                      className="truncate block hover:underline hover:text-foreground"
+                    >
+                      {event.orgName}
+                    </Link>
+                  ) : (
+                    <p className="truncate">{event.orgName}</p>
+                  )}
                   {event.nearestStation && (
                     <p className="truncate">{event.nearestStation}</p>
                   )}
@@ -156,7 +167,7 @@ export function EventsList({ initialEvents, initialHasNext, area, line }: Props)
                   )}
                 </div>
               </div>
-            </Link>
+            </div>
           );
         })}
       </div>

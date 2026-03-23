@@ -556,6 +556,7 @@ export type PublicEventItem = {
   endAt: string | null;
   orgId: string;
   orgName: string;
+  orgSlug: string | null;
   orgAddress: string | null;
   orgPrefecture: string | null;
   nearestStation: string | null;
@@ -635,6 +636,7 @@ export async function searchPublicEvents(opts: SearchEventsOptions = {}): Promis
       endAt: events.endAt,
       orgId: events.orgId,
       orgName: organizations.name,
+      orgSlug: organizations.slug,
       orgAddress: organizations.address,
       orgPrefecture: organizations.prefecture,
       nearestStation: events.nearestStation,
@@ -657,6 +659,7 @@ export async function searchPublicEvents(opts: SearchEventsOptions = {}): Promis
     endAt: row.endAt?.toISOString() ?? null,
     orgId: row.orgId,
     orgName: row.orgName,
+    orgSlug: row.orgSlug ?? null,
     orgAddress: row.orgAddress,
     orgPrefecture: row.orgPrefecture,
     nearestStation: row.nearestStation,
