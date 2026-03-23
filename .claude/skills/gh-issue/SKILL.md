@@ -1,4 +1,6 @@
 ---
+name: gh-issue
+description: GitHub Issue を起票するスキル。実装タスクを最大3つまで Issue として起票する。重複確認・ラベル付けも行う。
 model: sonnet
 ---
 

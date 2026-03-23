@@ -1,4 +1,6 @@
 ---
+name: pw-verify
+description: Playwright MCP を使って実装した機能を動作確認するスキル。dev サーバーに接続してスクリーンショットを取得し、表示・動作を検証する。
 model: haiku
 ---
 

@@ -1,4 +1,6 @@
 ---
+name: gh-ship
+description: 現在のブランチの変更をコミットして GitHub にプッシュするスキル。git status 確認・add・commit・push を一連で行う。
 model: haiku
 ---
 

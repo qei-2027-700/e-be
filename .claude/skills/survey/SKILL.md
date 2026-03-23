@@ -1,4 +1,6 @@
 ---
+name: survey
+description: プロジェクトの現状を把握して次に着手すべき内容を整理するスキル。docs/features・steering・スキーマ・実装状況・open Issue を確認してサマリーを出力する。
 model: haiku
 ---
 

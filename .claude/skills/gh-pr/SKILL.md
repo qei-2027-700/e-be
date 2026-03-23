@@ -1,4 +1,6 @@
 ---
+name: gh-pr
+description: 現在のブランチの Pull Request を GitHub に作成するスキル。コミット・diff を確認し、適切なタイトルと本文で PR を起票する。
 model: sonnet
 ---
 

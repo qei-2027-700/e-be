@@ -1,4 +1,6 @@
 ---
+name: gh-rv
+description: PR をセルフレビューして squash マージするスキル。ブランチ名または PR 番号を受け取り、diff 確認・コメント・マージまでを行う。
 model: opus
 ---
 

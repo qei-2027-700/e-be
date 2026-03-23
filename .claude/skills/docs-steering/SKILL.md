@@ -1,4 +1,6 @@
 ---
+name: docs-steering
+description: GitHub Issue 番号を受け取り、.claude/steering/ に実装計画ファイルを生成するスキル。Issue 内容と docs/features/ を参照して作成する。
 model: sonnet
 ---
 
