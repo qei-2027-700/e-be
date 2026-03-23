@@ -451,6 +451,7 @@ export type EventDetail = {
   location: string | null;
   chargeAmount: number | null;
   orgName: string;
+  orgSlug: string | null;
   orgAddress: string | null;
   myParticipationStatus: "registered" | "cancelled" | null;
   participantCount: number;
@@ -497,6 +498,7 @@ export async function getEventDetail(
       chargeAmount: events.chargeAmount,
       maxParticipants: events.maxParticipants,
       orgName: organizations.name,
+      orgSlug: organizations.slug,
       orgAddress: organizations.address,
       participationStatus: eventParticipations.status,
       organizerUserId: events.userId,
@@ -538,6 +540,7 @@ export async function getEventDetail(
     chargeAmount: row.chargeAmount ?? null,
     maxParticipants: row.maxParticipants ?? null,
     orgName: row.orgName,
+    orgSlug: row.orgSlug ?? null,
     orgAddress: row.orgAddress,
     myParticipationStatus: row.participationStatus ?? null,
     participantCount,
