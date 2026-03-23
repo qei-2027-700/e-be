@@ -277,6 +277,7 @@ export function EventEditForm({ event, eventId, hasPermission, locale, bars }: P
               name="nearestStation"
               defaultValue={event.nearestStation ?? ""}
               placeholder={t("field_nearest_station_placeholder")}
+              maxLength={50}
               disabled={isPending}
             />
           </div>
