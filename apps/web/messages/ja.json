@@ -421,5 +421,12 @@
     "page_next": "次のページ",
     "filter_searching": "検索中...",
     "load_more": "もっと見る"
+  },
+  "stores": {
+    "events_title": "開催イベント",
+    "no_events": "現在公開中のイベントはありません",
+    "charge_free": "無料",
+    "seats_remaining": "残席{count}",
+    "seats_full": "満席"
   }
 }

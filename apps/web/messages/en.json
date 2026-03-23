@@ -421,5 +421,12 @@
     "page_next": "Next",
     "filter_searching": "Searching...",
     "load_more": "Load More"
+  },
+  "stores": {
+    "events_title": "Events",
+    "no_events": "No upcoming events",
+    "charge_free": "Free",
+    "seats_remaining": "{count} seats left",
+    "seats_full": "Full"
   }
 }
