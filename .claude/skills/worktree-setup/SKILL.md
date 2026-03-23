@@ -1,3 +1,7 @@
+---
+model: haiku
+---
+
 # worktree-setup
 
 Issue 番号: $ARGUMENTS

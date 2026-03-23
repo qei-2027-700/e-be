@@ -1,3 +1,7 @@
+---
+model: sonnet
+---
+
 Issue 起票: $ARGUMENTS
 
 ## 制約

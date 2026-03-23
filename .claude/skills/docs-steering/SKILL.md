@@ -1,3 +1,7 @@
+---
+model: sonnet
+---
+
 GitHub Issue 番号: $ARGUMENTS
 
 以下の手順で実行計画ファイルを作成してください。

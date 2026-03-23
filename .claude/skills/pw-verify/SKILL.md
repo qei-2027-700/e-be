@@ -1,3 +1,7 @@
+---
+model: haiku
+---
+
 Playwright MCP で実装した機能を動作確認してください。
 
 ## Step 1: 検証対象の dev サーバーを確認

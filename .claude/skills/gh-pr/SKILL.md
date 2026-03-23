@@ -1,3 +1,7 @@
+---
+model: sonnet
+---
+
 現在のブランチの PR を作成してください。
 
 対象リポジトリ: https://github.com/qei-2027-700/e-be
