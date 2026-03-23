@@ -31,7 +31,7 @@ export function NavBar({ locale, isLoggedIn, labels }: NavBarProps) {
     <header
       className={cn(
         "fixed left-0 right-0 top-0 z-50 transition-all duration-300",
-        scrolled && "border-b bg-background/95 shadow-sm backdrop-blur-sm"
+        scrolled && "border-b glass shadow-sm"
       )}
     >
       <div className="mx-auto flex max-w-5xl items-center justify-between px-6 h-16">
