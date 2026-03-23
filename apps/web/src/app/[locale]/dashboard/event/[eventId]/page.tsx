@@ -6,6 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { ParticipationButton } from "./participation-button";
+import { SnsAssist } from "./sns-assist";
 
 type Props = {
   params: Promise<{ eventId: string }>;
@@ -247,6 +248,11 @@ export default async function EventDetailPage({ params }: Props) {
             />
           </CardContent>
         </Card>
+
+        {/* SNS投稿アシスト（主催者かつ GEMINI_API_KEY 設定済みの場合のみ） */}
+        {!!process.env.GEMINI_API_KEY && event.organizerUserId === user.id && (
+          <SnsAssist eventId={event.id} />
+        )}
 
       </div>
     </main>
