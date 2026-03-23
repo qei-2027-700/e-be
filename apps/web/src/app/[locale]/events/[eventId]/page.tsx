@@ -138,7 +138,16 @@ export default async function PublicEventDetailPage({ params }: Props) {
                 <p className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground">
                   {t("venue")}
                 </p>
-                <p className="font-medium">{event.orgName}</p>
+                {event.orgSlug ? (
+                  <Link
+                    href={`/${locale}/stores/${event.orgSlug}`}
+                    className="font-medium hover:underline"
+                  >
+                    {event.orgName}
+                  </Link>
+                ) : (
+                  <p className="font-medium">{event.orgName}</p>
+                )}
                 {event.orgAddress && (
                   <p className="text-sm text-muted-foreground">{event.orgAddress}</p>
                 )}
