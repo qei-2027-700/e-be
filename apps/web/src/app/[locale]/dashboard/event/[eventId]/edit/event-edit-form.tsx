@@ -10,7 +10,13 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Select } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { updateEventDraft, submitEvent, publishEvent } from "@/lib/actions/event";
 import { DateTimePicker } from "@/components/ui/date-time-picker";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
@@ -175,15 +181,21 @@ export function EventEditForm({ event, eventId, hasPermission, locale, bars }: P
             {isDraft ? (
               <Select
                 value={orgId}
-                onChange={(e) => setOrgId(e.target.value)}
+                onValueChange={(val) => setOrgId(val ?? "")}
                 disabled={isPending}
               >
-                <option value="" disabled>{t("field_venue_placeholder")}</option>
-                {bars.map((bar) => (
-                  <option key={bar.id} value={bar.id}>
-                    {bar.name}
-                  </option>
-                ))}
+                <SelectTrigger className="w-full">
+                  <SelectValue>
+                    {orgId ? (bars.find((b) => b.id === orgId)?.name) : t("field_venue_placeholder")}
+                  </SelectValue>
+                </SelectTrigger>
+                <SelectContent>
+                  {bars.map((bar) => (
+                    <SelectItem key={bar.id} value={bar.id}>
+                      {bar.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
               </Select>
             ) : (
               <p className="rounded-md border border-border bg-muted px-3 py-2 text-sm text-muted-foreground">

@@ -13,7 +13,13 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { Select } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface DateTimePickerProps {
   id?: string;
@@ -78,15 +84,17 @@ export function DateTimePicker({
     setOpen(false);
   };
 
-  const handleHourChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const newHour = parseInt(e.target.value, 10);
+  const handleHourChange = (val: string | null) => {
+    if (!val) return;
+    const newHour = parseInt(val, 10);
     if (date) {
       updateDateTime(date, newHour, minute);
     }
   };
 
-  const handleMinuteChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const newMinute = parseInt(e.target.value, 10);
+  const handleMinuteChange = (val: string | null) => {
+    if (!val) return;
+    const newMinute = parseInt(val, 10);
     if (date) {
       updateDateTime(date, hour, newMinute);
     }
@@ -129,29 +137,37 @@ export function DateTimePicker({
 
         <div className="flex items-center gap-1">
           <Select
-            value={hour}
-            onChange={handleHourChange}
-            className="w-[64px]"
+            value={hour.toString()}
+            onValueChange={handleHourChange}
             disabled={disabled || !date}
           >
-            {Array.from({ length: 24 }).map((_, i) => (
-              <option key={i} value={i}>
-                {i.toString().padStart(2, "0")}
-              </option>
-            ))}
+            <SelectTrigger className="w-[64px]">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {Array.from({ length: 24 }).map((_, i) => (
+                <SelectItem key={i} value={i.toString()}>
+                  {i.toString().padStart(2, "0")}
+                </SelectItem>
+              ))}
+            </SelectContent>
           </Select>
           <span className="text-muted-foreground">:</span>
           <Select
-            value={minute}
-            onChange={handleMinuteChange}
-            className="w-[64px]"
+            value={minute.toString()}
+            onValueChange={handleMinuteChange}
             disabled={disabled || !date}
           >
-            {[0, 15, 30, 45].map((m) => (
-              <option key={m} value={m}>
-                {m.toString().padStart(2, "0")}
-              </option>
-            ))}
+            <SelectTrigger className="w-[64px]">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {[0, 15, 30, 45].map((m) => (
+                <SelectItem key={m} value={m.toString()}>
+                  {m.toString().padStart(2, "0")}
+                </SelectItem>
+              ))}
+            </SelectContent>
           </Select>
         </div>
       </div>
