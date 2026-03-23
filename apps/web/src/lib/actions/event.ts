@@ -27,6 +27,7 @@ export async function createEventDraft(formData: FormData): Promise<CreateEventD
   if (!orgId || !/^[0-9a-f-]{36}$/.test(orgId)) return { error: 'invalid' };
   if (!title || title.length > 100) return { error: 'invalid' };
   if (!description || description.length > 2000) return { error: 'invalid' };
+  if (nearestStation && nearestStation.length > 50) return { error: 'invalid' };
 
   let maxParticipants: number | null = null;
   if (maxParticipantsRaw && maxParticipantsRaw !== '') {
@@ -69,6 +70,7 @@ export async function updateEventDraft(eventId: string, formData: FormData): Pro
 
   if (!title || title.length > 100) return { error: 'invalid' };
   if (!description || description.length > 2000) return { error: 'invalid' };
+  if (nearestStation && nearestStation.length > 50) return { error: 'invalid' };
 
   const orgId = orgIdRaw && /^[0-9a-f-]{36}$/.test(orgIdRaw) ? orgIdRaw : undefined;
 
