@@ -354,7 +354,15 @@
     "toast_error": "エラーが発生しました。もう一度お試しください",
     "organizer_x": "主催者 X (Twitter)",
     "back_to_events": "イベント一覧へ戻る",
-    "sign_in_to_join": "サインインして参加する"
+    "sign_in_to_join": "サインインして参加する",
+    "sns_assist_title": "SNS投稿を作成",
+    "sns_assist_generate": "生成する",
+    "sns_assist_generating": "生成中...",
+    "sns_assist_x_post": "X（Twitter）投稿文言",
+    "sns_assist_image_prompt": "画像生成プロンプト",
+    "sns_assist_copy": "コピー",
+    "sns_assist_copied": "コピーしました",
+    "sns_assist_error": "生成に失敗しました。再度お試しください。"
   },
   "privacy": {
     "title": "プライバシーポリシー",

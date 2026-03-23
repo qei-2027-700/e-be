@@ -354,7 +354,15 @@
     "toast_error": "Something went wrong. Please try again",
     "organizer_x": "Organizer X (Twitter)",
     "back_to_events": "Back to Events",
-    "sign_in_to_join": "Sign in to Join"
+    "sign_in_to_join": "Sign in to Join",
+    "sns_assist_title": "Create SNS Post",
+    "sns_assist_generate": "Generate",
+    "sns_assist_generating": "Generating...",
+    "sns_assist_x_post": "X (Twitter) Post",
+    "sns_assist_image_prompt": "Image Generation Prompt",
+    "sns_assist_copy": "Copy",
+    "sns_assist_copied": "Copied!",
+    "sns_assist_error": "Generation failed. Please try again."
   },
   "privacy": {
     "title": "Privacy Policy",
