@@ -419,6 +419,7 @@
     "seats_full": "満席",
     "page_prev": "前のページ",
     "page_next": "次のページ",
-    "filter_searching": "検索中..."
+    "filter_searching": "検索中...",
+    "load_more": "もっと見る"
   }
 }

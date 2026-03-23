@@ -94,6 +94,13 @@ const TEST_ORGS = [
         maxParticipants: 5,
         offsetDays: 21,
       },
+      {
+        title: '【テスト】渋谷サンデーアフタヌーン',
+        nearestStation: '渋谷',
+        chargeAmount: 500,
+        maxParticipants: 20,
+        offsetDays: 28,
+      },
     ],
   },
   {
@@ -123,6 +130,13 @@ const TEST_ORGS = [
         chargeAmount: 3000,
         maxParticipants: 5,
         offsetDays: 22,
+      },
+      {
+        title: '【テスト】新宿ミッドナイト・セッション',
+        nearestStation: '新宿',
+        chargeAmount: 1500,
+        maxParticipants: 15,
+        offsetDays: 29,
       },
     ],
   },

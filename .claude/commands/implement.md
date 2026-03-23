@@ -37,7 +37,7 @@ ls .claude/steering/issue-$ARGUMENTS-*.md 2>/dev/null
 ```
 
 - 存在する → そのまま読んで次へ
-- 存在しない → `/docs-steering $ARGUMENTS` を実行してから次へ
+- 存在しない → `/docs-steering $ARGUMENTS` を実行してステアリングファイルを生成し、**生成完了後すぐに Step 2 以降の実装フローを続行する**（ユーザーへの確認や再実行の案内は不要）
 
 ### Step 2: 関連ドキュメントを読む
 

@@ -419,6 +419,7 @@
     "seats_full": "Full",
     "page_prev": "Previous",
     "page_next": "Next",
-    "filter_searching": "Searching..."
+    "filter_searching": "Searching...",
+    "load_more": "Load More"
   }
 }
