@@ -21,13 +21,11 @@ export async function createEventDraft(formData: FormData): Promise<CreateEventD
   const title = (formData.get('title') as string | null)?.trim() ?? '';
   const description = (formData.get('description') as string | null)?.trim() ?? '';
   const maxParticipantsRaw = formData.get('maxParticipants') as string | null;
-  const nearestStation = (formData.get('nearestStation') as string | null)?.trim() || null;
 
   // バリデーション
   if (!orgId || !/^[0-9a-f-]{36}$/.test(orgId)) return { error: 'invalid' };
   if (!title || title.length > 100) return { error: 'invalid' };
   if (!description || description.length > 2000) return { error: 'invalid' };
-  if (nearestStation && nearestStation.length > 50) return { error: 'invalid' };
 
   let maxParticipants: number | null = null;
   if (maxParticipantsRaw && maxParticipantsRaw !== '') {
@@ -45,7 +43,6 @@ export async function createEventDraft(formData: FormData): Promise<CreateEventD
       title,
       description,
       maxParticipants,
-      nearestStation,
     })
     .returning({ id: events.id });
 
