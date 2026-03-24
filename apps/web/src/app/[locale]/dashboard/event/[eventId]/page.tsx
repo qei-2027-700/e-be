@@ -87,7 +87,16 @@ export default async function EventDetailPage({ params }: Props) {
               </Badge>
             )}
           </div>
-          <p className="text-sm text-muted-foreground">{event.orgName}</p>
+          {event.orgSlug ? (
+            <Link
+              href={`/${locale}/stores/${event.orgSlug}`}
+              className="text-sm text-muted-foreground hover:text-foreground hover:underline transition-colors"
+            >
+              {event.orgName}
+            </Link>
+          ) : (
+            <p className="text-sm text-muted-foreground">{event.orgName}</p>
+          )}
         </div>
 
         {/* 日時カード */}

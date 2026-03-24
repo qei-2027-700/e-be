@@ -65,9 +65,11 @@ export function ParticipationButton({
     });
   };
 
+  const baseClassName = "w-full sm:w-64 sm:mx-auto";
+
   if (!isBeforeEvent) {
     return (
-      <Button disabled variant="outline" className="w-full">
+      <Button disabled variant="outline" className={baseClassName}>
         {endedLabel}
       </Button>
     );
@@ -79,7 +81,7 @@ export function ParticipationButton({
         onClick={handleCancel}
         disabled={isPending}
         variant="outline"
-        className="w-full border-red-300 text-red-600 hover:bg-red-50 hover:text-red-700 active:bg-red-100"
+        className={`${baseClassName} border-red-300 text-red-600 hover:bg-red-50 hover:text-red-700 active:bg-red-100`}
       >
         {isPending ? cancellingLabel : cancelLabel}
       </Button>
@@ -88,14 +90,14 @@ export function ParticipationButton({
 
   if (isFull) {
     return (
-      <Button disabled variant="outline" className="w-full">
+      <Button disabled variant="outline" className={baseClassName}>
         {fullLabel}
       </Button>
     );
   }
 
   return (
-    <Button onClick={handleJoin} disabled={isPending} className="w-full">
+    <Button onClick={handleJoin} disabled={isPending} className={baseClassName}>
       {isPending ? joiningLabel : joinLabel}
     </Button>
   );
