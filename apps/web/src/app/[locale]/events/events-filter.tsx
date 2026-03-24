@@ -53,7 +53,7 @@ export function EventsFilter({ defaultArea, defaultLine, availableLines = [] }: 
       <div className="flex flex-col gap-1.5">
         <label className="text-xs font-medium text-muted-foreground">{t("filter_area")}</label>
         <Select value={area} onValueChange={(val) => setArea(val ?? "")}>
-          <SelectTrigger className="w-full sm:w-40">
+          <SelectTrigger className="w-full sm:w-40" size="lg">
             <SelectValue>
               {area ? AREA_REGIONS[area as AreaKey]?.label : "—"}
             </SelectValue>
@@ -70,7 +70,7 @@ export function EventsFilter({ defaultArea, defaultLine, availableLines = [] }: 
         <div className="flex flex-col gap-1.5">
           <label className="text-xs font-medium text-muted-foreground">{t("filter_line")}</label>
           <Select value={line || undefined} onValueChange={(val) => setLine(val ?? "")}>
-            <SelectTrigger className="w-full sm:w-48">
+            <SelectTrigger className="w-full sm:w-48" size="lg">
               <SelectValue placeholder="—" />
             </SelectTrigger>
             <SelectContent>
