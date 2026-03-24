@@ -6,7 +6,19 @@ import { updateSession } from "./lib/supabase/middleware";
 const intlMiddleware = createMiddleware(routing);
 
 // 認証不要のパス（ロケールプレフィックスを除いた部分）
-const PUBLIC_PATHS = ["/", "/auth/sign-in", "/auth/sign-up", "/auth/callback", "/auth/confirm", "/events", "/terms", "/privacy", "/contact", "/api/chat"];
+const PUBLIC_PATHS = [
+  "/",
+  "/for-venues",
+  "/auth/sign-in",
+  "/auth/sign-up",
+  "/auth/callback",
+  "/auth/confirm",
+  "/events",
+  "/terms",
+  "/privacy",
+  "/contact",
+  "/api/chat",
+];
 
 function isPublicPath(pathname: string): boolean {
   // /ja/auth/sign-in → /auth/sign-in のようにロケール部分を除去

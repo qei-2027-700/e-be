@@ -20,14 +20,16 @@
     "nav": {
       "sign_in": "Sign In",
       "sign_up": "Get Started Free",
-      "dashboard": "Dashboard"
+      "dashboard": "Dashboard",
+      "for_venues": "For Venues"
     },
     "hero": {
       "eyebrow": "The Event Bar Platform",
       "title": "More Great Events, Together.",
-      "subtitle": "E-be connects venues with organizers. Handle bookings, attendance, and analytics — all in one place.",
+      "subtitle": "E-be connects participants with organizers. Handle bookings, attendance, and analytics — all in one place.",
       "cta_primary": "Find Events",
-      "cta_secondary": "Book a Venue"
+      "cta_secondary": "Book a Venue",
+      "for_venues_link": "For venue operators →"
     },
     "pain": {
       "title": "Sound familiar?",
@@ -77,10 +79,24 @@
         "description": "Let top organizers apply to open new venues, matched by past performance data."
       }
     },
+    "participant_features": {
+      "discover": {
+        "title": "Discover events",
+        "description": "Browse by area and date so you never miss what’s happening."
+      },
+      "follow": {
+        "title": "Get updates",
+        "description": "Follow your favorite organizers and venues to catch new announcements."
+      },
+      "coupons": {
+        "title": "Perks & coupons",
+        "description": "Enjoy rewards that make attending and visiting even better."
+      }
+    },
     "how": {
       "title": "Up and running in 3 steps",
       "step_1_title": "Create an account",
-      "step_1_desc": "Sign up free with just your email. Works for venue owners and organizers alike.",
+      "step_1_desc": "Sign up free with just your email. Get started as a participant or an organizer.",
       "step_2_title": "Choose a venue & apply",
       "step_2_desc": "Browse available venues and submit a booking request. Proven organizers get fast-tracked.",
       "step_3_title": "Host your event",
@@ -96,6 +112,39 @@
       "terms": "Terms of Service",
       "privacy": "Privacy Policy",
       "contact": "Contact"
+    }
+  },
+  "venue_lp": {
+    "nav": {
+      "back_to_home": "For Participants/Organizers"
+    },
+    "hero": {
+      "eyebrow": "For Venue Operators",
+      "title": "Make event operations simpler.",
+      "subtitle": "Review booking requests, manage schedules, and understand performance — all in one place.",
+      "cta_primary": "Get Started Free",
+      "cta_secondary": "View main site",
+      "note": "Note: Venue features require applying as a venue operator after signing in."
+    },
+    "features": {
+      "title": "What you can do as a venue",
+      "store": {
+        "title": "Venue profile",
+        "description": "Present your venue clearly and consolidate event discovery in one place."
+      },
+      "approval": {
+        "title": "Approve requests",
+        "description": "Review organizer requests and approve or reject smoothly."
+      },
+      "analytics": {
+        "title": "See performance",
+        "description": "Look back at results and apply learnings to your next events."
+      }
+    },
+    "cta_section": {
+      "title": "Start managing events today.",
+      "subtitle": "Create a free account and get set up in minutes.",
+      "button": "Get Started Free"
     }
   },
   "auth": {

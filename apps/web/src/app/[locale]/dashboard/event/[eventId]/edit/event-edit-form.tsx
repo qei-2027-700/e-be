@@ -184,7 +184,7 @@ export function EventEditForm({ event, eventId, hasPermission, locale, bars }: P
                 onValueChange={(val) => setOrgId(val ?? "")}
                 disabled={isPending}
               >
-                <SelectTrigger className="w-full">
+                <SelectTrigger className="w-full" size="lg">
                   <SelectValue>
                     {orgId ? (bars.find((b) => b.id === orgId)?.name) : t("field_venue_placeholder")}
                   </SelectValue>

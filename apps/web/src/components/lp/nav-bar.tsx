@@ -8,6 +8,7 @@ import { APP_NAME } from "@/lib/config";
 interface NavBarProps {
   locale: string;
   isLoggedIn: boolean;
+  extraLinks?: Array<{ href: string; label: string }>;
   labels: {
     signIn: string;
     signUp: string;
@@ -18,7 +19,7 @@ interface NavBarProps {
 const btnBase =
   "inline-flex shrink-0 items-center justify-center rounded-lg border border-transparent text-sm font-medium whitespace-nowrap transition-all select-none h-7 gap-1 px-2.5 text-[0.8rem]";
 
-export function NavBar({ locale, isLoggedIn, labels }: NavBarProps) {
+export function NavBar({ locale, isLoggedIn, extraLinks, labels }: NavBarProps) {
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
@@ -39,6 +40,15 @@ export function NavBar({ locale, isLoggedIn, labels }: NavBarProps) {
           {APP_NAME}
         </Link>
         <div className="flex items-center gap-2">
+          {extraLinks?.map(({ href, label }) => (
+            <Link
+              key={href}
+              href={href}
+              className={cn(btnBase, "hover:bg-muted hover:text-foreground")}
+            >
+              {label}
+            </Link>
+          ))}
           {isLoggedIn ? (
             <Link
               href={`/${locale}/dashboard`}
