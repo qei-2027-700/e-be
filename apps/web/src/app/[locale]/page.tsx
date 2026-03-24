@@ -3,11 +3,11 @@ import { getLocale, getTranslations } from "next-intl/server";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getUser } from "@/lib/auth";
-import Link from "next/link";
 import Image from "next/image";
 import { NavBar } from "@/components/lp/nav-bar";
 import { LinkButton } from "@/components/lp/link-button";
 import { AppFooter } from "@/components/layout/app-footer";
+import { TypingText } from "@/components/lp/typing-text";
 
 const venueItemKeys = [
   "pain.venue_item_1",
@@ -43,6 +43,14 @@ export default async function HomePage() {
     getUser(),
   ]);
 
+  const heroTitle = t("hero.title");
+  const heroSubtitle = t("hero.subtitle");
+  const heroTitleCharIntervalMs = 28;
+  const heroTitleStartDelayMs = 80;
+  const heroSubtitleCharIntervalMs = 18;
+  const heroSubtitleStartDelayMs =
+    heroTitleStartDelayMs + heroTitle.length * heroTitleCharIntervalMs + 320;
+
   if (user) {
     redirect(`/${locale}/dashboard`);
   }
@@ -70,10 +78,34 @@ export default async function HomePage() {
             {t("hero.eyebrow")}
           </Badge>
           <h1 className="mb-5 text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
-            {t("hero.title")}
+            <span className="sr-only">{heroTitle}</span>
+            <span className="grid">
+              <span aria-hidden className="invisible [grid-area:1/1]">
+                {heroTitle}
+              </span>
+              <TypingText
+                text={heroTitle}
+                startDelayMs={heroTitleStartDelayMs}
+                charIntervalMs={heroTitleCharIntervalMs}
+                respectReducedMotion={false}
+                className="[grid-area:1/1] text-center"
+              />
+            </span>
           </h1>
           <p className="mx-auto mb-10 max-w-lg text-base text-muted-foreground sm:text-lg">
-            {t("hero.subtitle")}
+            <span className="sr-only">{heroSubtitle}</span>
+            <span className="grid">
+              <span aria-hidden className="invisible [grid-area:1/1]">
+                {heroSubtitle}
+              </span>
+              <TypingText
+                text={heroSubtitle}
+                startDelayMs={heroSubtitleStartDelayMs}
+                charIntervalMs={heroSubtitleCharIntervalMs}
+                respectReducedMotion={false}
+                className="[grid-area:1/1] text-center"
+              />
+            </span>
           </p>
           <div className="flex flex-col items-center justify-center gap-3 sm:flex-row">
             <LinkButton href={`/${locale}/dashboard`} size="lg" className="w-full sm:w-auto">
