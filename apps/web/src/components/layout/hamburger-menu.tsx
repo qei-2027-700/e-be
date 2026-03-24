@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { Menu, LayoutDashboard, Settings, LogOut, Shield } from 'lucide-react';
+import { Menu, LayoutDashboard, Settings, LogOut, Shield, Bell } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { signOutAction } from '@/lib/actions/auth';
@@ -43,6 +43,14 @@ export function HamburgerMenu({ locale, userType }: HamburgerMenuProps) {
             >
               <LayoutDashboard className="h-4 w-4" />
               {t('dashboard')}
+            </Link>
+            <Link
+              href={`/${locale}/dashboard/notifications`}
+              onClick={() => setOpen(false)}
+              className="flex items-center gap-3 rounded-lg px-3 py-3 min-h-11 text-sm font-medium transition-colors hover:bg-muted cursor-pointer"
+            >
+              <Bell className="h-4 w-4" />
+              {t('notifications')}
             </Link>
             <Link
               href={`/${locale}/dashboard/settings`}

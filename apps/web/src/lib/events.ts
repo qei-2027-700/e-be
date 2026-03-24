@@ -457,6 +457,7 @@ export type EventDetail = {
   participantCount: number;
   maxParticipants: number | null;
   organizerUserId: string;
+  organizerName: string | null;
   organizerXUrl: string | null;
 };
 
@@ -502,6 +503,7 @@ export async function getEventDetail(
       orgAddress: organizations.address,
       participationStatus: eventParticipations.status,
       organizerUserId: events.userId,
+      organizerName: users.name,
       organizerXUrl: users.xUrl,
     })
     .from(events)
@@ -545,6 +547,7 @@ export async function getEventDetail(
     myParticipationStatus: row.participationStatus ?? null,
     participantCount,
     organizerUserId: row.organizerUserId,
+    organizerName: row.organizerName ?? null,
     organizerXUrl: row.organizerXUrl ?? null,
   };
 }

@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { signOutAction } from "@/lib/actions/auth";
 import { HamburgerMenu } from "@/components/layout/hamburger-menu";
 import { APP_NAME } from "@/lib/config";
+import { Bell } from "lucide-react";
 
 interface AppHeaderProps {
   userEmail: string;
@@ -12,7 +13,10 @@ interface AppHeaderProps {
 }
 
 export async function AppHeader({ userEmail, userType, locale }: AppHeaderProps) {
-  const t = await getTranslations("dashboard");
+  const [t, tNav] = await Promise.all([
+    getTranslations("dashboard"),
+    getTranslations("dashboard.nav"),
+  ]);
 
   return (
     <header className="sticky top-0 z-40 border-b glass">
@@ -24,6 +28,13 @@ export async function AppHeader({ userEmail, userType, locale }: AppHeaderProps)
           <span className="hidden text-xs text-muted-foreground sm:block">
             {userEmail}
           </span>
+          <Link
+            href={`/${locale}/dashboard/notifications`}
+            className="hidden md:inline-flex min-h-9 items-center justify-center rounded-lg border border-border bg-background px-2.5 text-[0.8rem] font-medium transition-colors hover:bg-muted cursor-pointer"
+            aria-label={tNav("notifications")}
+          >
+            <Bell className="h-4 w-4" />
+          </Link>
           {userType === "system_user" && (
             <Link
               href={`/${locale}/admin`}

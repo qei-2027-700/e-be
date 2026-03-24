@@ -176,6 +176,7 @@
   "dashboard": {
     "nav": {
       "dashboard": "ダッシュボード",
+      "notifications": "通知",
       "account_settings": "アカウント設定",
       "admin": "管理者画面",
       "sign_out": "サインアウト"
@@ -228,6 +229,14 @@
     "organizer_history_public": "公開",
     "organizer_history_private": "非公開",
     "organizer_history_toggle_public": "公開にする",
+    "notifications": {
+      "title": "通知",
+      "empty": "通知はまだありません",
+      "unread": "未読",
+      "open": "開く",
+      "mark_read": "既読にする",
+      "mark_all_read": "すべて既読にする"
+    },
     "organizer_history_toggle_private": "非公開にする",
     "organizer_history_csv": "CSV ダウンロード",
     "organizer_history_participants": "参加者数",
@@ -401,6 +410,13 @@
     "toast_full_capacity": "定員に達しています",
     "toast_event_ended": "開催済みのイベントです",
     "toast_error": "エラーが発生しました。もう一度お試しください",
+    "toast_watch_success": "お気に入りに追加しました",
+    "toast_unwatch_success": "お気に入りを解除しました",
+    "toast_watch_error": "エラーが発生しました。もう一度お試しください",
+    "organizer_label": "主催者",
+    "organizer_unknown": "不明",
+    "watch_organizer": "主催者をお気に入り",
+    "unwatch_organizer": "主催者のお気に入りを解除",
     "organizer_x": "主催者 X (Twitter)",
     "back_to_events": "イベント一覧へ戻る",
     "sign_in_to_join": "サインインして参加する",

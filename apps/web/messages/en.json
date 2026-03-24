@@ -176,6 +176,7 @@
   "dashboard": {
     "nav": {
       "dashboard": "Dashboard",
+      "notifications": "Notifications",
       "account_settings": "Account Settings",
       "admin": "Admin Panel",
       "sign_out": "Sign Out"
@@ -228,6 +229,14 @@
     "organizer_history_public": "Public",
     "organizer_history_private": "Private",
     "organizer_history_toggle_public": "Make public",
+    "notifications": {
+      "title": "Notifications",
+      "empty": "No notifications yet",
+      "unread": "Unread",
+      "open": "Open",
+      "mark_read": "Mark as read",
+      "mark_all_read": "Mark all as read"
+    },
     "organizer_history_toggle_private": "Make private",
     "organizer_history_csv": "Download CSV",
     "organizer_history_participants": "Participants",
@@ -401,6 +410,13 @@
     "toast_full_capacity": "This event is full",
     "toast_event_ended": "This event has already ended",
     "toast_error": "Something went wrong. Please try again",
+    "toast_watch_success": "Added to favorites",
+    "toast_unwatch_success": "Removed from favorites",
+    "toast_watch_error": "Something went wrong. Please try again",
+    "organizer_label": "Organizer",
+    "organizer_unknown": "Unknown",
+    "watch_organizer": "Favorite organizer",
+    "unwatch_organizer": "Unfavorite organizer",
     "organizer_x": "Organizer X (Twitter)",
     "back_to_events": "Back to Events",
     "sign_in_to_join": "Sign in to Join",

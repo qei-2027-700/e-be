@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { getTranslations, getLocale } from "next-intl/server";
-import { getUser } from "@/lib/auth";
+import { getDbUser, getUser } from "@/lib/auth";
 import { getEventDetail } from "@/lib/events";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -8,21 +8,28 @@ import Link from "next/link";
 import { PublicHeader } from "@/components/layout/public-header";
 import { AppFooter } from "@/components/layout/app-footer";
 import { ParticipationButton } from "@/app/[locale]/dashboard/event/[eventId]/participation-button";
+import { OrganizerWatchButton } from "./organizer-watch-button";
+import { isWatchingUser } from "@/lib/actions/watch";
+import { buttonVariants } from "@/components/ui/button";
 
 type Props = {
   params: Promise<{ eventId: string }>;
 };
 
 export default async function PublicEventDetailPage({ params }: Props) {
-  const [{ eventId }, locale, t, user] = await Promise.all([
+  const [{ eventId }, locale, t, user, dbUser] = await Promise.all([
     params,
     getLocale(),
     getTranslations("event_detail"),
     getUser(),
+    getDbUser(),
   ]);
 
   const event = await getEventDetail(eventId, user?.id);
   if (!event) notFound();
+
+  const isSelfOrganizer = !!dbUser && dbUser.id === event.organizerUserId;
+  const watching = !isSelfOrganizer ? await isWatchingUser(event.organizerUserId) : false;
 
   const formatDate = (iso: string | null) =>
     iso
@@ -83,7 +90,35 @@ export default async function PublicEventDetailPage({ params }: Props) {
                 </Badge>
               )}
             </div>
-            <p className="text-sm text-muted-foreground">{event.orgName}</p>
+            <div className="flex items-center justify-between gap-3">
+              <p className="text-sm text-muted-foreground">{event.orgName}</p>
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-muted-foreground">
+                  {t("organizer_label")}: {event.organizerName ?? t("organizer_unknown")}
+                </span>
+                {!isSelfOrganizer && (
+                  dbUser ? (
+                    <OrganizerWatchButton
+                      targetUserId={event.organizerUserId}
+                      initialWatching={watching}
+                      watchLabel={t("watch_organizer")}
+                      unwatchLabel={t("unwatch_organizer")}
+                      watchSuccess={t("toast_watch_success")}
+                      unwatchSuccess={t("toast_unwatch_success")}
+                      errorLabel={t("toast_watch_error")}
+                    />
+                  ) : (
+                    <Link
+                      href={signInUrl}
+                      className={buttonVariants({ variant: "ghost", size: "icon" })}
+                      aria-label={t("watch_organizer")}
+                    >
+                      ♡
+                    </Link>
+                  )
+                )}
+              </div>
+            </div>
           </div>
 
           {/* 日時カード */}

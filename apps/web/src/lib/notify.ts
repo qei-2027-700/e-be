@@ -7,7 +7,13 @@ export async function sendNotification(
   type: string,
   title: string,
   body: string,
-  payload?: Record<string, unknown>
+  payload?: Record<string, unknown>,
+  dedupeKey?: string
 ): Promise<void> {
-  await db.insert(notifications).values({ userId, type, title, body, payload: payload ?? null });
+  await db
+    .insert(notifications)
+    .values({ userId, type, title, body, payload: payload ?? null, dedupeKey: dedupeKey ?? null })
+    .onConflictDoNothing({
+      target: [notifications.userId, notifications.dedupeKey],
+    });
 }
