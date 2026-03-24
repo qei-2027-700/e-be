@@ -1,10 +1,10 @@
 ---
-name: worktree-setup
+name: wt-setup
 description: Issue 番号を受け取り、git worktree を作成して dev サーバーが起動できる状態まで整えるスキル。ブランチ作成・依存インストールを行う。
 model: haiku
 ---
 
-# worktree-setup
+# wt-setup
 
 Issue 番号: $ARGUMENTS
 

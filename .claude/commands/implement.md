@@ -48,7 +48,7 @@ ls .claude/steering/issue-$ARGUMENTS-*.md 2>/dev/null
 
 ### Step 3: Worktree 作成
 
-`/worktree-setup $ARGUMENTS` を実行する。
+`/wt-setup $ARGUMENTS` を実行する。
 
 - worktree ディレクトリ: `../wt-$ARGUMENTS`
 - dev サーバーのポートは `/tmp/wt-$ARGUMENTS-port.txt` に保存される
