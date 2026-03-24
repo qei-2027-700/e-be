@@ -6,7 +6,7 @@ import { updateSession } from "./lib/supabase/middleware";
 const intlMiddleware = createMiddleware(routing);
 
 // 認証不要のパス（ロケールプレフィックスを除いた部分）
-const PUBLIC_PATHS = ["/", "/auth/sign-in", "/auth/sign-up", "/auth/callback", "/auth/confirm", "/events", "/terms", "/privacy", "/contact"];
+const PUBLIC_PATHS = ["/", "/auth/sign-in", "/auth/sign-up", "/auth/callback", "/auth/confirm", "/events", "/terms", "/privacy", "/contact", "/api/chat"];
 
 function isPublicPath(pathname: string): boolean {
   // /ja/auth/sign-in → /auth/sign-in のようにロケール部分を除去
@@ -15,6 +15,19 @@ function isPublicPath(pathname: string): boolean {
 }
 
 export default async function proxy(request: NextRequest) {
+  // API ルートは next-intl の処理をスキップ（ロケールプレフィックスが付くのを防ぐ）
+  if (request.nextUrl.pathname.startsWith("/api/")) {
+    if (isPublicPath(request.nextUrl.pathname)) {
+      return NextResponse.next();
+    }
+    // 認証が必要な API ルートの場合は Supabase セッションを確認
+    const { response, user } = await updateSession(request, NextResponse.next());
+    if (!user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    return response;
+  }
+
   // 1. next-intl でロケールルーティング処理
   const intlResponse = intlMiddleware(request);
 
