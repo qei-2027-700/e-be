@@ -9,13 +9,6 @@ import { LinkButton } from "@/components/lp/link-button";
 import { AppFooter } from "@/components/layout/app-footer";
 import { TypingText } from "@/components/lp/typing-text";
 
-const venueItemKeys = [
-  "pain.venue_item_1",
-  "pain.venue_item_2",
-  "pain.venue_item_3",
-  "pain.venue_item_4",
-] as const;
-
 const eventerItemKeys = [
   "pain.eventer_item_1",
   "pain.eventer_item_2",
@@ -60,6 +53,9 @@ export default async function HomePage() {
       <NavBar
         locale={locale}
         isLoggedIn={!!user}
+        extraLinks={[
+          { href: `/${locale}/for-venues`, label: t("nav.for_venues") },
+        ]}
         labels={{
           signIn: t("nav.sign_in"),
           signUp: t("nav.sign_up"),
@@ -120,6 +116,14 @@ export default async function HomePage() {
               {t("hero.cta_secondary")}
             </LinkButton>
           </div>
+          <div className="mt-4">
+            <a
+              href={`/${locale}/for-venues`}
+              className="text-sm font-medium text-muted-foreground underline underline-offset-4 hover:text-foreground"
+            >
+              {t("hero.for_venues_link")}
+            </a>
+          </div>
         </div>
 
         {/* Hero image */}
@@ -143,28 +147,8 @@ export default async function HomePage() {
           <h2 className="mb-12 text-center text-2xl font-semibold sm:text-3xl">
             {t("pain.title")}
           </h2>
-          <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-            {/* バーオーナー */}
-            <Card className="border-t-4 border-t-feature">
-              <CardHeader className="pb-3">
-                <CardTitle className="flex items-center gap-2 text-base text-feature">
-                  <span className="text-2xl">🏪</span>
-                  {t("pain.venue_label")}
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <ul className="space-y-3">
-                  {venueItemKeys.map((key) => (
-                    <li key={key} className="flex items-start gap-2 text-sm text-muted-foreground">
-                      <span className="mt-0.5 shrink-0 text-feature">✕</span>
-                      {t(key)}
-                    </li>
-                  ))}
-                </ul>
-              </CardContent>
-            </Card>
-
-            {/* イベンター */}
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+            {/* 主催者 */}
             <Card className="border-t-4 border-t-feature">
               <CardHeader className="pb-3">
                 <CardTitle className="flex items-center gap-2 text-base text-feature">
@@ -215,46 +199,17 @@ export default async function HomePage() {
           </h2>
 
           <div className="space-y-16">
-            {/* 店舗管理者向け */}
-            <div className="rounded-2xl bg-feature/5 p-8 ring-1 ring-feature/20">
-              <h3 className="mb-8 flex items-center gap-2 text-xl font-bold text-feature">
-                <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-feature text-white text-sm">1</span>
-                {t("features.venue_title")}
-              </h3>
-              <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-                {[
-                  { key: "events", icon: "🎪" },
-                  { key: "multitenant", icon: "🏪" },
-                  { key: "ai", icon: "🤖" },
-                ].map(({ key, icon }) => (
-                  <Card key={key} className="border-none shadow-sm">
-                    <CardHeader className="pb-2">
-                      <CardTitle className="flex items-center gap-2 text-base">
-                        <span className="text-2xl">{icon}</span>
-                        {t(`features.${key}.title`)}
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <p className="text-sm text-muted-foreground">
-                        {t(`features.${key}.description`)}
-                      </p>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            </div>
-
             {/* イベント主催者向け */}
             <div className="rounded-2xl bg-feature/5 p-8 ring-1 ring-feature/20">
               <h3 className="mb-8 flex items-center gap-2 text-xl font-bold text-feature">
-                <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-feature text-white text-sm">2</span>
+                <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-feature text-white text-sm">1</span>
                 {t("features.eventer_title")}
               </h3>
               <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
                 {[
                   { key: "events", icon: "🎪" },
                   { key: "participants", icon: "👥" },
-                  { key: "fc", icon: "🤝" },
+                  { key: "coupons", icon: "🎫" },
                 ].map(({ key, icon }) => (
                   <Card key={key} className="border-none shadow-sm">
                     <CardHeader className="pb-2">
@@ -276,25 +231,25 @@ export default async function HomePage() {
             {/* イベント参加者向け */}
             <div className="rounded-2xl bg-brand/5 p-8 ring-1 ring-brand/20">
               <h3 className="mb-8 flex items-center gap-2 text-xl font-bold text-brand">
-                <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand text-white text-sm">3</span>
+                <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand text-white text-sm">2</span>
                 {t("features.participant_title")}
               </h3>
               <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
                 {[
-                  { key: "participants", icon: "👥" },
+                  { key: "discover", icon: "🗺️" },
+                  { key: "follow", icon: "🔔" },
                   { key: "coupons", icon: "🎫" },
-                  { key: "ai", icon: "🤖" }, // おすすめ分析的な意味で
                 ].map(({ key, icon }) => (
                   <Card key={key} className="border-none shadow-sm">
                     <CardHeader className="pb-2">
                       <CardTitle className="flex items-center gap-2 text-base">
                         <span className="text-2xl">{icon}</span>
-                        {t(`features.${key}.title`)}
+                        {t(`participant_features.${key}.title`)}
                       </CardTitle>
                     </CardHeader>
                     <CardContent>
                       <p className="text-sm text-muted-foreground">
-                        {t(`features.${key}.description`)}
+                        {t(`participant_features.${key}.description`)}
                       </p>
                     </CardContent>
                   </Card>
