@@ -9,7 +9,13 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Select } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { createEventDraft } from "@/lib/actions/event";
 import Link from "next/link";
 
@@ -25,10 +31,12 @@ export function EventCreateForm({ bars, locale }: Props) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
+  const [orgId, setOrgId] = useState("");
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
+    formData.set("orgId", orgId);
     setError(null);
 
     startTransition(async () => {
@@ -57,13 +65,25 @@ export function EventCreateForm({ bars, locale }: Props) {
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-1">
             <Label htmlFor="orgId">{t("field_bar")}</Label>
-            <Select id="orgId" name="orgId" required disabled={isPending}>
-              <option value="">{t("field_bar_placeholder")}</option>
-              {bars.map((bar) => (
-                <option key={bar.id} value={bar.id}>
-                  {bar.name}
-                </option>
-              ))}
+            <Select
+              value={orgId}
+              onValueChange={(val) => setOrgId(val ?? "")}
+              disabled={isPending}
+            >
+              <SelectTrigger className="w-full">
+                <SelectValue>
+                  {orgId
+                    ? bars.find((b) => b.id === orgId)?.name
+                    : t("field_bar_placeholder")}
+                </SelectValue>
+              </SelectTrigger>
+              <SelectContent>
+                {bars.map((bar) => (
+                  <SelectItem key={bar.id} value={bar.id}>
+                    {bar.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
             </Select>
           </div>
 
@@ -105,21 +125,10 @@ export function EventCreateForm({ bars, locale }: Props) {
             />
           </div>
 
-          <div className="space-y-1">
-            <Label htmlFor="nearestStation">{t("field_nearest_station")}</Label>
-            <Input
-              id="nearestStation"
-              name="nearestStation"
-              placeholder={t("field_nearest_station_placeholder")}
-              maxLength={50}
-              disabled={isPending}
-            />
-          </div>
-
           {error && <p className="text-sm text-destructive">{error}</p>}
 
           <div className="flex flex-col gap-2 pt-2">
-            <Button type="submit" disabled={isPending}>
+            <Button type="submit" disabled={isPending || !orgId}>
               {isPending ? t("submitting") : t("submit")}
             </Button>
             <Link href={`/${locale}/dashboard`} className={buttonVariants({ variant: "outline" })}>
