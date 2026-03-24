@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages, getTranslations } from "next-intl/server";
 import { Toaster } from "sonner";
+import { ChatWidget } from "@/components/ai-chat/chat-widget";
 import "../globals.css";
 
 const geistSans = Geist({
@@ -51,6 +52,7 @@ export default async function LocaleLayout({
       <body className="min-h-full flex flex-col">
         <NextIntlClientProvider messages={messages}>
           {children}
+          <ChatWidget />
           <Toaster position="bottom-center" richColors />
         </NextIntlClientProvider>
       </body>
