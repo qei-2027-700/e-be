@@ -12,7 +12,7 @@ export async function POST(req: Request) {
   const modelMessages = await convertToModelMessages(messages);
 
   const result = streamText({
-    model: google("gemini-1.5-flash"),
+    model: google("gemini-2.5-flash"),
     system: `あなたは e-be のAIアシスタントです。
 e-be はイベント主催者・店舗向けのイベント運営・分析プラットフォームです。
 ユーザーのイベント企画・集客・運営に関する質問に日本語で丁寧に答えてください。
