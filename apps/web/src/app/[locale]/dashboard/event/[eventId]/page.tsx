@@ -260,7 +260,9 @@ export default async function EventDetailPage({ params }: Props) {
 
         {/* SNS投稿アシスト（主催者かつ GEMINI_API_KEY 設定済みの場合のみ） */}
         {!!process.env.GEMINI_API_KEY && event.organizerUserId === user.id && (
-          <SnsAssist eventId={event.id} />
+          <div className="relative left-1/2 w-[calc(100vw-2rem)] max-w-5xl -translate-x-1/2 md:w-[calc(100vw-3rem)]">
+            <SnsAssist eventId={event.id} />
+          </div>
         )}
 
       </div>

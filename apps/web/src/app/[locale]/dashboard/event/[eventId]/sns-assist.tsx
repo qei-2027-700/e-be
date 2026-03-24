@@ -38,11 +38,11 @@ export function SnsAssist({ eventId }: Props) {
   }
 
   return (
-    <Card>
+    <Card className="w-full">
       <CardHeader>
         <CardTitle>{t("sns_assist_title")}</CardTitle>
       </CardHeader>
-      <CardContent className="space-y-4">
+      <CardContent className="space-y-5 sm:space-y-6">
         <Button onClick={handleGenerate} disabled={isLoading} className="w-full sm:w-auto">
           {isLoading ? (
             <span className="flex items-center gap-2">
@@ -63,7 +63,9 @@ export function SnsAssist({ eventId }: Props) {
             <p className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground">
               {t("sns_assist_x_post")}
             </p>
-            <div className="rounded-md border bg-muted/40 p-3 text-sm whitespace-pre-wrap">{xPost}</div>
+            <div className="min-h-32 rounded-md border bg-muted/40 p-4 text-base leading-relaxed whitespace-pre-wrap">
+              {xPost}
+            </div>
             <Button
               variant="outline"
               size="sm"
@@ -79,7 +81,9 @@ export function SnsAssist({ eventId }: Props) {
             <p className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground">
               {t("sns_assist_image_prompt")}
             </p>
-            <div className="rounded-md border bg-muted/40 p-3 text-sm whitespace-pre-wrap font-mono">{imagePrompt}</div>
+            <div className="min-h-32 rounded-md border bg-muted/40 p-4 text-sm leading-relaxed whitespace-pre-wrap font-mono">
+              {imagePrompt}
+            </div>
             <Button
               variant="outline"
               size="sm"
