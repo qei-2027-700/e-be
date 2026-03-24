@@ -23,9 +23,9 @@ const variants: Record<Variant, string> = {
 };
 
 const sizes: Record<Size, string> = {
-  sm: "h-7 gap-1 px-2.5 text-[0.8rem]",
-  default: "h-8 gap-1.5 px-2.5",
-  lg: "h-9 gap-1.5 px-3",
+  sm: "h-8 gap-1.5 px-3 text-[0.8rem]",
+  default: "h-10 gap-2 px-4",
+  lg: "h-12 gap-2 px-6 text-base",
 };
 
 export function LinkButton({
