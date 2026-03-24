@@ -13,7 +13,7 @@ interface LinkButtonProps {
 }
 
 const base =
-  "inline-flex shrink-0 items-center justify-center rounded-lg border border-transparent text-sm font-medium whitespace-nowrap transition-all select-none";
+  "inline-flex shrink-0 items-center justify-center rounded-lg border border-transparent text-sm font-bold whitespace-nowrap transition-all select-none";
 
 const variants: Record<Variant, string> = {
   default: "bg-brand text-brand-foreground hover:bg-brand/80",
