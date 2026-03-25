@@ -10,6 +10,9 @@ import {
   User,
   CheckSquare,
   Clock,
+  CalendarPlus,
+  ExternalLink,
+  AlertCircle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -24,6 +27,10 @@ type ToolGetCurrentDateTimeOutput = {
   datetime: string;
   timezone: string;
 };
+
+type ToolCreateEventOutput =
+  | { ok: true; eventId: string; title: string; status: string }
+  | { error: string };
 
 export function ChatWidget() {
   const [isOpen, setIsOpen] = useState(false);
@@ -204,6 +211,52 @@ export function ChatWidget() {
                         >
                           <Clock className="size-3" />
                           <span>{output.datetime}</span>
+                        </div>
+                      );
+                    }
+
+                    // createEvent ツール
+                    if (
+                      part.type === "tool-createEvent" &&
+                      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                      (part as any).state === "output-available"
+                    ) {
+                      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                      const output = (part as any).output as ToolCreateEventOutput;
+                      if ("error" in output) {
+                        return (
+                          <div
+                            key={i}
+                            className="flex items-center gap-2 rounded-xl border border-destructive/30 bg-destructive/5 px-3 py-2.5 text-sm text-destructive"
+                          >
+                            <AlertCircle className="size-4 shrink-0" />
+                            <span>
+                              イベントの作成に失敗しました（{output.error}）
+                            </span>
+                          </div>
+                        );
+                      }
+                      return (
+                        <div
+                          key={i}
+                          className="w-full rounded-2xl rounded-tl-sm border border-green-500/20 bg-green-500/5 px-3 py-2.5 text-sm"
+                        >
+                          <div className="mb-2 flex items-center gap-1.5 font-medium text-green-700 dark:text-green-400">
+                            <CalendarPlus className="size-3.5" />
+                            <span>下書きを作成しました</span>
+                          </div>
+                          <p className="mb-2 text-xs text-muted-foreground line-clamp-2">
+                            {output.title}
+                          </p>
+                          <a
+                            href={`/ja/dashboard/event/${output.eventId}/edit`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1 text-xs font-medium text-primary hover:underline"
+                          >
+                            <ExternalLink className="size-3" />
+                            イベント編集画面を開く
+                          </a>
                         </div>
                       );
                     }
