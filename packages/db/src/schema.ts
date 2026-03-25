@@ -240,6 +240,20 @@ export const notifications = pgTable('notifications', {
   payload: jsonb('payload'),
 });
 
+export const aiChatDailyUsage = pgTable(
+  'ai_chat_daily_usage',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    userId: uuid('user_id').notNull().references(() => users.id),
+    date: text('date').notNull(), // YYYY-MM-DD (Asia/Tokyo)
+    count: integer('count').notNull().default(0),
+    updatedAt: timestamp('updated_at').notNull().defaultNow(),
+  },
+  (t) => ({
+    uniqueUserDate: uniqueIndex('ai_chat_daily_usage_user_date_idx').on(t.userId, t.date),
+  })
+);
+
 export const userWatches = pgTable(
   'user_watches',
   {

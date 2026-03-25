@@ -1,51 +1,48 @@
 # AI Handoff
 
-- Date: 2026-03-21
+- Date: 2026-03-25
 - Project: e-be
 - Branch: main
 
 ## 作業概要
 
-Issue #67（API実行後のトースト通知）と Issue #68（下書き保存ボタンへのスピナー追加）を実装し、PR 作成・セルフレビュー・squash マージまで完了した。両 PR は main にマージ済みで、worktree もクリーンアップ済み。
+Issue #161（watchオーガナイザー・公開通知）、#160（IME Enter バグ修正）、#162（AI agent イベント作成）の3件を実装・PR作成・マージまで完了した。いずれも git worktree を利用して独立ブランチで開発し、Playwright MCP で動作確認後に squash マージした。
 
 ## 完了済みタスク
 
-- **#67** — `sonner` を導入し、全 Server Action（参加・キャンセル・申請・承認・却下・イベント作成・編集・公開）の成功/エラー時に画面下部トーストを表示
-  - `layout.tsx` に `<Toaster position="bottom-center" richColors />` を追加
-  - `ja.json` / `en.json` に `toast_*` 翻訳キーを追加
-  - PR #71 → squash マージ済み
-- **#68** — `event-edit-form.tsx` の下書き保存・申請・公開ボタンに `Loader2` スピナーを追加（`isPending` 時に回転表示）
-  - PR #72 → squash マージ済み
+- **#161 / PR #163**: watch オーガナイザー＋公開通知機能（`userWatches` テーブル追加、通知 dedupe、notifications ページ、イベント詳細の watch ボタン）→ マージ済み
+- **#160 / PR #165**: IME composition 中の Enter キーでチャット送信される不具合を `e.nativeEvent.isComposing` チェックで修正 → マージ済み
+- **#162 / PR #166**: AI agent イベント作成（`listBars` + `createEvent` ツール、chat widget 結果カード UI）→ マージ済み
+- **Issue #167 起票**: AI chat widget の i18n 対応（should 判定 → 将来対応）
 
 ## 未完了・継続タスク
 
-- **#70** — ux: イベント編集フォームの日時入力をカレンダーピッカーに変更（ステアリングなし、要 `/docs-steering 70`）
-- **#65** — テストケースの追加：イベント関連（ステアリングなし）
-- **#62** — feat: 主催履歴・公開設定機能の実装
-- **#61** — feat: クーポン配布・消費フローの実装
+- **Issue #167**: AI chat widget の i18n 対応（テキストハードコード・`/ja/` locale prefix）— 未着手、将来対応
+- その他 open Issue は `gh issue list --repo qei-2027-700/e-be --state open` で確認
 
 ## 重要な決定事項
 
-- トースト通知は `sonner@2.0.7` を採用（shadcn/ui v4 推奨ライブラリ）
-- `useActionState` 系のコンポーネントは `useEffect` で state を監視してトーストを発火するパターンを採用
-- `useTransition` 系は直接 action の戻り値をチェックしてトーストを発火
+- **AIチャット API route から Server Action は直接呼べない**（`'use server'` ディレクティブの制約）。`createEvent` ツールは `db.insert` を `route.ts` 内で直接実装した
+- **drizzle-kit 0.24.2 のバグ**で `pnpm db:push` が失敗する場合は `psql` でマイグレーション SQL を直接実行する
+- **worktree のベースブランチ**は必ず `main`（または最新の origin/main）から切ること。旧ブランチから切ると PR diff に余計なコミットが混入する
+- chat widget 内の静的テキストは日本語直書き可（ステアリング issue-162 に明記）
 
 ## 変更したファイル（未コミット含む）
 
-（なし — すべてコミット・マージ済み）
+（クリーン状態 — 未コミット変更なし）
 
 ## 次のセッションへの最初の指示
 
-- `git pull origin main` で最新状態に更新する
-- 次に着手する Issue を確認する: `gh issue list --repo qei-2027-700/e-be --state open --limit 10`
-- `backlog` ラベルの Issue は実装対象外（CLAUDE.md ルール参照）
-- ステアリングファイルがある Issue を優先: `ls .claude/steering/issue-*.md`
+- `git pull origin main` で最新化してから作業を始める
+- 次の実装候補を確認: `gh issue list --repo qei-2027-700/e-be --state open --limit 10`
+- `backlog` ラベルの Issue は着手しない（CLAUDE.md ルール参照）
+- ステアリングがある Issue を優先: `ls .claude/steering/issue-*.md`
 - `/implement <番号>` で実装を開始する（1セッション最大3 Issue）
 
 ## プロジェクト文脈
 
-- Tech stack: Next.js 16 (App Router) + Supabase + Drizzle ORM (Neon) + next-intl + shadcn/ui + Tailwind CSS + sonner
+- Tech stack: Next.js 15 (App Router) + TypeScript + Drizzle ORM + PostgreSQL + Gemini 2.5 Flash (AI SDK v6) + Tailwind CSS + shadcn/ui + next-intl + pnpm workspaces
 - 主要ルール: CLAUDE.md および `.claude/rules/` を参照すること
-- ローカル開発URL: http://localhost:3001（`apps/web` で `pnpm dev --port 3001`）
+- ローカル開発URL: http://localhost:3000（`apps/web` で `pnpm dev`）
 - テストアカウント: `test-user@e-be.internal` / `testpass2026`（一般ユーザー）、`test-venue@e-be.internal` / `testpass2026`（事業者）
 - monorepo 構成: worktree 作成後は `pnpm install` と `pnpm --filter @e-be/db build` が必要
