@@ -3,6 +3,7 @@ export const NOTIFICATION_TYPES = {
   EVENT_APPROVED: 'event_approved', // 主催者向け：承認
   EVENT_REJECTED: 'event_rejected', // 主催者向け：却下
   EVENT_CANCELLED: 'event_cancelled', // 関係者向け：キャンセル
+  WATCHED_ORGANIZER_EVENT_PUBLISHED: 'watched_organizer_event_published', // watcher向け：watch中の主催者が公開
   NEW_COUPON: 'new_coupon', // ユーザー向け：新規クーポン配布
   OWNERSHIP_TRANSFERRED: 'ownership_transferred', // メンバー向け：権限移譲
   PARTICIPATION_RECEIVED: 'participation_received', // 主催者向け：参加表明受領

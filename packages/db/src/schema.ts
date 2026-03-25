@@ -236,5 +236,24 @@ export const notifications = pgTable('notifications', {
   title: text('title').notNull(),
   body: text('body').notNull(),
   readAt: timestamp('read_at'),
+  dedupeKey: text('dedupe_key'),
   payload: jsonb('payload'),
 });
+
+export const userWatches = pgTable(
+  'user_watches',
+  {
+    ...commonColumns,
+    watcherUserId: uuid('watcher_user_id')
+      .notNull()
+      .references(() => users.id),
+    targetUserId: uuid('target_user_id')
+      .notNull()
+      .references(() => users.id),
+  },
+  (t) => ({
+    uniqueActiveWatch: uniqueIndex('unique_active_user_watch')
+      .on(t.watcherUserId, t.targetUserId)
+      .where(sql`${t.deletedAt} is null`),
+  })
+);

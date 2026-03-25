@@ -2,9 +2,11 @@
 
 import { getDbUser, getUserType } from '@/lib/auth';
 import { db } from '@/lib/db';
-import { events } from '@e-be/db/schema';
+import { events, userWatches } from '@e-be/db/schema';
 import { eq, and, isNull } from 'drizzle-orm';
 import { checkEventConflict, hasBarHostPermission } from '@/lib/events';
+import { sendNotification } from '@/lib/notify';
+import { NOTIFICATION_TYPES } from '@e-be/db';
 
 type CreateEventDraftResult =
   | { error: string }
@@ -140,7 +142,7 @@ export async function publishEvent(eventId: string): Promise<ActionResult> {
   if (!dbUser) return { error: 'unauthorized' };
 
   const [target] = await db
-    .select({ id: events.id, status: events.status, orgId: events.orgId, startAt: events.startAt, endAt: events.endAt })
+    .select({ id: events.id, status: events.status, orgId: events.orgId, startAt: events.startAt, endAt: events.endAt, title: events.title })
     .from(events)
     .where(and(eq(events.id, eventId), eq(events.userId, dbUser.id), isNull(events.deletedAt)))
     .limit(1);
@@ -160,5 +162,33 @@ export async function publishEvent(eventId: string): Promise<ActionResult> {
   if (conflict) return { error: 'conflict' };
 
   await db.update(events).set({ status: 'published', updatedAt: new Date() }).where(eq(events.id, eventId));
+
+  // watch 通知（published のみ）
+  const watchers = await db
+    .select({ watcherUserId: userWatches.watcherUserId })
+    .from(userWatches)
+    .where(
+      and(
+        eq(userWatches.targetUserId, dbUser.id),
+        isNull(userWatches.deletedAt)
+      )
+    );
+
+  const title = target.title?.trim() ? `イベントが公開されました: ${target.title}` : 'イベントが公開されました';
+  const body = 'watch中の主催者がイベントを公開しました。';
+
+  await Promise.all(
+    watchers.map(({ watcherUserId }) =>
+      sendNotification(
+        watcherUserId,
+        NOTIFICATION_TYPES.WATCHED_ORGANIZER_EVENT_PUBLISHED,
+        title,
+        body,
+        { eventId },
+        `watch:${dbUser.id}:event_published:${eventId}`
+      )
+    )
+  );
+
   return { ok: true };
 }

@@ -15,6 +15,7 @@
 | `event_cancelled` | イベントがキャンセルされたとき | 参加者全員 |
 | `participation_received` | ユーザーが参加表明したとき | イベンター |
 | `event_reminder` | イベント前日または数時間前 | 参加者全員 |
+| `watched_organizer_event_published` | watch 中の主催者がイベントを公開したとき | watcher |
 | `coupon_received` | クーポンを受け取ったとき（配布・受け渡し）| 受取人 |
 | `permission_granted` | 自動許可が付与されたとき | イベンター |
 | `permission_revoked` | 自動許可が取り消されたとき | イベンター |
