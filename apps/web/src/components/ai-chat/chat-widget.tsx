@@ -15,6 +15,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { toolResultRegistry } from "./tool-results";
+import { renderTextWithLinks } from "./render-text";
 
 type UsageInfo = {
   used: number;
@@ -179,7 +180,9 @@ export function ChatWidget() {
                                 : "rounded-tl-sm bg-muted/60 dark:bg-white/10"
                             )}
                           >
-                            <p className="whitespace-pre-wrap">{part.text}</p>
+                            <p className="whitespace-pre-wrap">
+                              {renderTextWithLinks(part.text)}
+                            </p>
                           </div>
                           {message.role === "assistant" && (
                             <button
