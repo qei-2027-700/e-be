@@ -9,6 +9,8 @@ import {
   Bot,
   User,
   AlertCircle,
+  Copy,
+  Check,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -23,7 +25,15 @@ export function ChatWidget() {
   const [isOpen, setIsOpen] = useState(false);
   const [input, setInput] = useState("");
   const [usage, setUsage] = useState<UsageInfo | null>(null);
+  const [copiedId, setCopiedId] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  const handleCopy = (text: string, id: string) => {
+    navigator.clipboard.writeText(text).then(() => {
+      setCopiedId(id);
+      setTimeout(() => setCopiedId(null), 2000);
+    });
+  };
 
   const { messages, sendMessage, status } = useChat();
   const isLoading = status === "streaming" || status === "submitted";
@@ -157,17 +167,40 @@ export function ChatWidget() {
                   {message.parts?.map((part, i) => {
                     // テキストパート
                     if (part.type === "text") {
+                      const copyKey = `${message.id}-${i}`;
+                      const isCopied = copiedId === copyKey;
                       return (
-                        <div
-                          key={i}
-                          className={cn(
-                            "rounded-2xl px-3 py-2 text-sm leading-relaxed",
-                            message.role === "user"
-                              ? "rounded-tr-sm bg-primary text-primary-foreground"
-                              : "rounded-tl-sm bg-muted/60 dark:bg-white/10"
+                        <div key={i} className="group relative">
+                          <div
+                            className={cn(
+                              "rounded-2xl px-3 py-2 text-sm leading-relaxed",
+                              message.role === "user"
+                                ? "rounded-tr-sm bg-primary text-primary-foreground"
+                                : "rounded-tl-sm bg-muted/60 dark:bg-white/10"
+                            )}
+                          >
+                            <p className="whitespace-pre-wrap">{part.text}</p>
+                          </div>
+                          {message.role === "assistant" && (
+                            <button
+                              onClick={() => handleCopy(part.text, copyKey)}
+                              className={cn(
+                                "absolute -bottom-1 -right-1",
+                                "flex size-6 items-center justify-center rounded-full",
+                                "border border-white/20 bg-white/80 shadow-sm backdrop-blur-sm dark:bg-zinc-800/80",
+                                "text-muted-foreground transition-all duration-150",
+                                "opacity-0 group-hover:opacity-100",
+                                isCopied && "opacity-100 text-green-600 dark:text-green-400"
+                              )}
+                              aria-label="コピー"
+                            >
+                              {isCopied ? (
+                                <Check className="size-3" />
+                              ) : (
+                                <Copy className="size-3" />
+                              )}
+                            </button>
                           )}
-                        >
-                          <p className="whitespace-pre-wrap">{part.text}</p>
                         </div>
                       );
                     }
