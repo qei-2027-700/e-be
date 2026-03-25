@@ -8,42 +8,43 @@ import {
   Send,
   Bot,
   User,
-  CheckSquare,
-  Clock,
-  CalendarPlus,
-  ExternalLink,
   AlertCircle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { toolResultRegistry } from "./tool-results";
 
-type ToolWritePlanOutput = {
-  title: string;
-  todos: string[];
-  createdAt: string;
+type UsageInfo = {
+  used: number;
+  limit: number;
 };
-
-type ToolGetCurrentDateTimeOutput = {
-  datetime: string;
-  timezone: string;
-};
-
-type ToolCreateEventOutput =
-  | { ok: true; eventId: string; title: string; status: string }
-  | { error: string };
 
 export function ChatWidget() {
   const [isOpen, setIsOpen] = useState(false);
   const [input, setInput] = useState("");
+  const [usage, setUsage] = useState<UsageInfo | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const { messages, sendMessage, status } = useChat();
   const isLoading = status === "streaming" || status === "submitted";
 
+  const isLimitReached = usage !== null && usage.used >= usage.limit;
+
+  // ウィジェットを開いたときに使用状況を取得
+  useEffect(() => {
+    if (!isOpen) return;
+    fetch("/api/chat")
+      .then((r) => r.json())
+      .then((data: UsageInfo) => setUsage(data))
+      .catch(() => {});
+  }, [isOpen]);
+
   const handleSend = () => {
-    if (!input.trim() || isLoading) return;
+    if (!input.trim() || isLoading || isLimitReached) return;
     sendMessage({ text: input });
     setInput("");
+    // 送信後にローカルカウンターを楽観的に更新
+    setUsage((prev) => (prev ? { ...prev, used: prev.used + 1 } : prev));
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -80,9 +81,14 @@ export function ChatWidget() {
                 <Bot className="size-4 text-primary" />
               </div>
               <div>
-                <p className="text-sm font-medium leading-none">e-be AI</p>
+                <div className="flex items-center gap-1.5">
+                  <p className="text-sm font-medium leading-none">e-be AI</p>
+                  <span className="rounded-full bg-amber-500/15 px-1.5 py-0.5 text-[10px] font-medium leading-none text-amber-600 dark:text-amber-400">
+                    β
+                  </span>
+                </div>
                 <p className="mt-0.5 text-xs text-muted-foreground">
-                  {isLoading ? "考え中..." : "オンライン"}
+                  {isLoading ? "考え中..." : "試験運用中"}
                 </p>
               </div>
             </div>
@@ -111,6 +117,11 @@ export function ChatWidget() {
                     なんでも聞いてください
                   </p>
                 </div>
+                {usage && (
+                  <p className="text-[11px] text-muted-foreground/60">
+                    本日の残り利用回数: {Math.max(0, usage.limit - usage.used)}/{usage.limit} 回
+                  </p>
+                )}
               </div>
             )}
 
@@ -161,104 +172,15 @@ export function ChatWidget() {
                       );
                     }
 
-                    // writePlan ツール（DeepAgents の write_todos 相当）
-                    if (
-                      part.type === "tool-writePlan" &&
+                    // ツール結果パート
+                    if (part.type.startsWith("tool-")) {
+                      const ToolResult = toolResultRegistry[part.type];
                       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                      (part as any).state === "output-available"
-                    ) {
-                      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                      const output = (part as any).output as ToolWritePlanOutput;
-                      return (
-                        <div
-                          key={i}
-                          className="w-full rounded-2xl rounded-tl-sm border border-primary/20 bg-primary/5 px-3 py-2.5 text-sm"
-                        >
-                          <div className="mb-2 flex items-center gap-1.5 font-medium text-primary">
-                            <CheckSquare className="size-3.5" />
-                            <span>{output.title}</span>
-                          </div>
-                          <ol className="list-none space-y-1">
-                            {output.todos.map((todo, j) => (
-                              <li
-                                key={j}
-                                className="flex items-start gap-1.5 text-xs text-muted-foreground"
-                              >
-                                <span className="mt-0.5 flex size-4 shrink-0 items-center justify-center rounded-full border border-muted-foreground/30 text-[10px]">
-                                  {j + 1}
-                                </span>
-                                {todo}
-                              </li>
-                            ))}
-                          </ol>
-                        </div>
-                      );
-                    }
-
-                    // getCurrentDateTime ツール
-                    if (
-                      part.type === "tool-getCurrentDateTime" &&
-                      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                      (part as any).state === "output-available"
-                    ) {
-                      const output =
+                      if (ToolResult && (part as any).state === "output-available") {
                         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                        (part as any).output as ToolGetCurrentDateTimeOutput;
-                      return (
-                        <div
-                          key={i}
-                          className="flex items-center gap-1.5 rounded-xl bg-muted/40 px-2.5 py-1.5 text-xs text-muted-foreground"
-                        >
-                          <Clock className="size-3" />
-                          <span>{output.datetime}</span>
-                        </div>
-                      );
-                    }
-
-                    // createEvent ツール
-                    if (
-                      part.type === "tool-createEvent" &&
-                      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                      (part as any).state === "output-available"
-                    ) {
-                      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                      const output = (part as any).output as ToolCreateEventOutput;
-                      if ("error" in output) {
-                        return (
-                          <div
-                            key={i}
-                            className="flex items-center gap-2 rounded-xl border border-destructive/30 bg-destructive/5 px-3 py-2.5 text-sm text-destructive"
-                          >
-                            <AlertCircle className="size-4 shrink-0" />
-                            <span>
-                              イベントの作成に失敗しました（{output.error}）
-                            </span>
-                          </div>
-                        );
+                        return <ToolResult key={i} output={(part as any).output} />;
                       }
-                      return (
-                        <div
-                          key={i}
-                          className="w-full rounded-2xl rounded-tl-sm border border-green-500/20 bg-green-500/5 px-3 py-2.5 text-sm"
-                        >
-                          <div className="mb-2 flex items-center gap-1.5 font-medium text-green-700 dark:text-green-400">
-                            <CalendarPlus className="size-3.5" />
-                            <span>下書きを作成しました</span>
-                          </div>
-                          <p className="mb-2 text-xs text-muted-foreground line-clamp-2">
-                            {output.title}
-                          </p>
-                          <a
-                            href={`/ja/dashboard/event/${output.eventId}/edit`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-flex items-center gap-1 text-xs font-medium text-primary hover:underline"
-                          >
-                            <ExternalLink className="size-3" />
-                            イベント編集画面を開く
-                          </a>
-                        </div>
-                      );
+                      return null;
                     }
 
                     return null;
@@ -288,34 +210,48 @@ export function ChatWidget() {
 
           {/* Input */}
           <div className="shrink-0 border-t border-white/20 bg-white/5 p-3">
-            <div className="flex items-end gap-2">
-              <textarea
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                onKeyDown={handleKeyDown}
-                placeholder="メッセージを入力... (Enter で送信)"
-                rows={1}
-                disabled={isLoading}
-                className={cn(
-                  "max-h-24 flex-1 resize-none overflow-y-auto",
-                  "rounded-xl border border-white/20 bg-white/10 dark:bg-white/5",
-                  "px-3 py-2 text-sm leading-relaxed placeholder:text-muted-foreground",
-                  "transition-all focus:outline-none focus:ring-2 focus:ring-ring/30",
-                  "disabled:opacity-50"
-                )}
-              />
-              <Button
-                size="icon-sm"
-                onClick={handleSend}
-                disabled={!input.trim() || isLoading}
-                className="shrink-0 rounded-xl transition-transform hover:scale-105"
-              >
-                <Send className="size-3.5" />
-              </Button>
+            {isLimitReached ? (
+              <div className="flex items-center gap-2 rounded-xl border border-amber-500/20 bg-amber-500/5 px-3 py-2.5 text-xs text-amber-700 dark:text-amber-400">
+                <AlertCircle className="size-3.5 shrink-0" />
+                <span>本日の利用上限（{usage.limit}回）に達しました。明日またご利用ください。</span>
+              </div>
+            ) : (
+              <div className="flex items-end gap-2">
+                <textarea
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  onKeyDown={handleKeyDown}
+                  placeholder="メッセージを入力... (Enter で送信)"
+                  rows={1}
+                  disabled={isLoading}
+                  className={cn(
+                    "max-h-24 flex-1 resize-none overflow-y-auto",
+                    "rounded-xl border border-white/20 bg-white/10 dark:bg-white/5",
+                    "px-3 py-2 text-sm leading-relaxed placeholder:text-muted-foreground",
+                    "transition-all focus:outline-none focus:ring-2 focus:ring-ring/30",
+                    "disabled:opacity-50"
+                  )}
+                />
+                <Button
+                  size="icon-sm"
+                  onClick={handleSend}
+                  disabled={!input.trim() || isLoading}
+                  className="shrink-0 rounded-xl transition-transform hover:scale-105"
+                >
+                  <Send className="size-3.5" />
+                </Button>
+              </div>
+            )}
+            <div className="mt-1.5 flex items-center justify-between">
+              <p className="text-[10px] text-muted-foreground/50">
+                試験的機能 · Gemini 2.5 Flash
+              </p>
+              {usage && !isLimitReached && (
+                <p className="text-[10px] text-muted-foreground/50">
+                  本日 {usage.used}/{usage.limit} 回
+                </p>
+              )}
             </div>
-            <p className="mt-1.5 text-center text-[10px] text-muted-foreground/50">
-              Gemini 1.5 Flash · 無料枠
-            </p>
           </div>
         </div>
       )}
