@@ -4,7 +4,7 @@ import type { UIMessage } from "ai";
 import { getDbUser } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { aiChatDailyUsage } from "@e-be/db/schema";
-import { eq, and, sql } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 import { createTools } from "@/lib/ai/tools";
 import { systemPrompt } from "@/lib/ai/system-prompt";
 
@@ -25,17 +25,14 @@ export async function GET() {
 
   const today = getTodayJST();
   const [row] = await db
-    .select({ count: aiChatDailyUsage.count })
+    .select({ count: aiChatDailyUsage.count, date: aiChatDailyUsage.date })
     .from(aiChatDailyUsage)
-    .where(
-      and(
-        eq(aiChatDailyUsage.userId, dbUser.id),
-        eq(aiChatDailyUsage.date, today)
-      )
-    )
+    .where(eq(aiChatDailyUsage.userId, dbUser.id))
     .limit(1);
 
-  return Response.json({ used: row?.count ?? 0, limit: DAILY_LIMIT });
+  // レコードが今日付でなければ残回数は満タン
+  const used = row?.date === today ? (row?.count ?? 0) : 0;
+  return Response.json({ used, limit: DAILY_LIMIT });
 }
 
 export async function POST(req: Request) {
@@ -48,17 +45,13 @@ export async function POST(req: Request) {
   if (dbUser) {
     const today = getTodayJST();
     const [row] = await db
-      .select({ count: aiChatDailyUsage.count })
+      .select({ count: aiChatDailyUsage.count, date: aiChatDailyUsage.date })
       .from(aiChatDailyUsage)
-      .where(
-        and(
-          eq(aiChatDailyUsage.userId, dbUser.id),
-          eq(aiChatDailyUsage.date, today)
-        )
-      )
+      .where(eq(aiChatDailyUsage.userId, dbUser.id))
       .limit(1);
 
-    const used = row?.count ?? 0;
+    // 過去日付のレコードがあれば 0 扱い
+    const used = row?.date === today ? (row?.count ?? 0) : 0;
     if (used >= DAILY_LIMIT) {
       return Response.json(
         { error: "rate_limit_exceeded", used, limit: DAILY_LIMIT },
@@ -66,14 +59,15 @@ export async function POST(req: Request) {
       );
     }
 
-    // 使用回数をインクリメント
+    // upsert: userId で競合したら日付が今日なら+1、違う日なら1にリセット
     await db
       .insert(aiChatDailyUsage)
       .values({ userId: dbUser.id, date: today, count: 1 })
       .onConflictDoUpdate({
-        target: [aiChatDailyUsage.userId, aiChatDailyUsage.date],
+        target: [aiChatDailyUsage.userId],
         set: {
-          count: sql`${aiChatDailyUsage.count} + 1`,
+          count: sql`CASE WHEN ${aiChatDailyUsage.date} = ${today} THEN ${aiChatDailyUsage.count} + 1 ELSE 1 END`,
+          date: today,
           updatedAt: sql`now()`,
         },
       });
