@@ -1,6 +1,6 @@
 "use client";
 
-import { useTransition, useState } from "react";
+import { useTransition, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
@@ -84,6 +84,9 @@ export function EventEditForm({ event, eventId, hasPermission, locale, bars }: P
   const [endAt, setEndAt] = useState(event.endAt ?? "");
   const [orgId, setOrgId] = useState(event.orgId);
   const [confirmOpen, setConfirmOpen] = useState(false);
+  const [confirmTitle, setConfirmTitle] = useState(event.title ?? "");
+  const [confirmCharge, setConfirmCharge] = useState<number | null>(event.chargeAmount);
+  const formRef = useRef<HTMLFormElement>(null);
 
   const isDraft = event.status === "draft";
 
@@ -154,6 +157,10 @@ export function EventEditForm({ event, eventId, hasPermission, locale, bars }: P
   const confirmDescription = (
     <span className="flex flex-col gap-1 text-sm">
       <span className="flex gap-2">
+        <span className="text-muted-foreground shrink-0">{t("submit_confirm_event_name")}:</span>
+        <span>{confirmTitle || t("submit_confirm_not_set")}</span>
+      </span>
+      <span className="flex gap-2">
         <span className="text-muted-foreground shrink-0">{t("submit_confirm_venue")}:</span>
         <span>{selectedBar?.name ?? event.orgName}</span>
       </span>
@@ -165,6 +172,16 @@ export function EventEditForm({ event, eventId, hasPermission, locale, bars }: P
             : t("submit_confirm_not_set")}
         </span>
       </span>
+      <span className="flex gap-2">
+        <span className="text-muted-foreground shrink-0">{t("submit_confirm_charge")}:</span>
+        <span>
+          {confirmCharge === null
+            ? t("submit_confirm_not_set")
+            : confirmCharge === 0
+            ? t("submit_confirm_free")
+            : `¥${confirmCharge.toLocaleString()}`}
+        </span>
+      </span>
     </span>
   );
 
@@ -174,7 +191,7 @@ export function EventEditForm({ event, eventId, hasPermission, locale, bars }: P
         <CardTitle>{t("title")}</CardTitle>
       </CardHeader>
       <CardContent>
-        <form onSubmit={handleSave} className="space-y-4">
+        <form ref={formRef} onSubmit={handleSave} className="space-y-4">
           {/* 会場 */}
           <div className="space-y-1">
             <Label>{t("field_venue")}</Label>
@@ -321,7 +338,15 @@ export function EventEditForm({ event, eventId, hasPermission, locale, bars }: P
               <Button
                 type="button"
                 disabled={isPending || !canSubmit}
-                onClick={() => setConfirmOpen(true)}
+                onClick={() => {
+                  if (formRef.current) {
+                    const fd = new FormData(formRef.current);
+                    setConfirmTitle((fd.get("title") as string) || "");
+                    const chargeVal = fd.get("chargeAmount");
+                    setConfirmCharge(chargeVal !== "" && chargeVal !== null ? Number(chargeVal) : null);
+                  }
+                  setConfirmOpen(true);
+                }}
               >
                 {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 {isPending ? t("submitting") : t("submit")}

@@ -361,6 +361,9 @@
     "submit_confirm_venue": "Venue",
     "submit_confirm_datetime": "Date & Time",
     "submit_confirm_not_set": "Not set",
+    "submit_confirm_event_name": "Event Name",
+    "submit_confirm_charge": "Charge",
+    "submit_confirm_free": "Free",
     "submit_confirm_label": "Submit"
   },
   "event_create": {

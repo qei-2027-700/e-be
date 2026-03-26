@@ -361,6 +361,9 @@
     "submit_confirm_venue": "会場",
     "submit_confirm_datetime": "日時",
     "submit_confirm_not_set": "未設定",
+    "submit_confirm_event_name": "イベント名",
+    "submit_confirm_charge": "料金",
+    "submit_confirm_free": "無料",
     "submit_confirm_label": "申請する"
   },
   "event_create": {
