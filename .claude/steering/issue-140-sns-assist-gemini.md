@@ -37,7 +37,7 @@ export async function generateSnsContent(eventId: string): Promise<{
 - `GEMINI_API_KEY` 環境変数から API キーを取得
 - キーがない場合はエラーを返す
 - `@google/generative-ai` パッケージを使用
-- モデル: `gemini-1.5-flash`
+- モデル: `gemini-2.5-flash`
 - イベント情報（タイトル・日時・場所・説明）を元にプロンプトを構築
 - 1回のリクエストで X 投稿文言と画像生成プロンプトの両方を生成（JSON レスポンス）
 
