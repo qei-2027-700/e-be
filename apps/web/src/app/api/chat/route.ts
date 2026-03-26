@@ -6,7 +6,7 @@ import { db } from "@/lib/db";
 import { aiChatDailyUsage } from "@e-be/db/schema";
 import { eq, sql } from "drizzle-orm";
 import { createTools } from "@/lib/ai/tools";
-import { systemPrompt } from "@/lib/ai/system-prompt";
+import { buildSystemPrompt, type ChatPageContext } from "@/lib/ai/system-prompt";
 
 const google = createGoogleGenerativeAI({
   apiKey: process.env.GEMINI_API_KEY ?? "",
@@ -36,7 +36,8 @@ export async function GET() {
 }
 
 export async function POST(req: Request) {
-  const { messages }: { messages: UIMessage[] } = await req.json();
+  const { messages, ...pageContext }: { messages: UIMessage[] } & ChatPageContext =
+    await req.json();
   const modelMessages = await convertToModelMessages(messages);
 
   const dbUser = await getDbUser();
@@ -75,7 +76,7 @@ export async function POST(req: Request) {
 
   const result = streamText({
     model: google("gemini-2.5-flash"),
-    system: systemPrompt,
+    system: buildSystemPrompt(pageContext),
     messages: modelMessages,
     tools: createTools(dbUser),
     stopWhen: stepCountIs(10),

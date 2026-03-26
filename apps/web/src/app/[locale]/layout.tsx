@@ -4,6 +4,7 @@ import { NextIntlClientProvider } from "next-intl";
 import { getMessages, getTranslations } from "next-intl/server";
 import { Toaster } from "sonner";
 import { ChatWidget } from "@/components/ai-chat/chat-widget";
+import { ChatPageContextProvider } from "@/contexts/chat-page-context";
 import "../globals.css";
 
 const geistSans = Geist({
@@ -51,8 +52,10 @@ export default async function LocaleLayout({
     >
       <body className="min-h-full flex flex-col">
         <NextIntlClientProvider messages={messages}>
-          {children}
-          <ChatWidget />
+          <ChatPageContextProvider>
+            {children}
+            <ChatWidget />
+          </ChatPageContextProvider>
           <Toaster position="bottom-center" richColors />
         </NextIntlClientProvider>
       </body>

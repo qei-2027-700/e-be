@@ -34,7 +34,7 @@ Issue #153（Approach B: DeepAgents Python連携）の前段として検証も�
 
 2. **API ルート作成**: `apps/web/src/app/api/chat/route.ts`
    - `createGoogleGenerativeAI({ apiKey: process.env.GEMINI_API_KEY })` でプロバイダー初期化
-   - モデル: `google("gemini-1.5-flash")`（無料枠）
+   - モデル: `google("gemini-2.5-flash")`（無料枠）
    - system プロンプト: e-be のアシスタントとして日本語で回答
    - Tools（DeepAgents 対応）:
      - `writePlan`: `write_todos` 相当。タイトル + タスクリストを受け取り返却

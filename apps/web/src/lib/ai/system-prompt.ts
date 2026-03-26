@@ -1,4 +1,10 @@
-export const systemPrompt = `あなたは e-be のAIアシスタントです。
+export type ChatPageContext = {
+  eventId?: string;
+  orgId?: string;
+  pageName?: string;
+};
+
+const basePrompt = `あなたは e-be のAIアシスタントです。
 e-be はイベント主催者・店舗向けのイベント運営・分析プラットフォームです。
 ユーザーのイベント企画・集客・運営に関する質問に日本語で丁寧に答えてください。
 必要に応じてツールを使い、ステップバイステップで考えて回答してください。
@@ -24,3 +30,17 @@ e-be はイベント主催者・店舗向けのイベント運営・分析プラ
   - draft ステータスのイベントのみ修正可能です
 - 作成・修正されるのは「下書き」状態です。申請・公開は管理画面から行う必要があります
 - 未ログインの場合はイベントの作成・修正ができません`;
+
+export function buildSystemPrompt(pageContext?: ChatPageContext): string {
+  if (!pageContext || (!pageContext.eventId && !pageContext.orgId && !pageContext.pageName)) {
+    return basePrompt;
+  }
+
+  const lines: string[] = ["\n\n## 現在のページ情報"];
+  if (pageContext.pageName) lines.push(`- ページ: ${pageContext.pageName}`);
+  if (pageContext.eventId) lines.push(`- 表示中のイベント ID: ${pageContext.eventId}`);
+  if (pageContext.orgId) lines.push(`- 表示中のバー/組織 ID: ${pageContext.orgId}`);
+  lines.push("- ユーザーが「このイベント」「このバー」と言ったら上記の ID を使ってください");
+
+  return basePrompt + lines.join("\n");
+}

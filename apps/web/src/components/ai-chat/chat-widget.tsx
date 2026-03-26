@@ -1,6 +1,7 @@
 "use client";
 
 import { useChat } from "@ai-sdk/react";
+import { DefaultChatTransport } from "ai";
 import { useState, useRef, useEffect } from "react";
 import {
   MessageSquare,
@@ -16,6 +17,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { toolResultRegistry } from "./tool-results";
 import { renderTextWithLinks } from "./render-text";
+import { useChatPageContext } from "@/contexts/chat-page-context";
 
 type UsageInfo = {
   used: number;
@@ -36,7 +38,13 @@ export function ChatWidget() {
     });
   };
 
-  const { messages, sendMessage, status } = useChat();
+  const { pageContext } = useChatPageContext();
+  const { messages, sendMessage, status } = useChat({
+    transport: new DefaultChatTransport({
+      api: "/api/chat",
+      body: pageContext ?? {},
+    }),
+  });
   const isLoading = status === "streaming" || status === "submitted";
 
   const isLimitReached = usage !== null && usage.used >= usage.limit;
@@ -76,14 +84,14 @@ export function ChatWidget() {
         <div
           className={cn(
             "absolute bottom-16 right-0",
-            "w-80 sm:w-96",
+            "w-[340px] sm:w-[440px]",
             "flex flex-col overflow-hidden",
             "rounded-2xl border border-white/20",
             "bg-white/80 backdrop-blur-xl dark:bg-zinc-900/80",
             "shadow-2xl shadow-black/10",
             "animate-in fade-in-0 slide-in-from-bottom-4 duration-300"
           )}
-          style={{ height: "480px" }}
+          style={{ height: "580px" }}
         >
           {/* Header */}
           <div className="flex shrink-0 items-center justify-between border-b border-white/20 bg-white/10 px-4 py-3 dark:bg-white/5">

@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { EventCalendar } from "@/components/event-calendar";
 import { getEventsForCalendar } from "@/lib/events";
+import { PageContextRegister } from "@/components/ai-chat/page-context-register";
 
 type Props = {
   params: Promise<{ locale: string; orgId: string }>;
@@ -48,6 +49,7 @@ export default async function OrgDashboardPage({ params }: Props) {
 
   return (
     <main className="min-h-screen bg-background p-4 md:p-6">
+      <PageContextRegister orgId={orgId} pageName={`バーダッシュボード: ${org.name}`} />
       <div className="mx-auto max-w-3xl space-y-6">
         <div className="flex items-center justify-between gap-3">
           <div className="flex items-center gap-3 min-w-0">
