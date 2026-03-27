@@ -50,6 +50,13 @@
       "when": 1774189040681,
       "tag": "0006_short_wrecking_crew",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1774531426444,
+      "tag": "0007_short_thanos",
+      "breakpoints": true
     }
   ]
 }

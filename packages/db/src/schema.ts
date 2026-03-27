@@ -254,6 +254,26 @@ export const aiChatDailyUsage = pgTable(
   })
 );
 
+export const chatSessions = pgTable(
+  'chat_sessions',
+  {
+    ...commonColumns,
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => users.id)
+      .unique(),
+  }
+);
+
+export const chatMessages = pgTable('chat_messages', {
+  ...commonColumns,
+  sessionId: uuid('session_id')
+    .notNull()
+    .references(() => chatSessions.id),
+  role: text('role').notNull(), // 'user' | 'assistant'
+  parts: jsonb('parts').notNull(), // UIMessage.parts をそのまま保存
+});
+
 export const userWatches = pgTable(
   'user_watches',
   {
