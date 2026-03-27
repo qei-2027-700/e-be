@@ -1,7 +1,7 @@
 "use client";
 
 import { useChat } from "@ai-sdk/react";
-import { DefaultChatTransport } from "ai";
+import { DefaultChatTransport, type UIMessage } from "ai";
 import { useState, useRef, useEffect } from "react";
 import {
   MessageSquare,
@@ -19,16 +19,18 @@ import { toolResultRegistry } from "./tool-results";
 import { renderTextWithLinks } from "./render-text";
 import { useChatPageContext } from "@/contexts/chat-page-context";
 
-type UsageInfo = {
+type ChatApiResponse = {
   used: number;
   limit: number;
+  messages: UIMessage[];
 };
 
 export function ChatWidget() {
   const [isOpen, setIsOpen] = useState(false);
   const [input, setInput] = useState("");
-  const [usage, setUsage] = useState<UsageInfo | null>(null);
+  const [usage, setUsage] = useState<{ used: number; limit: number } | null>(null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [historyLoading, setHistoryLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const handleCopy = (text: string, id: string) => {
@@ -39,7 +41,7 @@ export function ChatWidget() {
   };
 
   const { pageContext } = useChatPageContext();
-  const { messages, sendMessage, status } = useChat({
+  const { messages, sendMessage, status, setMessages } = useChat({
     transport: new DefaultChatTransport({
       api: "/api/chat",
       body: pageContext ?? {},
@@ -49,13 +51,22 @@ export function ChatWidget() {
 
   const isLimitReached = usage !== null && usage.used >= usage.limit;
 
-  // ウィジェットを開いたときに使用状況を取得
+  // ウィジェットを開いたときに使用状況と履歴を取得
   useEffect(() => {
     if (!isOpen) return;
+    setHistoryLoading(true);
     fetch("/api/chat")
       .then((r) => r.json())
-      .then((data: UsageInfo) => setUsage(data))
-      .catch(() => {});
+      .then((data: ChatApiResponse) => {
+        setUsage({ used: data.used, limit: data.limit });
+        if (data.messages.length > 0) {
+          setMessages(data.messages);
+        }
+      })
+      .catch(() => {})
+      .finally(() => setHistoryLoading(false));
+  // setMessages は安定参照なので依存に含めない
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen]);
 
   const handleSend = () => {
@@ -123,7 +134,28 @@ export function ChatWidget() {
 
           {/* Messages */}
           <div className="flex-1 space-y-3 overflow-y-auto p-4">
-            {messages.length === 0 && (
+            {historyLoading && (
+              <div className="space-y-3">
+                {[1, 2, 3].map((n) => (
+                  <div
+                    key={n}
+                    className={cn(
+                      "flex gap-2",
+                      n % 2 === 0 ? "flex-row-reverse" : "flex-row"
+                    )}
+                  >
+                    <div className="mt-1 size-6 shrink-0 rounded-full bg-muted/50 animate-pulse" />
+                    <div
+                      className={cn(
+                        "h-8 rounded-2xl bg-muted/40 animate-pulse",
+                        n % 2 === 0 ? "w-2/5" : "w-3/5"
+                      )}
+                    />
+                  </div>
+                ))}
+              </div>
+            )}
+            {!historyLoading && messages.length === 0 && (
               <div className="flex h-full flex-col items-center justify-center gap-3 text-center">
                 <div className="flex size-12 items-center justify-center rounded-2xl bg-primary/10">
                   <Bot className="size-6 text-primary" />
