@@ -135,16 +135,15 @@ export async function POST(req: Request) {
         after(async () => {
           const totalTokens = usage?.totalTokens ?? 0;
 
-          // トークン累計を upsert（日付が変わっていたらリセット）
+          // トークン累計を upsert（1ユーザー = 1日 = 1レコード）
           await db
             .insert(aiChatDailyUsage)
             .values({ userId: dbUser.id, date: today, count: 1, tokens: totalTokens })
             .onConflictDoUpdate({
-              target: [aiChatDailyUsage.userId],
+              target: [aiChatDailyUsage.userId, aiChatDailyUsage.date],
               set: {
-                count: sql`CASE WHEN ${aiChatDailyUsage.date} = ${today} THEN ${aiChatDailyUsage.count} + 1 ELSE 1 END`,
-                tokens: sql`CASE WHEN ${aiChatDailyUsage.date} = ${today} THEN ${aiChatDailyUsage.tokens} + ${totalTokens} ELSE ${totalTokens} END`,
-                date: today,
+                count: sql`${aiChatDailyUsage.count} + 1`,
+                tokens: sql`${aiChatDailyUsage.tokens} + ${totalTokens}`,
                 updatedAt: sql`now()`,
               },
             });

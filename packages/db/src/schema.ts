@@ -251,7 +251,7 @@ export const aiChatDailyUsage = pgTable(
     updatedAt: timestamp('updated_at').notNull().defaultNow(),
   },
   (t) => ({
-    uniqueUser: uniqueIndex('ai_chat_daily_usage_user_idx').on(t.userId),
+    uniqueUserDate: uniqueIndex('ai_chat_daily_usage_user_date_idx').on(t.userId, t.date),
   })
 );
 
