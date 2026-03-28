@@ -19,6 +19,8 @@ import { toolResultRegistry } from "./tool-results";
 import { renderTextWithLinks } from "./render-text";
 import { useTranslations } from "next-intl";
 import { useChatPageContext } from "@/contexts/chat-page-context";
+import { toast } from "sonner";
+import { MessageResponse } from "@/components/ai-elements/message";
 
 type ChatApiResponse = {
   tokens: number;
@@ -65,7 +67,10 @@ export function ChatWidget() {
           setMessages(data.messages);
         }
       })
-      .catch(() => {})
+      .catch((error) => {
+        console.error("Failed to fetch chat history:", error);
+        toast.error(t("fetchError"));
+      })
       .finally(() => setHistoryLoading(false));
   // setMessages は安定参照なので依存に含めない
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -223,9 +228,13 @@ export function ChatWidget() {
                                 : "rounded-tl-sm bg-muted/60 dark:bg-white/10"
                             )}
                           >
-                            <p className="whitespace-pre-wrap">
-                              {renderTextWithLinks(part.text)}
-                            </p>
+                            {message.role === "user" ? (
+                              <p className="whitespace-pre-wrap">
+                                {renderTextWithLinks(part.text)}
+                              </p>
+                            ) : (
+                              <MessageResponse>{part.text}</MessageResponse>
+                            )}
                           </div>
                           {message.role === "assistant" && (
                             <button
@@ -325,10 +334,13 @@ export function ChatWidget() {
               <p className="text-[10px] text-muted-foreground/50">
                 {t("footer")}
               </p>
-              {usage && !isLimitReached && (
-                <p className="text-[10px] text-muted-foreground/50">
-                  {t("tokenUsage", {
-                    used: usage.tokens.toLocaleString(),
+              {usage && (
+                <p className={cn(
+                  "text-[10px]",
+                  isLimitReached ? "text-amber-600 dark:text-amber-400" : "text-muted-foreground/50"
+                )}>
+                  {t("remainingTokens", {
+                    remaining: Math.max(0, usage.tokenLimit - usage.tokens).toLocaleString(),
                     limit: usage.tokenLimit.toLocaleString(),
                   })}
                 </p>
