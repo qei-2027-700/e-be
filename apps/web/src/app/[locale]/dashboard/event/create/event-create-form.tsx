@@ -70,7 +70,7 @@ export function EventCreateForm({ bars, locale }: Props) {
               onValueChange={(val) => setOrgId(val ?? "")}
               disabled={isPending}
             >
-              <SelectTrigger className="w-full" size="lg">
+              <SelectTrigger id="orgId" className="w-full" size="lg">
                 <SelectValue>
                   {orgId
                     ? bars.find((b) => b.id === orgId)?.name
