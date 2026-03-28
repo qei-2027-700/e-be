@@ -2,7 +2,7 @@
 
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport, type UIMessage } from "ai";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 import {
   MessageSquare,
   X,
@@ -45,12 +45,21 @@ export function ChatWidget() {
 
   const t = useTranslations("aiChat");
   const { pageContext } = useChatPageContext();
-  const { messages, sendMessage, status, setMessages } = useChat({
-    transport: new DefaultChatTransport({
-      api: "/api/chat",
-      body: pageContext ?? {},
-    }),
-  });
+
+  // pageContext が変化したとき transport を再生成する
+  // useChat は初期値しか参照しないため useMemo で依存を管理する
+  const transport = useMemo(
+    () =>
+      new DefaultChatTransport({
+        api: "/api/chat",
+        body: pageContext ?? {},
+      }),
+    // pageContext オブジェクトは毎レンダーで参照が変わりうるため JSON で比較する
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [JSON.stringify(pageContext)]
+  );
+
+  const { messages, sendMessage, status, setMessages } = useChat({ transport });
   const isLoading = status === "streaming" || status === "submitted";
 
   const isLimitReached = usage !== null && usage.tokens >= usage.tokenLimit;
@@ -262,12 +271,27 @@ export function ChatWidget() {
 
                     // ツール結果パート
                     if (part.type.startsWith("tool-")) {
-                      const ToolResult = toolResultRegistry[part.type];
                       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                      if (ToolResult && (part as any).state === "output-available") {
-                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                        return <ToolResult key={i} output={(part as any).output} />;
+                      const typedPart = part as any;
+                      const ToolResult = toolResultRegistry[part.type];
+
+                      if (typedPart.state === "output-available" && ToolResult) {
+                        return <ToolResult key={i} output={typedPart.output} />;
                       }
+
+                      // ツール実行中（streaming / input-available 等の中間状態）
+                      if (typedPart.state !== "output-available") {
+                        return (
+                          <div
+                            key={i}
+                            className="flex items-center gap-1.5 rounded-xl bg-muted/40 px-3 py-2 text-xs text-muted-foreground"
+                          >
+                            <span className="size-1.5 animate-pulse rounded-full bg-muted-foreground/60" />
+                            <span>{t("toolExecuting")}</span>
+                          </div>
+                        );
+                      }
+
                       return null;
                     }
 

@@ -531,6 +531,7 @@
     "close": "Close chat",
     "open": "Open AI chat",
     "fetchError": "Failed to fetch chat history. Please refresh the page.",
+    "toolExecuting": "Executing tool...",
     "tool": {
       "createEvent": {
         "error": "Failed to create event ({error})",
