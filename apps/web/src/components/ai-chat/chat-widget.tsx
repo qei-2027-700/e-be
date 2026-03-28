@@ -279,8 +279,8 @@ export function ChatWidget() {
                         return <ToolResult key={i} output={typedPart.output} />;
                       }
 
-                      // ツール実行中（streaming / input-available 等の中間状態）
-                      if (typedPart.state !== "output-available") {
+                      // ツール実行中（明示的な中間状態のみ。旧データの state=undefined はスピナー非表示）
+                      if (typedPart.state === "input-available" || typedPart.state === "streaming") {
                         return (
                           <div
                             key={i}
