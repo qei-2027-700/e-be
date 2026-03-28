@@ -88,7 +88,20 @@ export async function GET() {
 export async function POST(req: Request) {
   const { messages, ...pageContext }: { messages: UIMessage[] } & ChatPageContext =
     await req.json();
-  const modelMessages = await convertToModelMessages(messages);
+
+  // ツール呼び出し関連パーツ（tool-call / tool-result 等）は DB 保存時に除外しているため、
+  // 不完全なペアが履歴に残っていると Gemini がエラーになる。安全のため text/reasoning のみ残す。
+  const safeMessages: UIMessage[] = messages
+    .map((msg) => ({
+      ...msg,
+      parts: msg.parts.filter(
+        (p): p is Extract<UIMessage["parts"][number], { type: "text" | "reasoning" }> =>
+          p.type === "text" || p.type === "reasoning"
+      ),
+    }))
+    .filter((msg) => msg.parts.length > 0);
+
+  const modelMessages = await convertToModelMessages(safeMessages);
 
   const dbUser = await getDbUser();
 
