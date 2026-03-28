@@ -247,6 +247,7 @@ export const aiChatDailyUsage = pgTable(
     userId: uuid('user_id').notNull().references(() => users.id),
     date: text('date').notNull(), // YYYY-MM-DD (Asia/Tokyo)
     count: integer('count').notNull().default(0),
+    tokens: integer('tokens').notNull().default(0), // 消費トークン累計（日次リセット）
     updatedAt: timestamp('updated_at').notNull().defaultNow(),
   },
   (t) => ({

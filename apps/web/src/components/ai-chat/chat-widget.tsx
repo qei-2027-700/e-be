@@ -20,15 +20,15 @@ import { renderTextWithLinks } from "./render-text";
 import { useChatPageContext } from "@/contexts/chat-page-context";
 
 type ChatApiResponse = {
-  used: number;
-  limit: number;
+  tokens: number;
+  tokenLimit: number;
   messages: UIMessage[];
 };
 
 export function ChatWidget() {
   const [isOpen, setIsOpen] = useState(false);
   const [input, setInput] = useState("");
-  const [usage, setUsage] = useState<{ used: number; limit: number } | null>(null);
+  const [usage, setUsage] = useState<{ tokens: number; tokenLimit: number } | null>(null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [historyLoading, setHistoryLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -49,7 +49,7 @@ export function ChatWidget() {
   });
   const isLoading = status === "streaming" || status === "submitted";
 
-  const isLimitReached = usage !== null && usage.used >= usage.limit;
+  const isLimitReached = usage !== null && usage.tokens >= usage.tokenLimit;
 
   // ウィジェットを開いたときに使用状況と履歴を取得
   useEffect(() => {
@@ -58,7 +58,7 @@ export function ChatWidget() {
     fetch("/api/chat")
       .then((r) => r.json())
       .then((data: ChatApiResponse) => {
-        setUsage({ used: data.used, limit: data.limit });
+        setUsage({ tokens: data.tokens, tokenLimit: data.tokenLimit });
         if (data.messages.length > 0) {
           setMessages(data.messages);
         }
@@ -73,8 +73,6 @@ export function ChatWidget() {
     if (!input.trim() || isLoading || isLimitReached) return;
     sendMessage({ text: input });
     setInput("");
-    // 送信後にローカルカウンターを楽観的に更新
-    setUsage((prev) => (prev ? { ...prev, used: prev.used + 1 } : prev));
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -170,7 +168,7 @@ export function ChatWidget() {
                 </div>
                 {usage && (
                   <p className="text-[11px] text-muted-foreground/60">
-                    本日の残り利用回数: {Math.max(0, usage.limit - usage.used)}/{usage.limit} 回
+                    本日の残り: {Math.max(0, usage.tokenLimit - usage.tokens).toLocaleString()} / {usage.tokenLimit.toLocaleString()} token
                   </p>
                 )}
               </div>
@@ -289,7 +287,7 @@ export function ChatWidget() {
             {isLimitReached ? (
               <div className="flex items-center gap-2 rounded-xl border border-amber-500/20 bg-amber-500/5 px-3 py-2.5 text-xs text-amber-700 dark:text-amber-400">
                 <AlertCircle className="size-3.5 shrink-0" />
-                <span>本日の利用上限（{usage.limit}回）に達しました。明日またご利用ください。</span>
+                <span>本日のトークン上限（{usage.tokenLimit.toLocaleString()} token）に達しました。明日またご利用ください。</span>
               </div>
             ) : (
               <div className="flex items-end gap-2">
@@ -324,7 +322,7 @@ export function ChatWidget() {
               </p>
               {usage && !isLimitReached && (
                 <p className="text-[10px] text-muted-foreground/50">
-                  本日 {usage.used}/{usage.limit} 回
+                  本日 {usage.tokens.toLocaleString()}/{usage.tokenLimit.toLocaleString()} token
                 </p>
               )}
             </div>

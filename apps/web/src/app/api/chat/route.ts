@@ -16,27 +16,36 @@ const google = createGoogleGenerativeAI({
   apiKey: process.env.GEMINI_API_KEY ?? "",
 });
 
-const DAILY_LIMIT = parseInt(process.env.AI_CHAT_DAILY_LIMIT ?? "10", 10);
+const TOKEN_LIMIT = parseInt(process.env.AI_CHAT_TOKEN_LIMIT ?? "15000", 10);
 const HISTORY_LIMIT = 20;
 
 const getTodayJST = () =>
   new Date().toLocaleDateString("en-CA", { timeZone: "Asia/Tokyo" });
 
+/** 今日の消費トークン数を返す（レコードがない or 日付が変わっていれば 0） */
+async function getDailyTokens(userId: string): Promise<{ tokens: number; count: number }> {
+  const today = getTodayJST();
+  const [row] = await db
+    .select({
+      tokens: aiChatDailyUsage.tokens,
+      count: aiChatDailyUsage.count,
+      date: aiChatDailyUsage.date,
+    })
+    .from(aiChatDailyUsage)
+    .where(eq(aiChatDailyUsage.userId, userId))
+    .limit(1);
+
+  if (!row || row.date !== today) return { tokens: 0, count: 0 };
+  return { tokens: row.tokens, count: row.count };
+}
+
 export async function GET() {
   const dbUser = await getDbUser();
   if (!dbUser) {
-    return Response.json({ used: 0, limit: DAILY_LIMIT, messages: [] });
+    return Response.json({ tokens: 0, tokenLimit: TOKEN_LIMIT, messages: [] });
   }
 
-  const today = getTodayJST();
-  const [row] = await db
-    .select({ count: aiChatDailyUsage.count, date: aiChatDailyUsage.date })
-    .from(aiChatDailyUsage)
-    .where(eq(aiChatDailyUsage.userId, dbUser.id))
-    .limit(1);
-
-  // レコードが今日付でなければ残回数は満タン
-  const used = row?.date === today ? (row?.count ?? 0) : 0;
+  const { tokens } = await getDailyTokens(dbUser.id);
 
   // セッションと履歴を取得
   const session = await db
@@ -49,7 +58,7 @@ export async function GET() {
     .then((r) => r[0]);
 
   if (!session) {
-    return Response.json({ used, limit: DAILY_LIMIT, messages: [] });
+    return Response.json({ tokens, tokenLimit: TOKEN_LIMIT, messages: [] });
   }
 
   const rows = await db
@@ -65,7 +74,6 @@ export async function GET() {
     .orderBy(desc(chatMessages.createdAt))
     .limit(HISTORY_LIMIT);
 
-  // 古い順に並び直してUIMessage形式に変換
   const messages = rows.reverse().map((r) => ({
     id: r.id,
     role: r.role as "user" | "assistant",
@@ -73,7 +81,7 @@ export async function GET() {
     content: "",
   }));
 
-  return Response.json({ used, limit: DAILY_LIMIT, messages });
+  return Response.json({ tokens, tokenLimit: TOKEN_LIMIT, messages });
 }
 
 export async function POST(req: Request) {
@@ -83,38 +91,19 @@ export async function POST(req: Request) {
 
   const dbUser = await getDbUser();
 
-  // 認証済みユーザー: レート制限チェック＋履歴保存
+  // 認証済みユーザー: トークン制限チェック＋履歴保存
   if (dbUser) {
     const today = getTodayJST();
-    const [row] = await db
-      .select({ count: aiChatDailyUsage.count, date: aiChatDailyUsage.date })
-      .from(aiChatDailyUsage)
-      .where(eq(aiChatDailyUsage.userId, dbUser.id))
-      .limit(1);
+    const { tokens } = await getDailyTokens(dbUser.id);
 
-    // 過去日付のレコードがあれば 0 扱い
-    const used = row?.date === today ? (row?.count ?? 0) : 0;
-    if (used >= DAILY_LIMIT) {
+    if (tokens >= TOKEN_LIMIT) {
       return Response.json(
-        { error: "rate_limit_exceeded", used, limit: DAILY_LIMIT },
+        { error: "rate_limit_exceeded", tokens, tokenLimit: TOKEN_LIMIT },
         { status: 429 }
       );
     }
 
-    // upsert: userId で競合したら日付が今日なら+1、違う日なら1にリセット
-    await db
-      .insert(aiChatDailyUsage)
-      .values({ userId: dbUser.id, date: today, count: 1 })
-      .onConflictDoUpdate({
-        target: [aiChatDailyUsage.userId],
-        set: {
-          count: sql`CASE WHEN ${aiChatDailyUsage.date} = ${today} THEN ${aiChatDailyUsage.count} + 1 ELSE 1 END`,
-          date: today,
-          updatedAt: sql`now()`,
-        },
-      });
-
-    // セッションを upsert（userId で競合したら updatedAt だけ更新）
+    // セッションを upsert
     const [session] = await db
       .insert(chatSessions)
       .values({ userId: dbUser.id })
@@ -141,7 +130,24 @@ export async function POST(req: Request) {
       messages: modelMessages.slice(-HISTORY_LIMIT),
       tools: createTools(dbUser),
       stopWhen: stepCountIs(10),
-      onFinish: async ({ response }) => {
+      onFinish: async ({ response, usage }) => {
+        const totalTokens = usage?.totalTokens ?? 0;
+
+        // トークン累計を upsert（日付が変わっていたらリセット）
+        await db
+          .insert(aiChatDailyUsage)
+          .values({ userId: dbUser.id, date: today, count: 1, tokens: totalTokens })
+          .onConflictDoUpdate({
+            target: [aiChatDailyUsage.userId],
+            set: {
+              count: sql`CASE WHEN ${aiChatDailyUsage.date} = ${today} THEN ${aiChatDailyUsage.count} + 1 ELSE 1 END`,
+              tokens: sql`CASE WHEN ${aiChatDailyUsage.date} = ${today} THEN ${aiChatDailyUsage.tokens} + ${totalTokens} ELSE ${totalTokens} END`,
+              date: today,
+              updatedAt: sql`now()`,
+            },
+          });
+
+        // AIレスポンスメッセージを保存
         const assistantMsgs = response.messages.filter(
           (m) => m.role === "assistant"
         );
