@@ -504,5 +504,42 @@
     "charge_free": "無料",
     "seats_remaining": "残席{count}",
     "seats_full": "満席"
+  },
+  "aiChat": {
+    "thinking": "考え中...",
+    "beta": "試験運用中",
+    "assistantName": "e-be AIアシスタント",
+    "welcomeMessage": "イベント企画・集客・運営について\nなんでも聞いてください",
+    "remainingTokens": "本日の残り: {remaining} / {limit} token",
+    "limitReached": "本日のトークン上限（{limit} token）に達しました。明日またご利用ください。",
+    "inputPlaceholder": "メッセージを入力... (Enter で送信)",
+    "footer": "試験的機能 · Gemini 2.5 Flash",
+    "tokenUsage": "本日 {used}/{limit} token",
+    "copy": "コピー",
+    "close": "チャットを閉じる",
+    "open": "AIチャットを開く",
+    "tool": {
+      "createEvent": {
+        "error": "イベントの作成に失敗しました（{error}）",
+        "success": "下書きを作成しました",
+        "openEdit": "イベント編集画面を開く"
+      },
+      "updateEvent": {
+        "error": "修正に失敗しました（{msg}）",
+        "success": "下書きを修正しました",
+        "openEdit": "イベント編集画面を開く",
+        "errors": {
+          "unauthorized": "ログインが必要です",
+          "forbidden": "このイベントを修正する権限がありません",
+          "not_found": "イベントが見つかりません",
+          "not_draft": "下書き以外のイベントは修正できません",
+          "invalid_title": "タイトルが無効です（最大100文字）",
+          "invalid_description": "説明が無効です（最大2000文字）",
+          "invalid_start_at": "開始日時の形式が無効です",
+          "invalid_end_at": "終了日時の形式が無効です",
+          "invalid_date_range": "終了日時は開始日時より後に設定してください"
+        }
+      }
+    }
   }
 }

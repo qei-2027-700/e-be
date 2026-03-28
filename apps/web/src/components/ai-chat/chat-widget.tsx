@@ -17,6 +17,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { toolResultRegistry } from "./tool-results";
 import { renderTextWithLinks } from "./render-text";
+import { useTranslations } from "next-intl";
 import { useChatPageContext } from "@/contexts/chat-page-context";
 
 type ChatApiResponse = {
@@ -40,6 +41,7 @@ export function ChatWidget() {
     });
   };
 
+  const t = useTranslations("aiChat");
   const { pageContext } = useChatPageContext();
   const { messages, sendMessage, status, setMessages } = useChat({
     transport: new DefaultChatTransport({
@@ -116,7 +118,7 @@ export function ChatWidget() {
                   </span>
                 </div>
                 <p className="mt-0.5 text-xs text-muted-foreground">
-                  {isLoading ? "考え中..." : "試験運用中"}
+                  {isLoading ? t("thinking") : t("beta")}
                 </p>
               </div>
             </div>
@@ -159,16 +161,19 @@ export function ChatWidget() {
                   <Bot className="size-6 text-primary" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium">e-be AIアシスタント</p>
+                  <p className="text-sm font-medium">{t("assistantName")}</p>
                   <p className="mt-1 text-xs text-muted-foreground">
-                    イベント企画・集客・運営について
-                    <br />
-                    なんでも聞いてください
+                    {t("welcomeMessage").split("\n").map((line, i) => (
+                      <span key={i}>{i > 0 && <br />}{line}</span>
+                    ))}
                   </p>
                 </div>
                 {usage && (
                   <p className="text-[11px] text-muted-foreground/60">
-                    本日の残り: {Math.max(0, usage.tokenLimit - usage.tokens).toLocaleString()} / {usage.tokenLimit.toLocaleString()} token
+                    {t("remainingTokens", {
+                      remaining: Math.max(0, usage.tokenLimit - usage.tokens).toLocaleString(),
+                      limit: usage.tokenLimit.toLocaleString(),
+                    })}
                   </p>
                 )}
               </div>
@@ -233,7 +238,7 @@ export function ChatWidget() {
                                 "opacity-0 group-hover:opacity-100",
                                 isCopied && "opacity-100 text-green-600 dark:text-green-400"
                               )}
-                              aria-label="コピー"
+                              aria-label={t("copy")}
                             >
                               {isCopied ? (
                                 <Check className="size-3" />
@@ -287,7 +292,7 @@ export function ChatWidget() {
             {isLimitReached ? (
               <div className="flex items-center gap-2 rounded-xl border border-amber-500/20 bg-amber-500/5 px-3 py-2.5 text-xs text-amber-700 dark:text-amber-400">
                 <AlertCircle className="size-3.5 shrink-0" />
-                <span>本日のトークン上限（{usage.tokenLimit.toLocaleString()} token）に達しました。明日またご利用ください。</span>
+                <span>{t("limitReached", { limit: usage.tokenLimit.toLocaleString() })}</span>
               </div>
             ) : (
               <div className="flex items-end gap-2">
@@ -295,7 +300,7 @@ export function ChatWidget() {
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   onKeyDown={handleKeyDown}
-                  placeholder="メッセージを入力... (Enter で送信)"
+                  placeholder={t("inputPlaceholder")}
                   rows={1}
                   disabled={isLoading}
                   className={cn(
@@ -318,11 +323,14 @@ export function ChatWidget() {
             )}
             <div className="mt-1.5 flex items-center justify-between">
               <p className="text-[10px] text-muted-foreground/50">
-                試験的機能 · Gemini 2.5 Flash
+                {t("footer")}
               </p>
               {usage && !isLimitReached && (
                 <p className="text-[10px] text-muted-foreground/50">
-                  本日 {usage.tokens.toLocaleString()}/{usage.tokenLimit.toLocaleString()} token
+                  {t("tokenUsage", {
+                    used: usage.tokens.toLocaleString(),
+                    limit: usage.tokenLimit.toLocaleString(),
+                  })}
                 </p>
               )}
             </div>
@@ -333,7 +341,7 @@ export function ChatWidget() {
       {/* トグルボタン（液体ガラス風） */}
       <button
         onClick={() => setIsOpen((v) => !v)}
-        aria-label={isOpen ? "チャットを閉じる" : "AIチャットを開く"}
+        aria-label={isOpen ? t("close") : t("open")}
         className={cn(
           "flex size-12 items-center justify-center rounded-2xl",
           "shadow-lg backdrop-blur-xl",

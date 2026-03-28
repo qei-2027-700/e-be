@@ -504,5 +504,42 @@
     "charge_free": "Free",
     "seats_remaining": "{count} seats left",
     "seats_full": "Full"
+  },
+  "aiChat": {
+    "thinking": "Thinking...",
+    "beta": "Beta",
+    "assistantName": "e-be AI Assistant",
+    "welcomeMessage": "Ask me anything about event planning,\npromotion, and management.",
+    "remainingTokens": "Today's remaining: {remaining} / {limit} tokens",
+    "limitReached": "You've reached today's token limit ({limit} tokens). Please try again tomorrow.",
+    "inputPlaceholder": "Type a message... (Enter to send)",
+    "footer": "Experimental · Gemini 2.5 Flash",
+    "tokenUsage": "Today {used}/{limit} tokens",
+    "copy": "Copy",
+    "close": "Close chat",
+    "open": "Open AI chat",
+    "tool": {
+      "createEvent": {
+        "error": "Failed to create event ({error})",
+        "success": "Draft created",
+        "openEdit": "Open event editor"
+      },
+      "updateEvent": {
+        "error": "Failed to update ({msg})",
+        "success": "Draft updated",
+        "openEdit": "Open event editor",
+        "errors": {
+          "unauthorized": "Login required",
+          "forbidden": "You don't have permission to edit this event",
+          "not_found": "Event not found",
+          "not_draft": "Only draft events can be edited",
+          "invalid_title": "Invalid title (max 100 characters)",
+          "invalid_description": "Invalid description (max 2000 characters)",
+          "invalid_start_at": "Invalid start date/time format",
+          "invalid_end_at": "Invalid end date/time format",
+          "invalid_date_range": "End date/time must be after start date/time"
+        }
+      }
+    }
   }
 }
