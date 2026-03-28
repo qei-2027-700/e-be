@@ -524,6 +524,12 @@
         "success": "下書きを作成しました",
         "openEdit": "イベント編集画面を開く"
       },
+      "submitEvent": {
+        "error": "申請に失敗しました（{error}）",
+        "success": "申請が完了しました",
+        "pending": "バーからの承認をお待ちください",
+        "openDetail": "イベント詳細を確認する"
+      },
       "updateEvent": {
         "error": "修正に失敗しました（{msg}）",
         "success": "下書きを修正しました",

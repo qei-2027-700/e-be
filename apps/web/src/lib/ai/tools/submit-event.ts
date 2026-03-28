@@ -30,6 +30,6 @@ export const createSubmitEventTool = (dbUser: DbUser) =>
       if (result.error) {
         return { error: ERROR_MESSAGES[result.error] ?? result.error };
       }
-      return { ok: true, message: "申請が完了しました。バーからの承認をお待ちください。" };
+      return { ok: true, eventId, message: "申請が完了しました。バーからの承認をお待ちください。" };
     },
   });
