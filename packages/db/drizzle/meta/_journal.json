@@ -57,6 +57,13 @@
       "when": 1774531426444,
       "tag": "0007_short_thanos",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1774710435324,
+      "tag": "0008_small_meltdown",
+      "breakpoints": true
     }
   ]
 }
