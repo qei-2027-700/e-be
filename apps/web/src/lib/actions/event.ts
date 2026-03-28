@@ -7,6 +7,7 @@ import { eq, and, isNull } from 'drizzle-orm';
 import { checkEventConflict, hasBarHostPermission } from '@/lib/events';
 import { sendNotification } from '@/lib/notify';
 import { NOTIFICATION_TYPES } from '@e-be/db';
+import { organizationMembers } from '@e-be/db/schema';
 import { getLocale, getTranslations } from 'next-intl/server';
 
 type CreateEventDraftResult =
@@ -115,7 +116,7 @@ export async function submitEvent(eventId: string): Promise<ActionResult> {
   if (!dbUser) return { error: 'unauthorized' };
 
   const [target] = await db
-    .select({ id: events.id, status: events.status, orgId: events.orgId, startAt: events.startAt, endAt: events.endAt })
+    .select({ id: events.id, status: events.status, orgId: events.orgId, startAt: events.startAt, endAt: events.endAt, title: events.title })
     .from(events)
     .where(and(eq(events.id, eventId), eq(events.userId, dbUser.id), isNull(events.deletedAt)))
     .limit(1);
@@ -134,6 +135,38 @@ export async function submitEvent(eventId: string): Promise<ActionResult> {
   }
 
   await db.update(events).set({ status: 'pending', updatedAt: new Date() }).where(eq(events.id, eventId));
+
+  // バー owner に EVENT_PENDING 通知を送る
+  const owners = await db
+    .select({ userId: organizationMembers.userId })
+    .from(organizationMembers)
+    .where(
+      and(
+        eq(organizationMembers.orgId, target.orgId),
+        eq(organizationMembers.role, 'owner'),
+        isNull(organizationMembers.deletedAt)
+      )
+    );
+
+  if (owners.length > 0) {
+    const locale = await getLocale();
+    const t = await getTranslations({ locale, namespace: 'notifications.eventPending' });
+    const title = target.title?.trim() ? t('title', { eventTitle: target.title }) : t('titleNoName');
+    const body = t('body');
+    await Promise.all(
+      owners.map(({ userId }) =>
+        sendNotification(
+          userId,
+          NOTIFICATION_TYPES.EVENT_PENDING,
+          title,
+          body,
+          { eventId },
+          `event_pending:${eventId}`
+        )
+      )
+    );
+  }
+
   return { ok: true };
 }
 

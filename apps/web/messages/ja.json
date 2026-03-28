@@ -506,6 +506,11 @@
     "seats_full": "満席"
   },
   "notifications": {
+    "eventPending": {
+      "title": "新しいイベント申請: {eventTitle}",
+      "titleNoName": "新しいイベント申請が届きました",
+      "body": "イベンターから開催申請が届きました。内容を確認してください。"
+    },
     "watchedOrganizerEventPublished": {
       "title": "イベントが公開されました: {eventTitle}",
       "titleNoName": "イベントが公開されました",
