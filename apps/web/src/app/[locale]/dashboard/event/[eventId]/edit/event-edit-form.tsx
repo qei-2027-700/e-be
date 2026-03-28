@@ -299,17 +299,6 @@ export function EventEditForm({ event, eventId, hasPermission, locale, bars }: P
             />
           </div>
 
-          <div className="space-y-1">
-            <Label htmlFor="nearestStation">{t("field_nearest_station")}</Label>
-            <Input
-              id="nearestStation"
-              name="nearestStation"
-              defaultValue={event.nearestStation ?? ""}
-              placeholder={t("field_nearest_station_placeholder")}
-              maxLength={50}
-              disabled={isPending}
-            />
-          </div>
 
           {error && <p className="text-sm text-destructive">{error}</p>}
           {isDatetimeInvalid && (

@@ -152,9 +152,7 @@ export function EventsList({ initialEvents, initialHasNext, area, line }: Props)
                   ) : (
                     <p className="truncate">{event.orgName}</p>
                   )}
-                  {event.nearestStation && (
-                    <p className="truncate">{event.nearestStation}</p>
-                  )}
+
                 </div>
 
                 <div className="mt-auto flex flex-wrap items-center gap-x-3 gap-y-1 pt-2 text-xs">
