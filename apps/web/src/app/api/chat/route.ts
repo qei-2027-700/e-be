@@ -1,6 +1,7 @@
 import { streamText, convertToModelMessages, stepCountIs } from "ai";
 import { createGoogleGenerativeAI } from "@ai-sdk/google";
 import type { UIMessage } from "ai";
+import { after } from "next/server";
 import { getDbUser } from "@/lib/auth";
 import { db } from "@/lib/db";
 import {
@@ -130,37 +131,39 @@ export async function POST(req: Request) {
       messages: modelMessages.slice(-HISTORY_LIMIT),
       tools: createTools(dbUser),
       stopWhen: stepCountIs(10),
-      onFinish: async ({ response, usage }) => {
-        const totalTokens = usage?.totalTokens ?? 0;
+      onFinish: ({ response, usage }) => {
+        after(async () => {
+          const totalTokens = usage?.totalTokens ?? 0;
 
-        // トークン累計を upsert（日付が変わっていたらリセット）
-        await db
-          .insert(aiChatDailyUsage)
-          .values({ userId: dbUser.id, date: today, count: 1, tokens: totalTokens })
-          .onConflictDoUpdate({
-            target: [aiChatDailyUsage.userId],
-            set: {
-              count: sql`CASE WHEN ${aiChatDailyUsage.date} = ${today} THEN ${aiChatDailyUsage.count} + 1 ELSE 1 END`,
-              tokens: sql`CASE WHEN ${aiChatDailyUsage.date} = ${today} THEN ${aiChatDailyUsage.tokens} + ${totalTokens} ELSE ${totalTokens} END`,
-              date: today,
-              updatedAt: sql`now()`,
-            },
-          });
+          // トークン累計を upsert（日付が変わっていたらリセット）
+          await db
+            .insert(aiChatDailyUsage)
+            .values({ userId: dbUser.id, date: today, count: 1, tokens: totalTokens })
+            .onConflictDoUpdate({
+              target: [aiChatDailyUsage.userId],
+              set: {
+                count: sql`CASE WHEN ${aiChatDailyUsage.date} = ${today} THEN ${aiChatDailyUsage.count} + 1 ELSE 1 END`,
+                tokens: sql`CASE WHEN ${aiChatDailyUsage.date} = ${today} THEN ${aiChatDailyUsage.tokens} + ${totalTokens} ELSE ${totalTokens} END`,
+                date: today,
+                updatedAt: sql`now()`,
+              },
+            });
 
-        // AIレスポンスメッセージを保存
-        const assistantMsgs = response.messages.filter(
-          (m) => m.role === "assistant"
-        );
-        for (const msg of assistantMsgs) {
-          const parts = Array.isArray(msg.content)
-            ? msg.content
-            : [{ type: "text", text: String(msg.content) }];
-          await db.insert(chatMessages).values({
-            sessionId,
-            role: "assistant",
-            parts: parts as unknown as Record<string, unknown>[],
-          });
-        }
+          // AIレスポンスメッセージを保存
+          const assistantMsgs = response.messages.filter(
+            (m) => m.role === "assistant"
+          );
+          for (const msg of assistantMsgs) {
+            const parts = Array.isArray(msg.content)
+              ? msg.content
+              : [{ type: "text", text: String(msg.content) }];
+            await db.insert(chatMessages).values({
+              sessionId,
+              role: "assistant",
+              parts: parts as unknown as Record<string, unknown>[],
+            });
+          }
+        });
       },
     });
 
