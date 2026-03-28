@@ -505,6 +505,13 @@
     "seats_remaining": "残席{count}",
     "seats_full": "満席"
   },
+  "notifications": {
+    "watchedOrganizerEventPublished": {
+      "title": "イベントが公開されました: {eventTitle}",
+      "titleNoName": "イベントが公開されました",
+      "body": "watch中の主催者がイベントを公開しました。"
+    }
+  },
   "aiChat": {
     "thinking": "考え中...",
     "beta": "試験運用中",

@@ -7,6 +7,7 @@ import { eq, and, isNull } from 'drizzle-orm';
 import { checkEventConflict, hasBarHostPermission } from '@/lib/events';
 import { sendNotification } from '@/lib/notify';
 import { NOTIFICATION_TYPES } from '@e-be/db';
+import { getLocale, getTranslations } from 'next-intl/server';
 
 type CreateEventDraftResult =
   | { error: string }
@@ -174,8 +175,10 @@ export async function publishEvent(eventId: string): Promise<ActionResult> {
       )
     );
 
-  const title = target.title?.trim() ? `イベントが公開されました: ${target.title}` : 'イベントが公開されました';
-  const body = 'watch中の主催者がイベントを公開しました。';
+  const locale = await getLocale();
+  const t = await getTranslations({ locale, namespace: 'notifications.watchedOrganizerEventPublished' });
+  const title = target.title?.trim() ? t('title', { eventTitle: target.title }) : t('titleNoName');
+  const body = t('body');
 
   await Promise.all(
     watchers.map(({ watcherUserId }) =>

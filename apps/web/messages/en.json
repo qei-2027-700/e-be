@@ -505,6 +505,13 @@
     "seats_remaining": "{count} seats left",
     "seats_full": "Full"
   },
+  "notifications": {
+    "watchedOrganizerEventPublished": {
+      "title": "New event published: {eventTitle}",
+      "titleNoName": "New event published",
+      "body": "An organizer you're watching published a new event."
+    }
+  },
   "aiChat": {
     "thinking": "Thinking...",
     "beta": "Beta",
