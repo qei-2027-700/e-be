@@ -194,14 +194,14 @@ export function EventEditForm({ event, eventId, hasPermission, locale, bars }: P
         <form ref={formRef} onSubmit={handleSave} className="space-y-4">
           {/* 会場 */}
           <div className="space-y-1">
-            <Label>{t("field_venue")}</Label>
+            <Label htmlFor="orgId">{t("field_venue")}</Label>
             {isDraft ? (
               <Select
                 value={orgId}
                 onValueChange={(val) => setOrgId(val ?? "")}
                 disabled={isPending}
               >
-                <SelectTrigger className="w-full" size="lg">
+                <SelectTrigger id="orgId" className="w-full" size="lg">
                   <SelectValue>
                     {orgId ? (bars.find((b) => b.id === orgId)?.name) : t("field_venue_placeholder")}
                   </SelectValue>
