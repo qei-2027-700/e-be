@@ -12,9 +12,10 @@ import { APP_NAME } from '@/lib/config';
 interface HamburgerMenuProps {
   locale: string;
   userType: 'user' | 'venue_user' | 'system_user';
+  unreadCount?: number;
 }
 
-export function HamburgerMenu({ locale, userType }: HamburgerMenuProps) {
+export function HamburgerMenu({ locale, userType, unreadCount = 0 }: HamburgerMenuProps) {
   const [open, setOpen] = useState(false);
   const t = useTranslations('dashboard.nav');
 
@@ -51,6 +52,11 @@ export function HamburgerMenu({ locale, userType }: HamburgerMenuProps) {
             >
               <Bell className="h-4 w-4" />
               {t('notifications')}
+              {unreadCount > 0 && (
+                <span className="ml-auto rounded-full bg-destructive px-1.5 py-0.5 text-[10px] font-bold text-destructive-foreground">
+                  {unreadCount > 99 ? "99+" : unreadCount}
+                </span>
+              )}
             </Link>
             <Link
               href={`/${locale}/dashboard/settings`}

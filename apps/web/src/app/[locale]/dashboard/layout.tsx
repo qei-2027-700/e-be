@@ -3,6 +3,9 @@ import { getLocale } from "next-intl/server";
 import { getUser, getDbUser, getUserType } from "@/lib/auth";
 import { AppHeader } from "@/components/layout/app-header";
 import { AppFooter } from "@/components/layout/app-footer";
+import { db } from "@/lib/db";
+import { notifications } from "@e-be/db/schema";
+import { and, eq, isNull, sql } from "drizzle-orm";
 
 export default async function DashboardLayout({
   children,
@@ -15,7 +18,15 @@ export default async function DashboardLayout({
     redirect(`/${locale}/auth/sign-in`);
   }
 
-  const userType = await getUserType(user.id);
+  const [userType, unreadResult] = await Promise.all([
+    getUserType(user.id),
+    db
+      .select({ count: sql<number>`cast(count(*) as int)` })
+      .from(notifications)
+      .where(and(eq(notifications.userId, dbUser.id), isNull(notifications.readAt), isNull(notifications.deletedAt)))
+      .then((r) => r[0]?.count ?? 0),
+  ]);
+  const unreadCount = unreadResult;
 
   return (
     <div className="relative flex min-h-screen flex-col bg-background">
@@ -28,6 +39,7 @@ export default async function DashboardLayout({
         userEmail={user.email ?? ""}
         userType={userType}
         locale={locale}
+        unreadCount={unreadCount}
       />
       <div className="flex-1">{children}</div>
       <AppFooter />

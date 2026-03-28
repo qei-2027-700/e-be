@@ -506,6 +506,11 @@
     "seats_full": "Full"
   },
   "notifications": {
+    "eventPending": {
+      "title": "New event application: {eventTitle}",
+      "titleNoName": "New event application received",
+      "body": "An eventer has submitted an event application. Please review the details."
+    },
     "watchedOrganizerEventPublished": {
       "title": "New event published: {eventTitle}",
       "titleNoName": "New event published",

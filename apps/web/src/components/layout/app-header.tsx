@@ -10,9 +10,10 @@ interface AppHeaderProps {
   userEmail: string;
   userType: "user" | "venue_user" | "system_user";
   locale: string;
+  unreadCount?: number;
 }
 
-export async function AppHeader({ userEmail, userType, locale }: AppHeaderProps) {
+export async function AppHeader({ userEmail, userType, locale, unreadCount = 0 }: AppHeaderProps) {
   const [t, tNav] = await Promise.all([
     getTranslations("dashboard"),
     getTranslations("dashboard.nav"),
@@ -30,10 +31,15 @@ export async function AppHeader({ userEmail, userType, locale }: AppHeaderProps)
           </span>
           <Link
             href={`/${locale}/dashboard/notifications`}
-            className="hidden md:inline-flex min-h-9 items-center justify-center rounded-lg border border-border bg-background px-2.5 text-[0.8rem] font-medium transition-colors hover:bg-muted cursor-pointer"
+            className="relative hidden md:inline-flex min-h-9 items-center justify-center rounded-lg border border-border bg-background px-2.5 text-[0.8rem] font-medium transition-colors hover:bg-muted cursor-pointer"
             aria-label={tNav("notifications")}
           >
             <Bell className="h-4 w-4" />
+            {unreadCount > 0 && (
+              <span className="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-destructive px-1 text-[10px] font-bold text-destructive-foreground">
+                {unreadCount > 99 ? "99+" : unreadCount}
+              </span>
+            )}
           </Link>
           {userType === "system_user" && (
             <Link
@@ -50,7 +56,7 @@ export async function AppHeader({ userEmail, userType, locale }: AppHeaderProps)
             </Button>
           </form>
           {/* SP のみハンバーガーメニュー */}
-          <HamburgerMenu locale={locale} userType={userType} />
+          <HamburgerMenu locale={locale} userType={userType} unreadCount={unreadCount} />
         </div>
       </div>
     </header>
