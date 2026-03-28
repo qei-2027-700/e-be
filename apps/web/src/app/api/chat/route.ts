@@ -149,19 +149,30 @@ export async function POST(req: Request) {
               },
             });
 
-          // AIレスポンスメッセージを保存
+          // AIレスポンスメッセージを UIMessage の parts 形式で保存
+          // response.messages は ModelMessage 形式（content が string | ContentPart[]）
+          // GET で読み出す際は UIMessage の parts として扱うため、テキスト部分のみ抽出する
           const assistantMsgs = response.messages.filter(
             (m) => m.role === "assistant"
           );
           for (const msg of assistantMsgs) {
-            const parts = Array.isArray(msg.content)
-              ? msg.content
-              : [{ type: "text", text: String(msg.content) }];
-            await db.insert(chatMessages).values({
-              sessionId,
-              role: "assistant",
-              parts: parts as unknown as Record<string, unknown>[],
-            });
+            const parts: { type: string; text: string }[] = [];
+            if (Array.isArray(msg.content)) {
+              for (const contentPart of msg.content) {
+                if (contentPart.type === "text" && contentPart.text) {
+                  parts.push({ type: "text", text: contentPart.text });
+                }
+              }
+            } else if (typeof msg.content === "string" && msg.content) {
+              parts.push({ type: "text", text: msg.content });
+            }
+            if (parts.length > 0) {
+              await db.insert(chatMessages).values({
+                sessionId,
+                role: "assistant",
+                parts: parts as unknown as Record<string, unknown>[],
+              });
+            }
           }
         });
       },
