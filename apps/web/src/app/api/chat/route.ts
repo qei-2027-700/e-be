@@ -9,7 +9,7 @@ import {
   chatSessions,
   chatMessages,
 } from "@e-be/db/schema";
-import { eq, sql, desc } from "drizzle-orm";
+import { and, eq, sql, desc } from "drizzle-orm";
 import { createTools } from "@/lib/ai/tools";
 import { buildSystemPrompt, type ChatPageContext } from "@/lib/ai/system-prompt";
 
@@ -23,20 +23,18 @@ const HISTORY_LIMIT = 20;
 const getTodayJST = () =>
   new Date().toLocaleDateString("en-CA", { timeZone: "Asia/Tokyo" });
 
-/** 今日の消費トークン数を返す（レコードがない or 日付が変わっていれば 0） */
+/** 今日の消費トークン数を返す（レコードがなければ 0） */
 async function getDailyTokens(userId: string): Promise<{ tokens: number; count: number }> {
   const today = getTodayJST();
   const [row] = await db
     .select({
       tokens: aiChatDailyUsage.tokens,
       count: aiChatDailyUsage.count,
-      date: aiChatDailyUsage.date,
     })
     .from(aiChatDailyUsage)
-    .where(eq(aiChatDailyUsage.userId, userId))
-    .limit(1);
+    .where(and(eq(aiChatDailyUsage.userId, userId), eq(aiChatDailyUsage.date, today)));
 
-  if (!row || row.date !== today) return { tokens: 0, count: 0 };
+  if (!row) return { tokens: 0, count: 0 };
   return { tokens: row.tokens, count: row.count };
 }
 
