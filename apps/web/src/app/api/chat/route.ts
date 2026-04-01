@@ -9,7 +9,7 @@ import {
   chatSessions,
   chatMessages,
 } from "@e-be/db/schema";
-import { and, eq, sql, desc } from "drizzle-orm";
+import { and, eq, sql, desc, isNull } from "drizzle-orm";
 import { createTools } from "@/lib/ai/tools";
 import { buildSystemPrompt, type ChatPageContext } from "@/lib/ai/system-prompt";
 
@@ -201,4 +201,27 @@ export async function POST(req: Request) {
   });
 
   return result.toUIMessageStreamResponse();
+}
+
+export async function DELETE() {
+  const dbUser = await getDbUser();
+  if (!dbUser) return new Response(null, { status: 401 });
+
+  // セッションを取得
+  const session = await db
+    .select({ id: chatSessions.id })
+    .from(chatSessions)
+    .where(and(eq(chatSessions.userId, dbUser.id), isNull(chatSessions.deletedAt)))
+    .limit(1)
+    .then((r) => r[0]);
+
+  if (!session) return new Response(null, { status: 204 });
+
+  // メッセージを論理削除
+  await db
+    .update(chatMessages)
+    .set({ deletedAt: sql`now()` })
+    .where(and(eq(chatMessages.sessionId, session.id), isNull(chatMessages.deletedAt)));
+
+  return new Response(null, { status: 204 });
 }

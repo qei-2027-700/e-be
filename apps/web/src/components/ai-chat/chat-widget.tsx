@@ -16,6 +16,7 @@ import {
   FileEdit,
   Search,
   Lightbulb,
+  RotateCcw,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -122,6 +123,18 @@ export function ChatWidget() {
     setInput("");
   };
 
+  const handleReset = async () => {
+    try {
+      const res = await fetch("/api/chat", { method: "DELETE" });
+      if (!res.ok) throw new Error("Reset failed");
+      setMessages([]);
+      toast.success(t("resetSuccess"));
+    } catch (error) {
+      console.error("Failed to reset chat:", error);
+      toast.error(t("resetError") || "Failed to reset");
+    }
+  };
+
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey && !e.nativeEvent.isComposing) {
       e.preventDefault();
@@ -167,14 +180,27 @@ export function ChatWidget() {
                 </p>
               </div>
             </div>
-            <Button
-              variant="ghost"
-              size="icon-sm"
-              onClick={() => setIsOpen(false)}
-              className="transition-transform hover:scale-110"
-            >
-              <X className="size-4" />
-            </Button>
+            <div className="flex items-center gap-1">
+              {messages.length > 0 && !isLoading && (
+                <Button
+                  variant="ghost"
+                  size="icon-sm"
+                  onClick={handleReset}
+                  className="transition-transform hover:scale-110"
+                  title={t("reset")}
+                >
+                  <RotateCcw className="size-4" />
+                </Button>
+              )}
+              <Button
+                variant="ghost"
+                size="icon-sm"
+                onClick={() => setIsOpen(false)}
+                className="transition-transform hover:scale-110"
+              >
+                <X className="size-4" />
+              </Button>
+            </div>
           </div>
 
           {/* Messages */}
