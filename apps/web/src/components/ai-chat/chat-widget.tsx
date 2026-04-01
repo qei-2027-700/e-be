@@ -12,6 +12,10 @@ import {
   AlertCircle,
   Copy,
   Check,
+  CalendarPlus,
+  FileEdit,
+  Search,
+  Lightbulb,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -61,6 +65,17 @@ export function ChatWidget() {
     ];
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [JSON.stringify(pageContext)]);
+
+  const capabilities = useMemo(
+    () => [
+      { icon: CalendarPlus, title: t("capabilities.createEvent"), desc: t("capabilities.createEventDesc") },
+      { icon: FileEdit, title: t("capabilities.editSubmit"), desc: t("capabilities.editSubmitDesc") },
+      { icon: Search, title: t("capabilities.search"), desc: t("capabilities.searchDesc") },
+      { icon: Lightbulb, title: t("capabilities.consult"), desc: t("capabilities.consultDesc") },
+    ],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [t]
+  );
 
   // pageContext が変化したとき transport を再生成する
   // useChat は初期値しか参照しないため useMemo で依存を管理する
@@ -192,11 +207,21 @@ export function ChatWidget() {
                 </div>
                 <div>
                   <p className="text-sm font-medium">{t("assistantName")}</p>
-                  <p className="mt-1 text-xs text-muted-foreground">
-                    {t("welcomeMessage").split("\n").map((line, i) => (
-                      <span key={i}>{i > 0 && <br />}{line}</span>
-                    ))}
-                  </p>
+                </div>
+                <div className="w-full grid grid-cols-2 gap-1.5 px-2">
+                  {capabilities.map((capability) => {
+                    const Icon = capability.icon;
+                    return (
+                      <div
+                        key={capability.title}
+                        className="rounded-xl bg-muted/30 p-2 flex flex-col gap-0.5"
+                      >
+                        <Icon className="size-3.5 text-primary mb-0.5" />
+                        <p className="text-[11px] font-medium text-foreground">{capability.title}</p>
+                        <p className="text-[10px] text-muted-foreground">{capability.desc}</p>
+                      </div>
+                    );
+                  })}
                 </div>
                 {usage && (
                   <p className="text-[11px] text-muted-foreground/60">

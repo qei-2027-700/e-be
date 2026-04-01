@@ -542,6 +542,16 @@
       "listOrgEvents": "このバーのイベントを見せて",
       "createEventForOrg": "新しいイベントを作成したい"
     },
+    "capabilities": {
+      "createEvent": "イベント作成",
+      "createEventDesc": "タイトルや日時を伝えるだけで下書きを作成",
+      "editSubmit": "修正・申請サポート",
+      "editSubmitDesc": "既存イベントの修正や申請手続きを代行",
+      "search": "イベント・バー検索",
+      "searchDesc": "登録済みの一覧をすぐに表示",
+      "consult": "企画相談",
+      "consultDesc": "集客・告知文の改善を提案"
+    },
     "tool": {
       "createEvent": {
         "error": "イベントの作成に失敗しました（{error}）",

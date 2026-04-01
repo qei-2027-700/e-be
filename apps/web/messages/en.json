@@ -542,6 +542,16 @@
       "listOrgEvents": "Show events for this venue",
       "createEventForOrg": "Create a new event"
     },
+    "capabilities": {
+      "createEvent": "Create Event",
+      "createEventDesc": "Create a draft just by telling the title and time",
+      "editSubmit": "Edit & Submit Support",
+      "editSubmitDesc": "Handle editing and submission for existing events",
+      "search": "Event & Venue Search",
+      "searchDesc": "Quickly display registered venues and events",
+      "consult": "Planning Consultation",
+      "consultDesc": "Suggest improvements for promotion and announcements"
+    },
     "tool": {
       "createEvent": {
         "error": "Failed to create event ({error})",
