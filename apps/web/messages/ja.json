@@ -532,6 +532,16 @@
     "open": "AIチャットを開く",
     "fetchError": "チャット履歴の取得に失敗しました。ページをリロードしてください。",
     "toolExecuting": "ツールを実行中...",
+    "suggestions": {
+      "createEvent": "イベントを作成したい",
+      "listEvents": "下書きイベントを見せて",
+      "howToSubmit": "申請の仕方は？",
+      "listBars": "登録バーを教えて",
+      "submitThisEvent": "このイベントを申請するには？",
+      "improveDescription": "説明文を改善して",
+      "listOrgEvents": "このバーのイベントを見せて",
+      "createEventForOrg": "新しいイベントを作成したい"
+    },
     "tool": {
       "createEvent": {
         "error": "イベントの作成に失敗しました（{error}）",

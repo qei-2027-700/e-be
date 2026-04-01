@@ -532,6 +532,16 @@
     "open": "Open AI chat",
     "fetchError": "Failed to fetch chat history. Please refresh the page.",
     "toolExecuting": "Executing tool...",
+    "suggestions": {
+      "createEvent": "I want to create an event",
+      "listEvents": "Show my draft events",
+      "howToSubmit": "How do I submit an event?",
+      "listBars": "Show registered venues",
+      "submitThisEvent": "How do I submit this event?",
+      "improveDescription": "Improve the description",
+      "listOrgEvents": "Show events for this venue",
+      "createEventForOrg": "Create a new event"
+    },
     "tool": {
       "createEvent": {
         "error": "Failed to create event ({error})",
