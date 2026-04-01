@@ -46,6 +46,22 @@ export function ChatWidget() {
   const t = useTranslations("aiChat");
   const { pageContext } = useChatPageContext();
 
+  const suggestions = useMemo(() => {
+    if (pageContext?.eventId) {
+      return [t("suggestions.submitThisEvent"), t("suggestions.improveDescription")];
+    }
+    if (pageContext?.orgId) {
+      return [t("suggestions.listOrgEvents"), t("suggestions.createEventForOrg")];
+    }
+    return [
+      t("suggestions.createEvent"),
+      t("suggestions.listEvents"),
+      t("suggestions.howToSubmit"),
+      t("suggestions.listBars"),
+    ];
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [JSON.stringify(pageContext)]);
+
   // pageContext が変化したとき transport を再生成する
   // useChat は初期値しか参照しないため useMemo で依存を管理する
   const transport = useMemo(
@@ -190,6 +206,22 @@ export function ChatWidget() {
                     })}
                   </p>
                 )}
+                <div className="flex flex-wrap justify-center gap-1.5">
+                  {suggestions.map((suggestion) => (
+                    <button
+                      key={suggestion}
+                      onClick={() => sendMessage({ text: suggestion })}
+                      disabled={isLoading || isLimitReached}
+                      className={cn(
+                        "rounded-full border border-border/60 bg-background/60 px-3 py-1.5 text-xs text-foreground/80",
+                        "transition-colors hover:border-primary/40 hover:bg-primary/5 hover:text-primary",
+                        "disabled:cursor-not-allowed disabled:opacity-40"
+                      )}
+                    >
+                      {suggestion}
+                    </button>
+                  ))}
+                </div>
               </div>
             )}
 
