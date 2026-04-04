@@ -164,15 +164,24 @@ export function EventCalendar({
               </span>
 
               {/* イベントチップ（最大2件表示） */}
-              {dayEvents.slice(0, 2).map((event) => (
-                <div
-                  key={event.id}
-                  title={event.title ?? ""}
-                  className="truncate rounded bg-primary/15 px-1 py-px text-[10px] leading-tight text-primary"
-                >
-                  {event.title ?? (locale === "ja" ? "イベント" : "Event")}
-                </div>
-              ))}
+              {dayEvents.slice(0, 2).map((event) => {
+                const isPending = event.status === "pending";
+                return (
+                  <div
+                    key={event.id}
+                    title={event.title ?? ""}
+                    className={cn(
+                      "truncate rounded px-1 py-px text-[10px] leading-tight",
+                      isPending
+                        ? "bg-amber-500/15 text-amber-600 dark:text-amber-400"
+                        : "bg-primary/15 text-primary"
+                    )}
+                  >
+                    {isPending && "⏳ "}
+                    {event.title ?? (locale === "ja" ? "イベント" : "Event")}
+                  </div>
+                );
+              })}
 
               {/* 3件以上の場合 */}
               {dayEvents.length > 2 && (

@@ -228,3 +228,72 @@ export async function publishEvent(eventId: string): Promise<ActionResult> {
 
   return { ok: true };
 }
+
+/** pending → published（バーのオーナーが承認） */
+export async function approveEvent(eventId: string): Promise<ActionResult> {
+  const dbUser = await getDbUser();
+  if (!dbUser) return { error: 'unauthorized' };
+
+  const [target] = await db
+    .select({
+      id: events.id,
+      status: events.status,
+      orgId: events.orgId,
+      userId: events.userId,
+      title: events.title,
+      startAt: events.startAt,
+      endAt: events.endAt,
+    })
+    .from(events)
+    .where(and(eq(events.id, eventId), isNull(events.deletedAt)))
+    .limit(1);
+
+  if (!target) return { error: 'not_found' };
+  if (target.status !== 'pending') return { error: 'forbidden' };
+  if (!target.orgId) return { error: 'venue_required' };
+
+  // バーのオーナー権限チェック
+  const role = await getOrgRole(dbUser.id, target.orgId);
+  if (role !== 'owner') return { error: 'forbidden' };
+
+  // 重複チェック（承認時にも念のため行う）
+  if (target.startAt && target.endAt) {
+    const conflict = await checkEventConflict(target.orgId, target.startAt, target.endAt, eventId);
+    if (conflict) return { error: 'conflict' };
+  }
+
+  await db
+    .update(events)
+    .set({ status: 'published', updatedAt: new Date() })
+    .where(eq(events.id, eventId));
+
+  // 1. 主催者に「承認されました」通知を送る（TODO: 新しい通知タイプが必要なら追加するが、まずはログ的に保存）
+  // 2. 主催者の watcher に「イベントが公開されました」通知を送る
+  const watchers = await db
+    .select({ watcherUserId: userWatches.watcherUserId })
+    .from(userWatches)
+    .where(and(eq(userWatches.targetUserId, target.userId), isNull(userWatches.deletedAt)));
+
+  const locale = await getLocale();
+  const t = await getTranslations({
+    locale,
+    namespace: 'notifications.watchedOrganizerEventPublished',
+  });
+  const title = target.title?.trim() ? t('title', { eventTitle: target.title }) : t('titleNoName');
+  const body = t('body');
+
+  await Promise.all(
+    watchers.map(({ watcherUserId }) =>
+      sendNotification(
+        watcherUserId,
+        NOTIFICATION_TYPES.WATCHED_ORGANIZER_EVENT_PUBLISHED,
+        title,
+        body,
+        { eventId },
+        `watch:${target.userId}:event_published:${eventId}`
+      )
+    )
+  );
+
+  return { ok: true };
+}

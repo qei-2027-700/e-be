@@ -8,8 +8,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { EventCalendar } from "@/components/event-calendar";
-import { getEventsForCalendar } from "@/lib/events";
+import { getEventsForCalendar, getPendingEventsForOrg } from "@/lib/events";
 import { PageContextRegister } from "@/components/ai-chat/page-context-register";
+import { PendingEventList } from "./pending-event-list";
 
 type Props = {
   params: Promise<{ locale: string; orgId: string }>;
@@ -34,13 +35,14 @@ export default async function OrgDashboardPage({ params }: Props) {
   const calendarFrom = new Date(now.getFullYear(), now.getMonth(), 1);
   const calendarTo = new Date(now.getFullYear(), now.getMonth() + 3, 0);
 
-  const [[org], calendarEvents] = await Promise.all([
+  const [[org], calendarEvents, pendingEvents] = await Promise.all([
     db
       .select()
       .from(organizations)
       .where(and(eq(organizations.id, orgId), isNull(organizations.deletedAt)))
       .limit(1),
     getEventsForCalendar({ orgId, from: calendarFrom, to: calendarTo }),
+    role === "owner" ? getPendingEventsForOrg(orgId) : Promise.resolve([]),
   ]);
 
   if (!org) {
@@ -70,6 +72,10 @@ export default async function OrgDashboardPage({ params }: Props) {
             </Link>
           )}
         </div>
+
+        {role === "owner" && pendingEvents.length > 0 && (
+          <PendingEventList initialEvents={pendingEvents} />
+        )}
 
         <Card>
           <CardHeader>

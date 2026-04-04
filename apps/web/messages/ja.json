@@ -213,7 +213,13 @@
       "back": "ダッシュボードへ戻る",
       "settings": "設定",
       "your_role": "あなたのロール",
-      "not_member": "この組織のメンバーではありません"
+      "not_member": "この組織のメンバーではありません",
+      "pending_events_title": "承認待ちのイベント",
+      "pending_events_empty": "承認待ちのイベントはありません",
+      "approve_button": "承認する",
+      "approving": "承認中...",
+      "approve_success": "イベントを承認しました",
+      "approve_error": "承認に失敗しました"
     },
     "settings": {
       "title": "組織設定",

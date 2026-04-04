@@ -213,7 +213,13 @@
       "back": "Back to Dashboard",
       "settings": "Settings",
       "your_role": "Your Role",
-      "not_member": "You are not a member of this organization"
+      "not_member": "You are not a member of this organization",
+      "pending_events_title": "Pending Events",
+      "pending_events_empty": "No pending events",
+      "approve_button": "Approve",
+      "approving": "Approving...",
+      "approve_success": "Event approved",
+      "approve_error": "Failed to approve"
     },
     "settings": {
       "title": "Organization Settings",

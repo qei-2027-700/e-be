@@ -175,6 +175,7 @@ export type CalendarEventData = {
   id: string;
   title: string | null;
   startAt: string | null; // ISO 8601 文字列（Server→Client 境界でシリアライズ済み）
+  status: 'published' | 'pending';
 };
 
 type GetEventsForCalendarOptions = {
@@ -186,7 +187,7 @@ type GetEventsForCalendarOptions = {
 
 /**
  * カレンダー表示用に公開済みイベントを取得する。
- * startAt が from〜to の範囲内かつ status が 'published' のイベントを返す。
+ * orgId 指定時は承認待ち（pending）も含める。
  */
 export async function getEventsForCalendar({
   orgId,
@@ -194,7 +195,6 @@ export async function getEventsForCalendar({
   to,
 }: GetEventsForCalendarOptions): Promise<CalendarEventData[]> {
   const conditions = [
-    eq(events.status, "published"),
     isNull(events.deletedAt),
     gte(events.startAt, from),
     lte(events.startAt, to),
@@ -202,6 +202,9 @@ export async function getEventsForCalendar({
 
   if (orgId) {
     conditions.push(eq(events.orgId, orgId));
+    conditions.push(inArray(events.status, ["published", "pending"]));
+  } else {
+    conditions.push(eq(events.status, "published"));
   }
 
   const rows = await db
@@ -209,6 +212,7 @@ export async function getEventsForCalendar({
       id: events.id,
       title: events.title,
       startAt: events.startAt,
+      status: events.status,
     })
     .from(events)
     .where(and(...conditions));
@@ -217,6 +221,48 @@ export async function getEventsForCalendar({
     id: row.id,
     title: row.title,
     startAt: row.startAt?.toISOString() ?? null,
+    status: row.status as 'published' | 'pending',
+  }));
+}
+
+export type PendingEventItem = {
+  id: string;
+  title: string | null;
+  userName: string | null;
+  startAt: string | null;
+  endAt: string | null;
+  createdAt: string;
+};
+
+/** バーオーナー用に承認待ち（pending）イベント一覧を取得する */
+export async function getPendingEventsForOrg(orgId: string): Promise<PendingEventItem[]> {
+  const rows = await db
+    .select({
+      id: events.id,
+      title: events.title,
+      userName: users.name,
+      startAt: events.startAt,
+      endAt: events.endAt,
+      createdAt: events.createdAt,
+    })
+    .from(events)
+    .innerJoin(users, eq(events.userId, users.id))
+    .where(
+      and(
+        eq(events.orgId, orgId),
+        eq(events.status, 'pending'),
+        isNull(events.deletedAt)
+      )
+    )
+    .orderBy(desc(events.createdAt));
+
+  return rows.map((row) => ({
+    id: row.id,
+    title: row.title,
+    userName: row.userName,
+    startAt: row.startAt?.toISOString() ?? null,
+    endAt: row.endAt?.toISOString() ?? null,
+    createdAt: row.createdAt.toISOString(),
   }));
 }
 
