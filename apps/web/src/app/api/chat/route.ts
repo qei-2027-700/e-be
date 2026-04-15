@@ -89,14 +89,20 @@ export async function POST(req: Request) {
 
   // ツール呼び出し関連パーツ（tool-call / tool-result 等）は DB 保存時に除外しているため、
   // 不完全なペアが履歴に残っていると Gemini がエラーになる。安全のため text/reasoning のみ残す。
+  // アシスタントがツールのみを返してテキストなしだった場合、メッセージを丸ごと削除すると
+  // user → user の連続になり Gemini がエラーになるため、プレースホルダーで保持する。
   const safeMessages: UIMessage[] = messages
-    .map((msg) => ({
-      ...msg,
-      parts: msg.parts.filter(
+    .map((msg) => {
+      const textParts = msg.parts.filter(
         (p): p is Extract<UIMessage["parts"][number], { type: "text" | "reasoning" }> =>
           p.type === "text" || p.type === "reasoning"
-      ),
-    }))
+      );
+      if (msg.role === "assistant" && textParts.length === 0 && msg.parts.length > 0) {
+        // ツール呼び出しのみで本文テキストがないターン → 空削除を防ぐためプレースホルダー挿入
+        return { ...msg, parts: [{ type: "text" as const, text: "…" }] };
+      }
+      return { ...msg, parts: textParts };
+    })
     .filter((msg) => msg.parts.length > 0);
 
   const modelMessages = await convertToModelMessages(safeMessages);
