@@ -1,6 +1,6 @@
 'use server';
 
-import { getDbUser, getUserType } from '@/lib/auth';
+import { getDbUser, getUserType, getOrgRole } from '@/lib/auth';
 import { db } from '@/lib/db';
 import { events, userWatches } from '@e-be/db/schema';
 import { eq, and, isNull } from 'drizzle-orm';

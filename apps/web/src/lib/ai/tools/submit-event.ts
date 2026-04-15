@@ -27,7 +27,7 @@ export const createSubmitEventTool = (dbUser: DbUser) =>
     execute: async ({ eventId }) => {
       if (!dbUser) return { error: "ログインが必要です" };
       const result = await submitEvent(eventId);
-      if (result.error) {
+      if ('error' in result) {
         return { error: ERROR_MESSAGES[result.error] ?? result.error };
       }
       return { ok: true, eventId, message: "申請が完了しました。バーからの承認をお待ちください。" };
