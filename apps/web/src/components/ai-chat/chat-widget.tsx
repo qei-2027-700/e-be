@@ -24,6 +24,7 @@ import { toolResultRegistry } from "./tool-results";
 import { renderTextWithLinks } from "./render-text";
 import { useTranslations } from "next-intl";
 import { useChatPageContext } from "@/contexts/chat-page-context";
+import { ChatSendProvider } from "@/contexts/chat-send-context";
 import { toast } from "sonner";
 import { MessageResponse } from "@/components/ai-elements/message";
 
@@ -204,8 +205,9 @@ export function ChatWidget() {
           </div>
 
           {/* Messages */}
-          <div className="flex-1 space-y-3 overflow-y-auto p-4">
-            {historyLoading && (
+          <ChatSendProvider value={{ sendMessage, isLoading }}>
+            <div className="flex-1 space-y-3 overflow-y-auto p-4">
+              {historyLoading && (
               <div className="space-y-3">
                 {[1, 2, 3].map((n) => (
                   <div
@@ -400,8 +402,9 @@ export function ChatWidget() {
               </div>
             )}
 
-            <div ref={messagesEndRef} />
-          </div>
+              <div ref={messagesEndRef} />
+            </div>
+          </ChatSendProvider>
 
           {/* Input */}
           <div className="shrink-0 border-t border-white/20 bg-white/5 p-3">

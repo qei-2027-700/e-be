@@ -4,6 +4,7 @@ import { GetCurrentDateTimeResult } from "./get-current-date-time-result";
 import { CreateEventResult } from "./create-event-result";
 import { UpdateEventResult } from "./update-event-result";
 import { SubmitEventResult } from "./submit-event-result";
+import { SuggestRepliesResult } from "./suggest-replies-result";
 
 // ツール名 → コンポーネント のレジストリ
 // output の型は各コンポーネント側で管理するため unknown で受け取る
@@ -22,6 +23,9 @@ export const toolResultRegistry: Record<
     output: unknown;
   }>,
   "tool-submitEvent": SubmitEventResult as React.ComponentType<{
+    output: unknown;
+  }>,
+  "tool-suggestReplies": SuggestRepliesResult as React.ComponentType<{
     output: unknown;
   }>,
   // tool-listEvents と tool-listBars は中間ツールなので UI 表示なし
