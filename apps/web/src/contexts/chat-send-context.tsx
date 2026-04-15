@@ -1,10 +1,9 @@
 "use client";
 
 import { createContext, useContext } from "react";
-import type { UseChatHelpers } from "@ai-sdk/react";
 
 type ChatSendContextValue = {
-  sendMessage: UseChatHelpers["sendMessage"];
+  sendMessage: (options: { text: string }) => void;
   isLoading: boolean;
 };
 
