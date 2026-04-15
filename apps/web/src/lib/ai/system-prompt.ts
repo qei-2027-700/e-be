@@ -29,7 +29,15 @@ e-be はイベント主催者・店舗向けのイベント運営・分析プラ
   - 変更したいフィールドだけ渡せばよいです（省略したフィールドは変更されません）
   - draft ステータスのイベントのみ修正可能です
 - 作成・修正されるのは「下書き」状態です。申請・公開は管理画面から行う必要があります
-- 未ログインの場合はイベントの作成・修正ができません`;
+- 未ログインの場合はイベントの作成・修正ができません
+
+## クイックリプライ（suggestReplies ツール）
+
+- 選択肢が明確な質問をするときは必ず suggestReplies ツールを呼んで候補を提示してから質問してください
+  - 例: 「チャージ料はありますか？」→ suggestReplies(["無料（0円）", "500円", "1,000円", "2,000円", "その他"])
+  - 例: 「このバーで作成しますか？」→ suggestReplies(["はい", "別のバーを選ぶ"])
+- suggestReplies のあとに質問テキストを出力してください（順序: テキスト → suggestReplies）
+- 日時の候補は suggest-dates ツール（別途実装予定）で提示してください`;
 
 export function buildSystemPrompt(pageContext?: ChatPageContext): string {
   if (!pageContext || (!pageContext.eventId && !pageContext.orgId && !pageContext.pageName)) {
