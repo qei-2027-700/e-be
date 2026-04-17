@@ -3,7 +3,6 @@
 import { AlertCircle, Building, ChevronRight } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useChatSend } from "@/contexts/chat-send-context";
-import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 type Output =
