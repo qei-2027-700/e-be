@@ -588,6 +588,12 @@
           "invalid_end_at": "Invalid end date/time format",
           "invalid_date_range": "End date/time must be after start date/time"
         }
+      },
+      "listBars": {
+        "title": "Bar List",
+        "selectBar": "Click a bar to select it",
+        "noBars": "No bars available",
+        "error": "Failed to fetch bars ({error})"
       }
     }
   }
