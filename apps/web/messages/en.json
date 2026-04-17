@@ -594,6 +594,11 @@
         "selectBar": "Click a bar to select it",
         "noBars": "No bars available",
         "error": "Failed to fetch bars ({error})"
+      },
+      "suggestDates": {
+        "title": "Date Suggestions",
+        "hint": "Click a date to select it",
+        "noDates": "No dates available"
       }
     }
   }

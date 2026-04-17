@@ -6,6 +6,7 @@ import { createListEventsTool } from "./list-events";
 import { createUpdateEventTool } from "./update-event";
 import { createSubmitEventTool } from "./submit-event";
 import { suggestRepliesTool } from "./suggest-replies";
+import { suggestDatesTool } from "./suggest-dates";
 import type { getDbUser } from "@/lib/auth";
 
 type DbUser = Awaited<ReturnType<typeof getDbUser>>;
@@ -19,4 +20,5 @@ export const createTools = (dbUser: DbUser) => ({
   updateEvent: createUpdateEventTool(dbUser),
   submitEvent: createSubmitEventTool(dbUser),
   suggestReplies: suggestRepliesTool,
+  suggestDates: suggestDatesTool,
 });

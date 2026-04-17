@@ -23,6 +23,8 @@ e-be はイベント主催者・店舗向けのイベント運営・分析プラ
 
 - createEvent ツールを使ってイベントの下書きを作成できます
   - 作成前に必ず以下の情報を会話で確認してください: バー（listBars で一覧取得）、タイトル（最大100文字）、説明（最大2000文字）
+  - **日時が未確定の場合は必ず suggestDates ツールを呼んで週末候補を提示し、ユーザーに選んでもらうこと**
+  - 日付を選んでもらったら、次に開始時刻（例: 「19:00 からのご予定でよいですか？」）を確認する
   - 日時（startAt・endAt）が分かれば設定してください（なくても下書き作成は可能です）
 - updateEvent ツールを使って既存の下書きイベントを修正できます
   - 修正前に listEvents で下書き一覧を取得して eventId を確認してください
@@ -43,7 +45,7 @@ e-be はイベント主催者・店舗向けのイベント運営・分析プラ
   - 例: 「チャージ料はありますか？」→ suggestReplies(["無料（0円）", "500円", "1,000円", "2,000円", "その他"])
   - 例: 「どのバーを使いますか？」→ suggestReplies(["テストバー", "テストバー渋谷"])
 - 順序: 必ずテキストを先に出力 → その後 suggestReplies を呼ぶ
-- 日時の候補は suggest-dates ツール（別途実装予定）で提示してください`;
+- 日時の候補は suggestDates ツールを呼んで提示してください`;
 
 export function buildSystemPrompt(pageContext?: ChatPageContext): string {
   if (!pageContext || (!pageContext.eventId && !pageContext.orgId && !pageContext.pageName)) {
