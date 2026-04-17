@@ -5,6 +5,7 @@ import { CreateEventResult } from "./create-event-result";
 import { UpdateEventResult } from "./update-event-result";
 import { SubmitEventResult } from "./submit-event-result";
 import { SuggestRepliesResult } from "./suggest-replies-result";
+import { ListBarsResult } from "./list-bars-result";
 
 // ツール名 → コンポーネント のレジストリ
 // output の型は各コンポーネント側で管理するため unknown で受け取る
@@ -28,5 +29,8 @@ export const toolResultRegistry: Record<
   "tool-suggestReplies": SuggestRepliesResult as React.ComponentType<{
     output: unknown;
   }>,
-  // tool-listEvents と tool-listBars は中間ツールなので UI 表示なし
+  "tool-listBars": ListBarsResult as React.ComponentType<{
+    output: unknown;
+  }>,
+  // tool-listEvents は中間ツールなので UI 表示なし
 };
