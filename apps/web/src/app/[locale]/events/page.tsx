@@ -4,7 +4,8 @@ import { EventsFilter } from "./events-filter";
 import { EventsList } from "./events-list";
 import { AppFooter } from "@/components/layout/app-footer";
 import { PublicHeader } from "@/components/layout/public-header";
-import { getUser } from "@/lib/auth";
+import { getUser, getDbUser } from "@/lib/auth";
+import { getWatchedUserIds } from "@/lib/actions/watch";
 
 const PAGE_SIZE = 12;
 
@@ -14,20 +15,18 @@ type SearchParams = Promise<{
 }>;
 
 export default async function EventsPage({ searchParams }: { searchParams: SearchParams }) {
-  const [{ area, line }, user, availableLines] = await Promise.all([
+  const [{ area, line }, user, dbUser, availableLines] = await Promise.all([
     searchParams,
     getUser(),
+    getDbUser(),
     getAvailableLines(),
   ]);
   const t = await getTranslations("events");
 
-  // 初回表示分を取得（1件多く取得して hasNext を判定）
-  const items = await searchPublicEvents({
-    area,
-    line,
-    limit: PAGE_SIZE + 1,
-    offset: 0,
-  });
+  const [items, watchedUserIds] = await Promise.all([
+    searchPublicEvents({ area, line, limit: PAGE_SIZE + 1, offset: 0 }),
+    dbUser ? getWatchedUserIds(dbUser.id) : Promise.resolve([]),
+  ]);
 
   const hasNext = items.length > PAGE_SIZE;
   const initialEvents = hasNext ? items.slice(0, PAGE_SIZE) : items;
@@ -50,6 +49,8 @@ export default async function EventsPage({ searchParams }: { searchParams: Searc
             initialHasNext={hasNext}
             area={area}
             line={line}
+            loggedInUserId={dbUser?.id ?? null}
+            watchedUserIds={watchedUserIds}
           />
         </div>
       </main>

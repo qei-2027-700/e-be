@@ -7,6 +7,7 @@ import { useTranslations, useLocale } from "next-intl";
 import { Button } from "@/components/ui/button";
 import type { PublicEventItem } from "@/lib/events";
 import { fetchPublicEventsAction } from "./actions";
+import { OrganizerWatchButton } from "./[eventId]/organizer-watch-button";
 
 const PAGE_SIZE = 12;
 
@@ -15,10 +16,13 @@ type Props = {
   initialHasNext: boolean;
   area?: string;
   line?: string;
+  loggedInUserId?: string | null;
+  watchedUserIds?: string[];
 };
 
-export function EventsList({ initialEvents, initialHasNext, area, line }: Props) {
+export function EventsList({ initialEvents, initialHasNext, area, line, loggedInUserId, watchedUserIds = [] }: Props) {
   const t = useTranslations("events");
+  const tDetail = useTranslations("event_detail");
   const locale = useLocale();
   const [items, setItems] = useState<PublicEventItem[]>(initialEvents);
   const [hasMore, setHasMore] = useState(initialHasNext);
@@ -152,7 +156,34 @@ export function EventsList({ initialEvents, initialHasNext, area, line }: Props)
                   ) : (
                     <p className="truncate">{event.orgName}</p>
                   )}
+                </div>
 
+                {/* 主催者 + お気に入りボタン */}
+                <div className="flex items-center justify-between gap-2">
+                  <span className="text-xs text-muted-foreground truncate">
+                    {event.organizerName ?? tDetail("organizer_unknown")}
+                  </span>
+                  {loggedInUserId !== event.organizerUserId && (
+                    loggedInUserId ? (
+                      <OrganizerWatchButton
+                        targetUserId={event.organizerUserId}
+                        initialWatching={watchedUserIds.includes(event.organizerUserId)}
+                        watchLabel={tDetail("watch_organizer")}
+                        unwatchLabel={tDetail("unwatch_organizer")}
+                        watchSuccess={tDetail("toast_watch_success")}
+                        unwatchSuccess={tDetail("toast_unwatch_success")}
+                        errorLabel={tDetail("toast_watch_error")}
+                      />
+                    ) : (
+                      <Link
+                        href={`/${locale}/auth/sign-in?next=/${locale}/events`}
+                        aria-label={tDetail("watch_organizer")}
+                        className="p-2 text-muted-foreground hover:text-foreground transition-colors"
+                      >
+                        ♡
+                      </Link>
+                    )
+                  )}
                 </div>
 
                 <div className="mt-auto flex flex-wrap items-center gap-x-3 gap-y-1 pt-2 text-xs">
