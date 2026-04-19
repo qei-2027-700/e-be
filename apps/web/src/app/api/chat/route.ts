@@ -17,7 +17,7 @@ const google = createGoogleGenerativeAI({
   apiKey: process.env.GEMINI_API_KEY ?? "",
 });
 
-const TOKEN_LIMIT = parseInt(process.env.AI_CHAT_TOKEN_LIMIT ?? "15000", 10);
+const TOKEN_LIMIT = parseInt(process.env.AI_CHAT_TOKEN_LIMIT ?? "200000", 10);
 const HISTORY_LIMIT = 20;
 
 const getTodayJST = () =>
