@@ -1,6 +1,7 @@
 "use server";
 
 import { db } from "@/lib/db";
+import { getDbUser } from "@/lib/auth";
 import { operatorApplications, organizations } from "@e-be/db/schema";
 import { eq, and, isNull } from "drizzle-orm";
 
@@ -10,7 +11,12 @@ export async function submitApplication(
   _prev: State,
   formData: FormData
 ): Promise<State> {
-  const userId = String(formData.get("userId") ?? "").trim();
+  const dbUser = await getDbUser();
+  if (!dbUser) {
+    return { success: false, error: "Unauthorized" };
+  }
+
+  const userId = dbUser.id;
   const companyName = String(formData.get("companyName") ?? "").trim();
   const orgName = String(formData.get("orgName") ?? "").trim();
   const orgSlug = String(formData.get("orgSlug") ?? "").trim().toLowerCase();

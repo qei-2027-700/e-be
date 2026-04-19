@@ -15,7 +15,6 @@ type Props = {
   companyName: string;
   address: string | null;
   description: string | null;
-  reviewerUserId: string;
   locale: string;
 };
 
@@ -27,7 +26,6 @@ export function ReviewActions({
   companyName,
   address,
   description,
-  reviewerUserId,
   locale,
 }: Props) {
   const t = useTranslations("admin");
@@ -62,7 +60,6 @@ export function ReviewActions({
         <input type="hidden" name="companyName" value={companyName} />
         <input type="hidden" name="address" value={address ?? ""} />
         <input type="hidden" name="description" value={description ?? ""} />
-        <input type="hidden" name="reviewerUserId" value={reviewerUserId} />
         <input type="hidden" name="locale" value={locale} />
         <Button
           type="submit"
@@ -77,7 +74,6 @@ export function ReviewActions({
 
       <form action={rejectAction} className="space-y-2">
         <input type="hidden" name="applicationId" value={applicationId} />
-        <input type="hidden" name="reviewerUserId" value={reviewerUserId} />
         <input type="hidden" name="locale" value={locale} />
         <div className="space-y-1.5">
           <Label htmlFor={`note-${applicationId}`} className="text-xs">

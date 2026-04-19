@@ -121,7 +121,6 @@ export default async function AdminApplicationsPage() {
                       companyName={app.companyName}
                       address={app.address}
                       description={app.description}
-                      reviewerUserId={user.id}
                       locale={locale}
                     />
                   )}
