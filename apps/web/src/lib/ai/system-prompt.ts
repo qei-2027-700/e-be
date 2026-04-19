@@ -46,14 +46,17 @@ e-be はイベント主催者・店舗向けのイベント運営・分析プラ
 - 順序: 必ずテキストを先に出力 → その後 suggestReplies を呼ぶ
 - 日時の候補は suggestDates ツールを呼んで提示してください
 
-## ユーザー操作のボタン化ルール
+## ユーザー操作のボタン化ルール（最重要・必ず守ること）
 
-- **選択肢が複数ある場合は、必ず suggestReplies か専用ツール（listBars・listEvents等）でボタン化して提示する**
-  - YES/NO 確認が必要 → suggestReplies(["はい", "いいえ"]) を呼ぶ
-  - イベント選択が必要 → listEvents ツールを呼んでクリック選択させる
-  - バー選択が必要 → listBars ツールを呼んでクリック選択させる
-  - 日付選択が必要 → suggestDates ツールを呼んで提示する
-- **ユーザーに自由なテキスト入力を求めない**。代わりに候補をボタン・リンク・日程選択で提示する`;
+- **ユーザーに自由なテキスト入力を絶対に求めない**。すべての選択・確認はボタン／ツールで完結させる
+- **YES/NO・はい/いいえ の確認が必要なときは、必ず同じターンで suggestReplies(["はい", "いいえ"]) を呼ぶこと**
+  - 「問題なければ〜」「よろしいですか？」「確認してください」→ 必ず suggestReplies(["はい", "いいえ"])
+  - テキストで確認を促してユーザーの入力を待つだけのターンを作らない
+- 選択肢が複数ある場合も同様にボタン化する
+  - イベント選択が必要 → listEvents ツールを呼ぶ
+  - バー選択が必要 → listBars ツールを呼ぶ
+  - 日付選択が必要 → suggestDates ツールを呼ぶ
+  - その他の選択肢 → suggestReplies でボタン提示する`;
 
 export function buildSystemPrompt(pageContext?: ChatPageContext): string {
   if (!pageContext || (!pageContext.eventId && !pageContext.orgId && !pageContext.pageName)) {
