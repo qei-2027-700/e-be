@@ -613,6 +613,8 @@ export type PublicEventItem = {
   maxParticipants: number | null;
   participantCount: number;
   thumbnailUrl: string | null;
+  organizerUserId: string;
+  organizerName: string | null;
 };
 
 export type SearchEventsOptions = {
@@ -693,9 +695,12 @@ export async function searchPublicEvents(opts: SearchEventsOptions = {}): Promis
       maxParticipants: events.maxParticipants,
       participantCount: sql<number>`(${participantCountSq})`,
       thumbnailUrl: events.thumbnailUrl,
+      organizerUserId: events.userId,
+      organizerName: users.name,
     })
     .from(events)
     .innerJoin(organizations, eq(events.orgId, organizations.id))
+    .innerJoin(users, eq(events.userId, users.id))
     .where(and(...conditions))
     .orderBy(asc(events.startAt))
     .limit(limit)
@@ -716,6 +721,8 @@ export async function searchPublicEvents(opts: SearchEventsOptions = {}): Promis
     maxParticipants: row.maxParticipants,
     participantCount: Number(row.participantCount),
     thumbnailUrl: row.thumbnailUrl,
+    organizerUserId: row.organizerUserId,
+    organizerName: row.organizerName ?? null,
   }));
 }
 

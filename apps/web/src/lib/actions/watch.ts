@@ -74,3 +74,16 @@ export async function isWatchingUser(targetUserId: string): Promise<boolean> {
   return rows.length > 0;
 }
 
+export async function getWatchedUserIds(userId: string): Promise<string[]> {
+  const rows = await db
+    .select({ targetUserId: userWatches.targetUserId })
+    .from(userWatches)
+    .where(
+      and(
+        eq(userWatches.watcherUserId, userId),
+        isNull(userWatches.deletedAt)
+      )
+    );
+  return rows.map((r) => r.targetUserId);
+}
+
