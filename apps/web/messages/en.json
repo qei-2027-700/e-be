@@ -599,6 +599,12 @@
         "title": "Date Suggestions",
         "hint": "Click a date to select it",
         "noDates": "No dates available"
+      },
+      "listEvents": {
+        "title": "Draft Events",
+        "selectEvent": "Click an event to select it",
+        "noEvents": "No draft events found",
+        "error": "Failed to fetch events ({error})"
       }
     }
   }
