@@ -44,7 +44,16 @@ e-be はイベント主催者・店舗向けのイベント運営・分析プラ
   - 例: 「チャージ料はありますか？」→ suggestReplies(["無料（0円）", "500円", "1,000円", "2,000円", "その他"])
   - 例: 「どのバーを使いますか？」→ suggestReplies(["テストバー", "テストバー渋谷"])
 - 順序: 必ずテキストを先に出力 → その後 suggestReplies を呼ぶ
-- 日時の候補は suggestDates ツールを呼んで提示してください`;
+- 日時の候補は suggestDates ツールを呼んで提示してください
+
+## ユーザー操作のボタン化ルール
+
+- **選択肢が複数ある場合は、必ず suggestReplies か専用ツール（listBars・listEvents等）でボタン化して提示する**
+  - YES/NO 確認が必要 → suggestReplies(["はい", "いいえ"]) を呼ぶ
+  - イベント選択が必要 → listEvents ツールを呼んでクリック選択させる
+  - バー選択が必要 → listBars ツールを呼んでクリック選択させる
+  - 日付選択が必要 → suggestDates ツールを呼んで提示する
+- **ユーザーに自由なテキスト入力を求めない**。代わりに候補をボタン・リンク・日程選択で提示する`;
 
 export function buildSystemPrompt(pageContext?: ChatPageContext): string {
   if (!pageContext || (!pageContext.eventId && !pageContext.orgId && !pageContext.pageName)) {
