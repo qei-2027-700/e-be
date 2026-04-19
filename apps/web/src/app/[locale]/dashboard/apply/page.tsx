@@ -66,7 +66,7 @@ export default async function ApplyPage() {
             <p className="text-sm text-muted-foreground">{t("description")}</p>
           </CardHeader>
           <CardContent>
-            <ApplyForm userId={user.id} locale={locale} />
+            <ApplyForm locale={locale} />
           </CardContent>
         </Card>
       </div>

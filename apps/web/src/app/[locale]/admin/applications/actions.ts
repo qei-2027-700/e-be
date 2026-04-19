@@ -2,6 +2,7 @@
 
 import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
+import { getDbUser, isAdmin } from "@/lib/auth";
 import {
   operatorApplications,
   companies,
@@ -17,6 +18,11 @@ export async function approveApplication(
   _prev: State,
   formData: FormData
 ): Promise<State> {
+  const dbUser = await getDbUser();
+  if (!dbUser || !(await isAdmin(dbUser.id))) {
+    return { success: false, error: "Unauthorized" };
+  }
+
   const applicationId = String(formData.get("applicationId") ?? "");
   const applicantUserId = String(formData.get("applicantUserId") ?? "");
   const orgName = String(formData.get("orgName") ?? "");
@@ -24,7 +30,6 @@ export async function approveApplication(
   const companyName = String(formData.get("companyName") ?? "");
   const address = String(formData.get("address") ?? "") || null;
   const description = String(formData.get("description") ?? "") || null;
-  const reviewerUserId = String(formData.get("reviewerUserId") ?? "");
   const locale = String(formData.get("locale") ?? "ja");
 
   // トランザクション: 会社 → 組織 → メンバー → userType 更新 → 申請ステータス更新
@@ -68,7 +73,7 @@ export async function approveApplication(
       .update(operatorApplications)
       .set({
         status: "approved",
-        reviewedBy: reviewerUserId,
+        reviewedBy: dbUser.id,
         reviewedAt: new Date(),
       })
       .where(eq(operatorApplications.id, applicationId));
@@ -81,8 +86,12 @@ export async function rejectApplication(
   _prev: State,
   formData: FormData
 ): Promise<State> {
+  const dbUser = await getDbUser();
+  if (!dbUser || !(await isAdmin(dbUser.id))) {
+    return { success: false, error: "Unauthorized" };
+  }
+
   const applicationId = String(formData.get("applicationId") ?? "");
-  const reviewerUserId = String(formData.get("reviewerUserId") ?? "");
   const reviewNote = String(formData.get("reviewNote") ?? "") || null;
   const locale = String(formData.get("locale") ?? "ja");
 
@@ -90,7 +99,7 @@ export async function rejectApplication(
     .update(operatorApplications)
     .set({
       status: "rejected",
-      reviewedBy: reviewerUserId,
+      reviewedBy: dbUser.id,
       reviewedAt: new Date(),
       reviewNote,
     })

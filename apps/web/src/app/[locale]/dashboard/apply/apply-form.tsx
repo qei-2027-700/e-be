@@ -9,11 +9,10 @@ import { Label } from "@/components/ui/label";
 import { submitApplication } from "./actions";
 
 type Props = {
-  userId: string;
   locale: string;
 };
 
-export function ApplyForm({ userId, locale }: Props) {
+export function ApplyForm({ locale }: Props) {
   const t = useTranslations("apply");
   const [state, action, isPending] = useActionState(submitApplication, null);
 
@@ -37,7 +36,6 @@ export function ApplyForm({ userId, locale }: Props) {
 
   return (
     <form action={action} className="space-y-4">
-      <input type="hidden" name="userId" value={userId} />
       <input type="hidden" name="locale" value={locale} />
 
       <div className="space-y-1.5">

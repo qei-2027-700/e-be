@@ -11,9 +11,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { createClient } from "@/lib/supabase/client";
 
 // --- BYPASS START ---
-const BYPASS_ENABLED =
-  process.env.NEXT_PUBLIC_BYPASS_AUTH === "true" ||
-  !!process.env.NEXT_PUBLIC_VERCEL_ENV;
+const BYPASS_ENABLED = process.env.NEXT_PUBLIC_BYPASS_AUTH === "true";
 
 const TEST_ACCOUNTS = [
   {
