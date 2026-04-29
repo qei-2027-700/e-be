@@ -176,6 +176,7 @@ export type CalendarEventData = {
   title: string | null;
   startAt: string | null; // ISO 8601 文字列（Server→Client 境界でシリアライズ済み）
   status: 'published' | 'pending';
+  source?: 'external';
 };
 
 type GetEventsForCalendarOptions = {
