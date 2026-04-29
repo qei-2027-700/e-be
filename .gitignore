@@ -9,3 +9,4 @@ dist
 .claude/handoff-*.md
 docs/.vitepress/dist
 docs/.vitepress/cache
+.vercel
