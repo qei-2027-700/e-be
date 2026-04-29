@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { EventCalendar } from "@/components/event-calendar";
 import { getEventsForCalendar, getMyDraftEvents, getOrganizerHistory, getParticipationHistory, getUpcomingParticipations, searchPublicEvents } from "@/lib/events";
+import { getGoogleCalendarEvents } from "@/lib/google-calendar";
 import { OrganizerHistoryItem } from "./organizer-history-item";
 
 const USER_TYPE_VARIANT = {
@@ -25,12 +26,15 @@ export default async function DashboardPage() {
   const calendarFrom = new Date(now.getFullYear(), now.getMonth(), 1);
   const calendarTo = new Date(now.getFullYear(), now.getMonth() + 3, 0);
 
-  const [userOrgs, userType, calendarEvents, upcomingPublicEvents] = await Promise.all([
+  const [userOrgs, userType, calendarEvents, externalEvents, upcomingPublicEvents] = await Promise.all([
     getUserOrgs(user.id),
     getUserType(user.id),
     getEventsForCalendar({ from: calendarFrom, to: calendarTo }),
+    getGoogleCalendarEvents(calendarFrom, calendarTo),
     searchPublicEvents({ limit: 3 }),
   ]);
+
+  const allCalendarEvents = [...calendarEvents, ...externalEvents];
 
   // userType === 'user' のみ必要なデータを並行取得
   let organizerHistory: Awaited<ReturnType<typeof getOrganizerHistory>> = [];
@@ -76,7 +80,7 @@ export default async function DashboardPage() {
               </CardHeader>
               <CardContent>
                 <EventCalendar
-                  events={calendarEvents}
+                  events={allCalendarEvents}
                   initialYear={now.getFullYear()}
                   initialMonth={now.getMonth()}
                   locale={locale}
